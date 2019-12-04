@@ -10,7 +10,9 @@ Live demo is [**here**](https://onderonur.github.io/react-intersection-observer-
 
 ## Installation
 
-`npm install react-intersection-observer-hook`
+`
+npm install react-intersection-observer-hook
+`
 
 ## Usage
 
