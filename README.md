@@ -2,7 +2,7 @@
 
 🔨 Under construction... 🔨
 
-This is a React hook to use [Insersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) declaratively.
+This is a React hook to use [Insersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) declaratively. It is written in TypeScript (thanks to [TSDX](https://github.com/jaredpalmer/tsdx)). So, you can use it with your TypeScript projects easily.
 
 Live demo [**here**](https://onderonur.github.io/react-intersection-observer-hook).
 
@@ -34,8 +34,8 @@ const Example = () => {
 
 ## Props
 
-- **root:** The viewport element to check the visibility of the given target with the ref callback. The default value is the browser viewport.  
-- **rootMargin:** Indicates the margin value around the root element. Default value is zero for all directions (top, right, bottom and left).  
+- **root:** The viewport element to check the visibility of the given target with the ref callback. The default value is the browser viewport.
+- **rootMargin:** Indicates the margin value around the root element. Default value is zero for all directions (top, right, bottom and left).
 - **threshold:** Threshold value (or values) to trigger the observer.
 
 For more info you can check [here](https://developers.google.com/web/updates/2016/04/intersectionobserver) and [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).
