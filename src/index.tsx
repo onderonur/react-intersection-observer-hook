@@ -6,20 +6,12 @@ type IntersectionObserverHookResult = [
   { entry: IntersectionObserverEntry | undefined }
 ];
 
-// For more info: https://developers.google.com/web/updates/2016/04/intersectionobserver
+// For more info:
+// https://developers.google.com/web/updates/2016/04/intersectionobserver
+// https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
 function useIntersectionObserver({
-  // The root to use for intersection.
-  // If not provided, use the top-level document’s viewport.
   root = null,
-  // Same as margin, can be 1, 2, 3 or 4 components, possibly negative lengths.
-  // If an explicit root element is specified, components may be percentages of the
-  // root element size.  If no explicit root element is specified, using a percentage
-  // is an error.
   rootMargin = '0px',
-  // Threshold(s) at which to trigger callback, specified as a ratio, or list of
-  // ratios, of (visible area / total area) of the observed element (hence all
-  // entries must be in the range [0, 1]).  Callback will be invoked when the visible
-  // ratio of the observed element crosses a threshold in the list.
   threshold = [0],
 }: IntersectionObserverInit = {}): IntersectionObserverHookResult {
   const observerRef = useRef<IntersectionObserver>();
