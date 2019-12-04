@@ -1,0 +1,29 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --public-url /react-intersection-observer-hook/",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "homepage": "https://onderonur.github.io/react-intersection-observer-hook",
+  "dependencies": {
+    "react-app-polyfill": "^1.0.0",
+    "styled-components": "^4.4.1"
+  },
+  "alias": {
+    "react": "../node_modules/react",
+    "react-dom": "../node_modules/react-dom/profiling",
+    "scheduler/tracing": "../node_modules/scheduler/tracing-profiling"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.8.4",
+    "gh-pages": "^2.1.1",
+    "parcel": "^1.12.3",
+    "typescript": "^3.4.5"
+  }
+}
