@@ -42,6 +42,8 @@ function Example() {
 
 ## Props
 
+Both `useIntersectionObserver` and `useTrackVisibility` gets the same props. And those are;
+
 - **root:** The viewport element to check the visibility of the given target with the ref callback. The default value is the browser viewport.
 - **rootMargin:** Indicates the margin value around the root element. Default value is zero for all directions (top, right, bottom and left).
 - **threshold:** Threshold value (or values) to trigger the observer.
