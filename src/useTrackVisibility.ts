@@ -1,11 +1,5 @@
-import useIntersectionObserver, {
-  IntersectionObserverHookRefCallback,
-} from './useIntersectionObserver';
-
-export type TrackVisibilityResult = [
-  IntersectionObserverHookRefCallback,
-  { isVisible: boolean }
-];
+import useIntersectionObserver from './useIntersectionObserver';
+import { TrackVisibilityResult } from './types';
 
 function useTrackVisibility(
   props?: IntersectionObserverInit
