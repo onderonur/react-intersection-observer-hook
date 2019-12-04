@@ -6,7 +6,7 @@ This is a React hook to use [Insersection Observer](https://developer.mozilla.or
 
 This package is written in TypeScript (all thanks to [TSDX](https://github.com/jaredpalmer/tsdx)). So, you can use it in your TypeScript projects too.
 
-Live demo is [**here**](https://onderonur.github.io/react-intersection-observer-hook).
+**Live demo is [here](https://onderonur.github.io/react-intersection-observer-hook).**
 
 ## Installation
 
