@@ -63,7 +63,7 @@ function useIntersectionObserver({
 
   const result: IntersectionObserverHookResult = useMemo(() => {
     return [refCallback, { entry }];
-  }, []);
+  }, [refCallback, entry]);
 
   return result;
 }
