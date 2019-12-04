@@ -1,6 +1,10 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 
-type RefCallbackInput = Element | null;
+type IntersectionObserverHookRefCallbackNode = Element | null;
+type IntersectionObserverHookResult = [
+  (node: IntersectionObserverHookRefCallbackNode) => void,
+  { entry: IntersectionObserverEntry | undefined }
+];
 
 // For more info: https://developers.google.com/web/updates/2016/04/intersectionobserver
 function useIntersectionObserver({
@@ -17,12 +21,9 @@ function useIntersectionObserver({
   // entries must be in the range [0, 1]).  Callback will be invoked when the visible
   // ratio of the observed element crosses a threshold in the list.
   threshold = [0],
-}: IntersectionObserverInit = {}): [
-  (node: RefCallbackInput) => void,
-  { isIntersecting: boolean }
-] {
+}: IntersectionObserverInit = {}): IntersectionObserverHookResult {
   const observerRef = useRef<IntersectionObserver>();
-  const [isIntersecting, setIsIntersecting] = useState<boolean>(false);
+  const [entry, setEntry] = useState<IntersectionObserverEntry>();
 
   useEffect(() => {
     return () => {
@@ -34,14 +35,14 @@ function useIntersectionObserver({
   }, []);
 
   const refCallback = useCallback(
-    (node: RefCallbackInput) => {
+    (node: IntersectionObserverHookRefCallbackNode) => {
       function getObserver() {
         // If there is no observer, then create it.
         // So, we only create it only once.
         if (!observerRef.current) {
           observerRef.current = new IntersectionObserver(
             ([entry]) => {
-              setIsIntersecting(entry.isIntersecting);
+              setEntry(entry);
             },
             { root, rootMargin, threshold }
           );
@@ -60,7 +61,11 @@ function useIntersectionObserver({
     [root, rootMargin, threshold]
   );
 
-  return [refCallback, { isIntersecting }];
+  const result: IntersectionObserverHookResult = useMemo(() => {
+    return [refCallback, { entry }];
+  }, []);
+
+  return result;
 }
 
 export default useIntersectionObserver;
