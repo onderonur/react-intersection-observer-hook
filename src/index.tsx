@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 
 type IntersectionObserverHookRefCallbackNode = Element | null;
 type IntersectionObserverHookResult = [
@@ -53,11 +53,7 @@ function useIntersectionObserver({
     [root, rootMargin, threshold]
   );
 
-  const result: IntersectionObserverHookResult = useMemo(() => {
-    return [refCallback, { entry }];
-  }, [refCallback, entry]);
-
-  return result;
+  return [refCallback, { entry }];
 }
 
 export default useIntersectionObserver;
