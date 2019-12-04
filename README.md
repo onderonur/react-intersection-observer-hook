@@ -20,10 +20,10 @@ Here is a simple code to use the hook. Just pass the `ref callback` to the compo
 
 ```javascript
 import React from 'react';
-import useIntersectionObserver from '../src';
+import useIntersectionObserver from 'react-intersection-observer-hook';
 // ...
 
-const Example = () => {
+function Example() {
   const [ref, { entry }] = useIntersectionObserver();
   const isVisible = entry && entry.isIntersecting;
 
@@ -38,6 +38,17 @@ const Example = () => {
     </>
   );
 };
+```
+Or you can create your own custom hook like this;
+
+```javascript
+import useIntersectionObserver from 'react-intersection-observer-hook';
+
+function useTrackVisibility(props) {
+  const [ref, { entry }] = useIntersectionObserver(props);
+  const isVisible = entry && entry.isIntersecting;
+  return [ref, { isVisible }]
+}
 ```
 
 ## Props
