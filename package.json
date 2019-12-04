@@ -29,7 +29,8 @@
     "build": "tsdx build",
     "test": "tsdx test --env=jsdom",
     "lint": "tsdx lint",
-    "clean": "rimraf dist .rts2_cache_esm .rts2_cache_cjs example/.cache example/dist"
+    "clean": "rimraf dist .rts2_cache_esm .rts2_cache_cjs example/.cache example/dist",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react": ">=16"
