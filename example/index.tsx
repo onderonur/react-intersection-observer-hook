@@ -1,7 +1,7 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { useIntersectionObserver } from '../src';
+import { useIntersectionObserver, useTrackVisibility } from '../src';
 import styled from 'styled-components';
 
 const Root = styled.div`
@@ -35,8 +35,7 @@ const Ball = styled.div`
 `;
 
 const App = () => {
-  const [ref, { entry }] = useIntersectionObserver();
-  const isVisible = entry && entry.isIntersecting;
+  const [ref, { isVisible }] = useTrackVisibility();
 
   return (
     <Root>
