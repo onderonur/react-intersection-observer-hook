@@ -1,8 +1,11 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 
-type IntersectionObserverHookRefCallbackNode = Element | null;
-type IntersectionObserverHookResult = [
-  (node: IntersectionObserverHookRefCallbackNode) => void,
+export type IntersectionObserverHookRefCallbackNode = Element | null;
+export type IntersectionObserverHookRefCallback = (
+  node: IntersectionObserverHookRefCallbackNode
+) => void;
+export type IntersectionObserverHookResult = [
+  IntersectionObserverHookRefCallback,
   { entry: IntersectionObserverEntry | undefined }
 ];
 
