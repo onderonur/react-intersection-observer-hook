@@ -2,13 +2,15 @@
 
 🔨 Under construction... 🔨
 
-This is a React hook to use [Insersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) declaratively. It is written in TypeScript (thanks to [TSDX](https://github.com/jaredpalmer/tsdx)). So, you can use it with your TypeScript projects easily.
+This is a React hook to use [Insersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) declaratively. By using this hook, you can easily track if a component is visible or not.  
 
-Live demo [**here**](https://onderonur.github.io/react-intersection-observer-hook).
+This package is written in TypeScript (all thanks to [TSDX](https://github.com/jaredpalmer/tsdx)). So, you can use it in your TypeScript projects too.
+
+Live demo is [**here**](https://onderonur.github.io/react-intersection-observer-hook).
 
 ## Usage
 
-Here is a simple code to use the hook. Just pass the `ref callback` to the component that you want to track its visibility.
+Here is a simple code to use the hook. Just pass the `ref callback` to the component that you want to track its visibility. You can find a more complete code in the `example` folder.
 
 ```javascript
 import React from 'react';
