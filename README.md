@@ -39,17 +39,6 @@ function Example() {
   );
 };
 ```
-Or you can create your own custom hook like this;
-
-```javascript
-import useIntersectionObserver from 'react-intersection-observer-hook';
-
-function useTrackVisibility(props) {
-  const [ref, { entry }] = useIntersectionObserver(props);
-  const isVisible = entry && entry.isIntersecting;
-  return [ref, { isVisible }]
-}
-```
 
 ## Props
 
