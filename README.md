@@ -10,7 +10,9 @@ Live demo is [**here**](https://onderonur.github.io/react-intersection-observer-
 
 ## Installation
 
-`npm install react-intersection-observer-hook`
+```sh
+npm install react-intersection-observer-hook
+```
 
 ## Usage
 
@@ -44,4 +46,4 @@ const Example = () => {
 - **rootMargin:** Indicates the margin value around the root element. Default value is zero for all directions (top, right, bottom and left).
 - **threshold:** Threshold value (or values) to trigger the observer.
 
-For more info you can check [here](https://developers.google.com/web/updates/2016/04/intersectionobserver) and [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).
+*For more info, you can check [here](https://developers.google.com/web/updates/2016/04/intersectionobserver) and [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).*
