@@ -36,12 +36,13 @@ const Ball = styled.div`
 
 const App = () => {
   const [ref, { entry }] = useIntersectionObserver();
+  const isVisible = entry && entry.isIntersecting;
 
   return (
     <Root>
       <Scroller>
         <Message>
-          {entry && entry.isIntersecting
+          {isVisible
             ? '(づ｡◕‿‿◕｡)づ You have found it!'
             : "¯\\_(ツ)_/¯ I don't know where the green ball is. Use scroll to find it."}
         </Message>

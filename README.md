@@ -17,11 +17,12 @@ import useIntersectionObserver from '../src';
 
 const Example = () => {
   const [ref, { entry }] = useIntersectionObserver();
+  const isVisible = entry && entry.isIntersecting;
 
   return (
     <>
       <p>
-        {entry && entry.isIntersecting
+        {isVisible
           ? 'The component is visible.'
           : 'The component is not visible.'}
       </p>
