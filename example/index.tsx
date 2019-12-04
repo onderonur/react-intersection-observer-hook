@@ -1,7 +1,7 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import useIntersectionObserver from '../src';
+import { useIntersectionObserver } from '../src';
 import styled from 'styled-components';
 
 const Root = styled.div`
