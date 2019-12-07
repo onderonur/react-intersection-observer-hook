@@ -1,0 +1,61 @@
+{
+  "name": "react-intersection-observer-hook",
+  "version": "0.1.0-alpha.2",
+  "license": "MIT",
+  "author": "onderonur",
+  "main": "dist/index.js",
+  "module": "dist/react-intersection-observer-hook.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "react",
+    "react-hooks",
+    "intersection-observer",
+    "on-screen",
+    "visibility"
+  ],
+  "homepage": "https://onderonur.github.io/react-intersection-observer-hook",
+  "bugs": {
+    "url": "https://github.com/onderonur/react-intersection-observer-hook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onderonur/react-intersection-observer-hook.git"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --env=jsdom",
+    "lint": "tsdx lint",
+    "clean": "rimraf dist .rts2_cache_esm .rts2_cache_cjs example/.cache example/dist",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "@types/react": "^16.9.13",
+    "@types/react-dom": "^16.9.4",
+    "husky": "^3.1.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "rimraf": "^3.0.0",
+    "tsdx": "^0.11.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.7.2"
+  }
+}
