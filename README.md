@@ -22,7 +22,7 @@ Here is a simple code to use the hook. Just pass the `ref callback` to the compo
 
 ```javascript
 import React, { useEffect } from 'react';
-import useIntersectionObserver from 'react-intersection-observer-hook';
+import { useIntersectionObserver } from 'react-intersection-observer-hook';
 // ...
 
 function Example() {
@@ -43,7 +43,7 @@ or if you just want to track visibility, you can use `useTrackVisibility` hook l
 
 ```javascript
 import React, { useEffect } from 'react';
-import useTrackVisibility from 'react-intersection-observer-hook';
+import { useTrackVisibility } from 'react-intersection-observer-hook';
 // ...
 
 function Example() {
