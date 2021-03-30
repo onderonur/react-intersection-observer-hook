@@ -10,7 +10,7 @@ const Root = styled.div`
 
 const Scroller = styled.div`
   width: 100%;
-  height: 600px;
+  /* height: 600px; */
   overflow: auto;
   background-color: #fafafa;
 `;
@@ -35,10 +35,18 @@ const Ball = styled.div`
 `;
 
 const App = () => {
-  const [ref, { isVisible }] = useTrackVisibility();
+  const [rootMargin, setRootMargin] = React.useState<string>('600px');
+  const [ref, { isVisible }] = useTrackVisibility({ rootMargin });
 
   return (
     <Root>
+      <button
+        onClick={() =>
+          setRootMargin(current => (current ? undefined : '600px'))
+        }
+      >
+        {rootMargin ? 'YES' : 'NO'}
+      </button>
       <Scroller>
         <Message>
           {isVisible
