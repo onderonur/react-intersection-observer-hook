@@ -1,2 +1,15 @@
-export { default as useIntersectionObserver } from './useIntersectionObserver';
-export { default as useTrackVisibility } from './useTrackVisibility';
+export {
+  default as useIntersectionObserver,
+  IntersectionObserverHookArgs,
+  IntersectionObserverHookRefCallback,
+  IntersectionObserverHookRefCallbackNode,
+  IntersectionObserverHookResult,
+  IntersectionObserverHookRootRefCallback,
+  IntersectionObserverHookRootRefCallbackNode,
+} from './useIntersectionObserver';
+
+export {
+  default as useTrackVisibility,
+  TrackVisibilityHookArgs,
+  TrackVisibilityHookResult,
+} from './useTrackVisibility';

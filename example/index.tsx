@@ -1,11 +1,21 @@
 import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { useTrackVisibility } from '../src';
 import styled from 'styled-components';
+import { useTrackVisibility } from '../src';
+import Message from './components/Message';
 
 const Root = styled.div`
   min-width: 300px;
+`;
+
+const Top = styled.div`
+  position: fixed;
+  top: 6px;
+`;
+
+const ToggleButton = styled.button`
+  margin-bottom: 6px;
 `;
 
 const Scroller = styled.div`
@@ -13,11 +23,6 @@ const Scroller = styled.div`
   height: 600px;
   overflow: auto;
   background-color: #fafafa;
-`;
-
-const Message = styled.div`
-  position: fixed;
-  font-weight: 500;
 `;
 
 const Content = styled.div`
@@ -31,26 +36,49 @@ const Ball = styled.div`
   background-color: #1db954;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 700px;
+  margin-top: 50%;
 `;
 
-const App = () => {
-  const [ref, { isVisible }] = useTrackVisibility();
+// eslint-disable-next-line no-shadow
+enum Mode {
+  DOCUMENT_PARENT,
+  SCROLLABLE_PARENT,
+}
+
+function App() {
+  const [mode, setMode] = React.useState(Mode.DOCUMENT_PARENT);
+  const [ref, { isVisible, rootRef }] = useTrackVisibility();
+
+  const innerContent = (
+    <Content>
+      <Ball ref={ref} />
+    </Content>
+  );
 
   return (
     <Root>
-      <Scroller>
-        <Message>
-          {isVisible
-            ? '(づ｡◕‿‿◕｡)づ You have found it!'
-            : "¯\\_(ツ)_/¯ I don't know where the green ball is. Use scroll to find it."}
-        </Message>
-        <Content>
-          <Ball ref={ref} />
-        </Content>
-      </Scroller>
+      <Top>
+        <ToggleButton
+          type="button"
+          onClick={() =>
+            setMode((current) =>
+              current === Mode.DOCUMENT_PARENT
+                ? Mode.SCROLLABLE_PARENT
+                : Mode.DOCUMENT_PARENT,
+            )
+          }
+        >
+          {mode === Mode.DOCUMENT_PARENT ? 'Document' : 'Scrollable Parent'}
+        </ToggleButton>
+        <Message isVisible={isVisible} />
+      </Top>
+      {mode === Mode.DOCUMENT_PARENT ? (
+        innerContent
+      ) : (
+        <Scroller ref={rootRef}>{innerContent}</Scroller>
+      )}
     </Root>
   );
-};
+}
 
 ReactDOM.render(<App />, document.getElementById('root'));

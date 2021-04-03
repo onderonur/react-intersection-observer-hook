@@ -1,18 +1,33 @@
+import { useEffect, useState } from 'react';
 import useIntersectionObserver, {
-  IntersectionObserverHookRefCallback,
+  IntersectionObserverHookArgs,
+  IntersectionObserverHookResult,
 } from './useIntersectionObserver';
 
-export type TrackVisibilityResult = [
-  IntersectionObserverHookRefCallback,
-  { isVisible: boolean }
+export type TrackVisibilityHookArgs = IntersectionObserverHookArgs;
+
+export type TrackVisibilityHookResult = [
+  IntersectionObserverHookResult[0],
+  IntersectionObserverHookResult[1] & {
+    isVisible: boolean;
+    wasEverVisible: boolean;
+  },
 ];
 
 function useTrackVisibility(
-  props?: IntersectionObserverInit
-): TrackVisibilityResult {
-  const [ref, { entry }] = useIntersectionObserver(props);
-  const isVisible = Boolean(entry && entry.isIntersecting);
-  return [ref, { isVisible }];
+  args?: IntersectionObserverHookArgs,
+): TrackVisibilityHookResult {
+  const [ref, result] = useIntersectionObserver(args);
+  const isVisible = Boolean(result.entry?.isIntersecting);
+  const [wasEverVisible, setWasEverVisible] = useState(isVisible);
+
+  useEffect(() => {
+    if (isVisible) {
+      setWasEverVisible(isVisible);
+    }
+  }, [isVisible]);
+
+  return [ref, { ...result, isVisible, wasEverVisible }];
 }
 
 export default useTrackVisibility;
