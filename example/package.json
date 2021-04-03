@@ -11,8 +11,9 @@
   },
   "homepage": "https://onderonur.github.io/react-intersection-observer-hook",
   "dependencies": {
+    "components": "^0.1.0",
     "react-app-polyfill": "^2.0.0",
-    "styled-components": "^5.2.1"
+    "styled-components": "^5.2.3"
   },
   "alias": {
     "react": "../node_modules/react",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
+    "@types/styled-components": "^5.1.9",
     "gh-pages": "^3.1.0",
     "parcel": "^1.12.3",
     "typescript": "^4.2.3"
