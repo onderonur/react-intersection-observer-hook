@@ -14,8 +14,11 @@ const Top = styled.div`
   top: 6px;
 `;
 
-const ToggleButton = styled.button`
-  margin-bottom: 6px;
+const Label = styled.label`
+  font-weight: bold;
+  > * {
+    margin-left: 8px;
+  }
 `;
 
 const Scroller = styled.div`
@@ -40,13 +43,13 @@ const Ball = styled.div`
 `;
 
 // eslint-disable-next-line no-shadow
-enum Mode {
-  DOCUMENT_PARENT,
-  SCROLLABLE_PARENT,
+enum ParentType {
+  DOCUMENT,
+  SCROLLABLE_CONTAINER,
 }
 
 function App() {
-  const [mode, setMode] = React.useState(Mode.DOCUMENT_PARENT);
+  const [mode, setMode] = React.useState(ParentType.DOCUMENT);
   const [ref, { isVisible, rootRef }] = useTrackVisibility();
 
   const innerContent = (
@@ -58,21 +61,24 @@ function App() {
   return (
     <Root>
       <Top>
-        <ToggleButton
-          type="button"
-          onClick={() =>
-            setMode((current) =>
-              current === Mode.DOCUMENT_PARENT
-                ? Mode.SCROLLABLE_PARENT
-                : Mode.DOCUMENT_PARENT,
-            )
-          }
-        >
-          {mode === Mode.DOCUMENT_PARENT ? 'Document' : 'Scrollable Parent'}
-        </ToggleButton>
+        <Label htmlFor="parentType">
+          Parent Type
+          <select
+            id="parentType"
+            value={mode}
+            onChange={(e) => {
+              setMode(parseInt(e.target.value));
+            }}
+          >
+            <option value={ParentType.DOCUMENT}>Document</option>
+            <option value={ParentType.SCROLLABLE_CONTAINER}>
+              Scrollable Container
+            </option>
+          </select>
+        </Label>
         <Message isVisible={isVisible} />
       </Top>
-      {mode === Mode.DOCUMENT_PARENT ? (
+      {mode === ParentType.DOCUMENT ? (
         innerContent
       ) : (
         <Scroller ref={rootRef}>{innerContent}</Scroller>

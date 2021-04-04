@@ -24,6 +24,7 @@ module.exports = {
     'prettier/prettier': 'warn',
     'no-shadow': 'warn',
     'no-unused-vars': 'off',
+    radix: 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
     // For optional chaining to not create linting errors
     'no-unused-expressions': 'off',
