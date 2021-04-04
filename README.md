@@ -1,4 +1,5 @@
 # react-intersection-observer-hook
+![Build status](https://img.shields.io/github/workflow/status/onderonur/react-intersection-observer-hook/CI)
 ![License](https://img.shields.io/npm/l/react-intersection-observer-hook)
 ![Version](https://img.shields.io/npm/v/react-intersection-observer-hook)  
 
