@@ -31,18 +31,17 @@ function Example() {
   // The second item, `entry` is the response of the initially created `IntersectionObserver` instance.
   const [ref, { entry }] = useIntersectionObserver();
   const isVisible = entry && entry.isIntersecting;
-  
-  useEffect(() => {
-    console.log(`The component is ${isVisible ? "visible" : "not visible"}.`)
-  },[isVisible])
 
-  return (
-    <SomeComponentToTrack ref={ref} />
-  );
-};
+  useEffect(() => {
+    console.log(`The component is ${isVisible ? 'visible' : 'not visible'}.`);
+  }, [isVisible]);
+
+  return <SomeComponentToTrack ref={ref} />;
+}
 ```
 
 if you have a scrollable container, you can set a `root` like this:
+
 ```javascript
 import React, { useEffect } from 'react';
 import { useIntersectionObserver } from 'react-intersection-observer-hook';
@@ -51,24 +50,24 @@ import { useIntersectionObserver } from 'react-intersection-observer-hook';
 function Example() {
   const [ref, { entry, rootRef }] = useIntersectionObserver();
   const isVisible = entry && entry.isIntersecting;
-  
+
   useEffect(() => {
-    console.log(`The component is ${isVisible ? "visible" : "not visible"}.`)
-  },[isVisible])
+    console.log(`The component is ${isVisible ? 'visible' : 'not visible'}.`);
+  }, [isVisible]);
 
   return (
-    <ScrollableContainer 
+    <ScrollableContainer
       // We use `rootRef` callback to set our root node.
-      ref={rootRef} 
+      ref={rootRef}
     >
       <SomeComponentToTrack ref={ref} />
     </ScrollableContainer>
   );
-};
+}
 ```
 
 If you just want to track visibility, you can use `useTrackVisibility` hook.
-It has the same API as `useIntersectionObserver` hook. It just returns a different result.
+It has the same API as `useIntersectionObserver` hook. It just returns additional fields in its second tuple item.
 
 ```javascript
 import React, { useEffect } from 'react';
@@ -79,18 +78,21 @@ function Example() {
   // `useTrackVisibility` also returns a tuple like `useIntersectionObserver`.
   // First item is the same `ref` callback to set the node to observe.
   // Second item is an object that we can use to decide if a node is visible.
+  // `entry`: Same object which is returned by `useIntersectionObserver`.
+  // `rootRef`: Same ref callback which is returned by `useIntersectionObserver`.
   // `isVisible`: Becomes true/false based on the response of `IntersectionObserver`.
   // `wasEverVisible`: When our observed node becomes visible once, this flag becomes `true` and stays like that.
-  const [ref, { isVisible, wasEverVisible }] = useTrackVisibility();
-  
-  useEffect(() => {
-    console.log(`The component is ${isVisible ? "visible" : "not visible"}.`)
-  },[isVisible])
+  const [
+    ref,
+    { entry, rootRef, isVisible, wasEverVisible },
+  ] = useTrackVisibility();
 
-  return (
-    <SomeComponentToTrack ref={ref} />
-  );
-};
+  useEffect(() => {
+    console.log(`The component is ${isVisible ? 'visible' : 'not visible'}.`);
+  }, [isVisible]);
+
+  return <SomeComponentToTrack ref={ref} />;
+}
 ```
 
 ## Arguments
@@ -100,4 +102,4 @@ Both `useIntersectionObserver` and `useTrackVisibility` gets the same arguments.
 - **rootMargin:** Indicates the margin value around the root element. Default value is zero for all directions (top, right, bottom and left).
 - **threshold:** Threshold value (or values) to trigger the observer.
 
-*For more info, you can check [here](https://developers.google.com/web/updates/2016/04/intersectionobserver) and [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).*
+_For more info, you can check [here](https://developers.google.com/web/updates/2016/04/intersectionobserver) and [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)._
