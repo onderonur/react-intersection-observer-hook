@@ -1,4 +1,6 @@
 # react-intersection-observer-hook
+![License](https://img.shields.io/npm/l/react-intersection-observer-hook)
+![Version](https://img.shields.io/npm/v/react-intersection-observer-hook)  
 
 This is a small React hook package to use [Insersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) declaratively. By using this hook, you can easily track if a component is visible or not, create lazy loading images, trigger animations on entering or leaving the screen etc.
 
