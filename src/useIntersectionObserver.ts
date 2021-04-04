@@ -22,7 +22,7 @@ export type IntersectionObserverHookResult = [
   IntersectionObserverHookRefCallback,
   {
     entry: IntersectionObserverEntry | undefined;
-    rootRef?: IntersectionObserverHookRootRefCallback;
+    rootRef: IntersectionObserverHookRootRefCallback;
   },
 ];
 
