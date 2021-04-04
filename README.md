@@ -26,6 +26,9 @@ import { useIntersectionObserver } from 'react-intersection-observer-hook';
 // ...
 
 function Example() {
+  // `useIntersectionObserver` returns a tuple.
+  // We need to give this `ref` callback to the node we want to observe.
+  // The second item, `entry` is the response of the initially created `IntersectionObserver` instance.
   const [ref, { entry }] = useIntersectionObserver();
   const isVisible = entry && entry.isIntersecting;
   
@@ -39,7 +42,33 @@ function Example() {
 };
 ```
 
-or if you just want to track visibility, you can use `useTrackVisibility` hook like this;
+if you have a scrollable container, you can set a `root` like this:
+```javascript
+import React, { useEffect } from 'react';
+import { useIntersectionObserver } from 'react-intersection-observer-hook';
+// ...
+
+function Example() {
+  const [ref, { entry, rootRef }] = useIntersectionObserver();
+  const isVisible = entry && entry.isIntersecting;
+  
+  useEffect(() => {
+    console.log(`The component is ${isVisible ? "visible" : "not visible"}.`)
+  },[isVisible])
+
+  return (
+    <ScrollableContainer 
+      // We use `rootRef` callback to set our root node.
+      ref={rootRef} 
+    >
+      <SomeComponentToTrack ref={ref} />
+    </ScrollableContainer>
+  );
+};
+```
+
+If you just want to track visibility, you can use `useTrackVisibility` hook.
+It has the same API as `useIntersectionObserver` hook. It just returns a different result.
 
 ```javascript
 import React, { useEffect } from 'react';
@@ -47,7 +76,12 @@ import { useTrackVisibility } from 'react-intersection-observer-hook';
 // ...
 
 function Example() {
-  const [ref, { isVisible }] = useTrackVisibility();
+  // `useTrackVisibility` also returns a tuple like `useIntersectionObserver`.
+  // First item is the same `ref` callback to set the node to observe.
+  // Second item is an object that we can use to decide if a node is visible.
+  // `isVisible`: Becomes true/false based on the response of `IntersectionObserver`.
+  // `wasEverVisible`: When our observed node becomes visible once, this flag becomes `true` and stays like that.
+  const [ref, { isVisible, wasEverVisible }] = useTrackVisibility();
   
   useEffect(() => {
     console.log(`The component is ${isVisible ? "visible" : "not visible"}.`)
@@ -59,11 +93,10 @@ function Example() {
 };
 ```
 
-## Props
+## Arguments
 
-Both `useIntersectionObserver` and `useTrackVisibility` gets the same props. And those are;
+Both `useIntersectionObserver` and `useTrackVisibility` gets the same arguments. And those are;
 
-- **root:** The viewport element to check the visibility of the given target with the ref callback. The default value is the browser viewport.
 - **rootMargin:** Indicates the margin value around the root element. Default value is zero for all directions (top, right, bottom and left).
 - **threshold:** Threshold value (or values) to trigger the observer.
 
