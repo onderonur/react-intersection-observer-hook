@@ -30,15 +30,11 @@
     "test": "tsdx test --env=jsdom",
     "lint": "tsdx lint",
     "clean": "rimraf dist .rts2_cache_esm .rts2_cache_cjs example/.cache example/dist",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepare": "husky install"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
