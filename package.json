@@ -1,6 +1,6 @@
 {
   "name": "react-intersection-observer-hook",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "license": "MIT",
   "author": "onderonur",
   "main": "dist/index.js",
@@ -42,6 +42,7 @@
     "@types/react-dom": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^4.20.0",
     "@typescript-eslint/parser": "^4.20.0",
+    "all-contributors-cli": "^6.20.0",
     "eslint": "^7.23.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.2.0",
