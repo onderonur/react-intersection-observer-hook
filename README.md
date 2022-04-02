@@ -1,4 +1,7 @@
 # react-intersection-observer-hook
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 ![Build status](https://img.shields.io/github/workflow/status/onderonur/react-intersection-observer-hook/CI)
 ![License](https://img.shields.io/npm/l/react-intersection-observer-hook)
 ![Version](https://img.shields.io/npm/v/react-intersection-observer-hook)  
@@ -106,3 +109,23 @@ Both `useIntersectionObserver` and `useTrackVisibility` gets the same arguments.
 - **threshold:** Threshold value (or values) to trigger the observer.
 
 _For more info, you can check [here](https://developers.google.com/web/updates/2016/04/intersectionobserver) and [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)._
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://seonghyeonkimm.github.io/"><img src="https://avatars.githubusercontent.com/u/13966404?v=4?s=100" width="100px;" alt=""/><br /><sub><b>KimSeonghyeon</b></sub></a><br /><a href="https://github.com/onderonur/react-intersection-observer-hook/commits?author=seonghyeonkimm" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
