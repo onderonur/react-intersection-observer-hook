@@ -84,8 +84,15 @@ function useIntersectionObserver(
   );
 
   useEffect(() => {
+    // After React 18, StrictMode unmounts and mounts components to be sure
+    // if they are resilient effects being mounted and destroyed multiple times.
+    // This a behavior to be sure nothing breaks when off-screen components
+    // can preserve their state with future React versions.
+    // So in StrictMode, React unmounts the component, clean-up of this useEffect gets triggered and
+    // we stop observing the node. But we need to start observing after component re-mounts with its preserved state.
+    // So to handle this case, we call initializeObserver here.
+    // https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-strict-mode
     initializeObserver();
-
     return () => {
       // We disconnect the observer on unmount to prevent memory leaks etc.
       unobserve();
