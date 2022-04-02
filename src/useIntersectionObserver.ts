@@ -48,13 +48,6 @@ function useIntersectionObserver(
     observerRef.current = null;
   }, []);
 
-  useEffect(() => {
-    return () => {
-      // We disconnect the observer on unmount to prevent memory leaks etc.
-      unobserve();
-    };
-  }, [unobserve]);
-
   const observe = useCallback(() => {
     const node = nodeRef.current;
     if (node) {
@@ -89,6 +82,15 @@ function useIntersectionObserver(
     },
     [initializeObserver],
   );
+
+  useEffect(() => {
+    initializeObserver();
+
+    return () => {
+      // We disconnect the observer on unmount to prevent memory leaks etc.
+      unobserve();
+    };
+  }, [initializeObserver, unobserve]);
 
   return [refCallback, { entry, rootRef: rootRefCallback }];
 }
