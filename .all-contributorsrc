@@ -1,0 +1,24 @@
+{
+  "projectName": "react-intersection-observer-hook",
+  "projectOwner": "onderonur",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "seonghyeonkimm",
+      "name": "KimSeonghyeon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13966404?v=4",
+      "profile": "https://seonghyeonkimm.github.io/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}
