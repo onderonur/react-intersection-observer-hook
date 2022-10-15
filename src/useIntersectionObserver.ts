@@ -1,10 +1,13 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { Omit } from './types';
 
 const DEFAULT_ROOT_MARGIN = '0px';
 const DEFAULT_THRESHOLD = [0];
 
-// eslint-disable-next-line no-undef
-export type IntersectionObserverHookArgs = IntersectionObserverInit;
+export type IntersectionObserverHookArgs = Omit<
+  IntersectionObserverInit,
+  'root'
+>;
 
 export type IntersectionObserverHookRefCallbackNode = Element | null;
 
@@ -12,7 +15,7 @@ export type IntersectionObserverHookRefCallback = (
   node: IntersectionObserverHookRefCallbackNode,
 ) => void;
 
-export type IntersectionObserverHookRootRefCallbackNode = IntersectionObserverHookArgs['root'];
+export type IntersectionObserverHookRootRefCallbackNode = IntersectionObserverInit['root'];
 
 export type IntersectionObserverHookRootRefCallback = (
   node: IntersectionObserverHookRootRefCallbackNode,
