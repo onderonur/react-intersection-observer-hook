@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useIntersectionObserver, {
   IntersectionObserverHookArgs,
   IntersectionObserverHookResult,
@@ -21,11 +21,9 @@ function useTrackVisibility(
   const isVisible = Boolean(result.entry?.isIntersecting);
   const [wasEverVisible, setWasEverVisible] = useState(isVisible);
 
-  useEffect(() => {
-    if (isVisible) {
-      setWasEverVisible(isVisible);
-    }
-  }, [isVisible]);
+  if (isVisible && !wasEverVisible) {
+    setWasEverVisible(true);
+  }
 
   return [ref, { ...result, isVisible, wasEverVisible }];
 }
