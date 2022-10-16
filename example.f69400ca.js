@@ -404,16 +404,16 @@ function Promise(fn) {
   if (typeof fn !== 'function') {
     throw new TypeError('Promise constructor\'s argument is not a function');
   }
-  this._1 = 0;
-  this._2 = 0;
-  this._3 = null;
-  this._4 = null;
+  this._U = 0;
+  this._V = 0;
+  this._W = null;
+  this._X = null;
   if (fn === noop) return;
   doResolve(fn, this);
 }
-Promise._5 = null;
-Promise._6 = null;
-Promise._7 = noop;
+Promise._Y = null;
+Promise._Z = null;
+Promise._0 = noop;
 
 Promise.prototype.then = function(onFulfilled, onRejected) {
   if (this.constructor !== Promise) {
@@ -432,24 +432,24 @@ function safeThen(self, onFulfilled, onRejected) {
   });
 }
 function handle(self, deferred) {
-  while (self._2 === 3) {
-    self = self._3;
+  while (self._V === 3) {
+    self = self._W;
   }
-  if (Promise._5) {
-    Promise._5(self);
+  if (Promise._Y) {
+    Promise._Y(self);
   }
-  if (self._2 === 0) {
-    if (self._1 === 0) {
-      self._1 = 1;
-      self._4 = deferred;
+  if (self._V === 0) {
+    if (self._U === 0) {
+      self._U = 1;
+      self._X = deferred;
       return;
     }
-    if (self._1 === 1) {
-      self._1 = 2;
-      self._4 = [self._4, deferred];
+    if (self._U === 1) {
+      self._U = 2;
+      self._X = [self._X, deferred];
       return;
     }
-    self._4.push(deferred);
+    self._X.push(deferred);
     return;
   }
   handleResolved(self, deferred);
@@ -457,16 +457,16 @@ function handle(self, deferred) {
 
 function handleResolved(self, deferred) {
   asap(function() {
-    var cb = self._2 === 1 ? deferred.onFulfilled : deferred.onRejected;
+    var cb = self._V === 1 ? deferred.onFulfilled : deferred.onRejected;
     if (cb === null) {
-      if (self._2 === 1) {
-        resolve(deferred.promise, self._3);
+      if (self._V === 1) {
+        resolve(deferred.promise, self._W);
       } else {
-        reject(deferred.promise, self._3);
+        reject(deferred.promise, self._W);
       }
       return;
     }
-    var ret = tryCallOne(cb, self._3);
+    var ret = tryCallOne(cb, self._W);
     if (ret === IS_ERROR) {
       reject(deferred.promise, LAST_ERROR);
     } else {
@@ -494,8 +494,8 @@ function resolve(self, newValue) {
       then === self.then &&
       newValue instanceof Promise
     ) {
-      self._2 = 3;
-      self._3 = newValue;
+      self._V = 3;
+      self._W = newValue;
       finale(self);
       return;
     } else if (typeof then === 'function') {
@@ -503,29 +503,29 @@ function resolve(self, newValue) {
       return;
     }
   }
-  self._2 = 1;
-  self._3 = newValue;
+  self._V = 1;
+  self._W = newValue;
   finale(self);
 }
 
 function reject(self, newValue) {
-  self._2 = 2;
-  self._3 = newValue;
-  if (Promise._6) {
-    Promise._6(self, newValue);
+  self._V = 2;
+  self._W = newValue;
+  if (Promise._Z) {
+    Promise._Z(self, newValue);
   }
   finale(self);
 }
 function finale(self) {
-  if (self._1 === 1) {
-    handle(self, self._4);
-    self._4 = null;
+  if (self._U === 1) {
+    handle(self, self._X);
+    self._X = null;
   }
-  if (self._1 === 2) {
-    for (var i = 0; i < self._4.length; i++) {
-      handle(self, self._4[i]);
+  if (self._U === 2) {
+    for (var i = 0; i < self._X.length; i++) {
+      handle(self, self._X[i]);
     }
-    self._4 = null;
+    self._X = null;
   }
 }
 
@@ -573,8 +573,8 @@ var enabled = false;
 exports.disable = disable;
 function disable() {
   enabled = false;
-  Promise._5 = null;
-  Promise._6 = null;
+  Promise._Y = null;
+  Promise._Z = null;
 }
 
 exports.enable = enable;
@@ -585,27 +585,27 @@ function enable(options) {
   var id = 0;
   var displayId = 0;
   var rejections = {};
-  Promise._5 = function (promise) {
+  Promise._Y = function (promise) {
     if (
-      promise._2 === 2 && // IS REJECTED
-      rejections[promise._8]
+      promise._V === 2 && // IS REJECTED
+      rejections[promise._1]
     ) {
-      if (rejections[promise._8].logged) {
-        onHandled(promise._8);
+      if (rejections[promise._1].logged) {
+        onHandled(promise._1);
       } else {
-        clearTimeout(rejections[promise._8].timeout);
+        clearTimeout(rejections[promise._1].timeout);
       }
-      delete rejections[promise._8];
+      delete rejections[promise._1];
     }
   };
-  Promise._6 = function (promise, err) {
-    if (promise._1 === 0) { // not yet handled
-      promise._8 = id++;
-      rejections[promise._8] = {
+  Promise._Z = function (promise, err) {
+    if (promise._U === 0) { // not yet handled
+      promise._1 = id++;
+      rejections[promise._1] = {
         displayId: null,
         error: err,
         timeout: setTimeout(
-          onUnhandled.bind(null, promise._8),
+          onUnhandled.bind(null, promise._1),
           // For reference errors and type errors, this almost always
           // means the programmer made a mistake, so log them after just
           // 100ms
@@ -691,9 +691,9 @@ var ZERO = valuePromise(0);
 var EMPTYSTRING = valuePromise('');
 
 function valuePromise(value) {
-  var p = new Promise(Promise._7);
-  p._2 = 1;
-  p._3 = value;
+  var p = new Promise(Promise._0);
+  p._V = 1;
+  p._W = value;
   return p;
 }
 Promise.resolve = function (value) {
@@ -742,11 +742,11 @@ Promise.all = function (arr) {
     function res(i, val) {
       if (val && (typeof val === 'object' || typeof val === 'function')) {
         if (val instanceof Promise && val.then === Promise.prototype.then) {
-          while (val._2 === 3) {
-            val = val._3;
+          while (val._V === 3) {
+            val = val._W;
           }
-          if (val._2 === 1) return res(i, val._3);
-          if (val._2 === 2) reject(val._3);
+          if (val._V === 1) return res(i, val._W);
+          if (val._V === 2) reject(val._W);
           val.then(function (val) {
             res(i, val);
           }, reject);
@@ -771,29 +771,6 @@ Promise.all = function (arr) {
       res(i, args[i]);
     }
   });
-};
-
-function onSettledFulfill(value) {
-  return { status: 'fulfilled', value: value };
-}
-function onSettledReject(reason) {
-  return { status: 'rejected', reason: reason };
-}
-function mapAllSettled(item) {
-  if(item && (typeof item === 'object' || typeof item === 'function')){
-    if(item instanceof Promise && item.then === Promise.prototype.then){
-      return item.then(onSettledFulfill, onSettledReject);
-    }
-    var then = item.then;
-    if (typeof then === 'function') {
-      return new Promise(then.bind(item)).then(onSettledFulfill, onSettledReject)
-    }
-  }
-
-  return onSettledFulfill(item);
-}
-Promise.allSettled = function (iterable) {
-  return Promise.all(iterableToArray(iterable).map(mapAllSettled));
 };
 
 Promise.reject = function (value) {
@@ -823,11 +800,11 @@ Promise.prototype['catch'] = function (onRejected) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DOMException = void 0;
 exports.Headers = Headers;
 exports.Request = Request;
 exports.Response = Response;
 exports.fetch = fetch;
+exports.DOMException = void 0;
 var global = typeof globalThis !== 'undefined' && globalThis || typeof self !== 'undefined' && self || typeof global !== 'undefined' && global;
 var support = {
   searchParams: 'URLSearchParams' in global,
@@ -1533,7 +1510,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
   return to;
 };
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js":[function(require,module,exports) {
+},{}],"node_modules/core-js/internals/global.js":[function(require,module,exports) {
 var global = arguments[3];
 var check = function (it) {
   return it && it.Math == Math && it;
@@ -1541,16 +1518,15 @@ var check = function (it) {
 
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 module.exports =
-  // eslint-disable-next-line es/no-global-this -- safe
+  /* global globalThis -- safe */
   check(typeof globalThis == 'object' && globalThis) ||
   check(typeof window == 'object' && window) ||
-  // eslint-disable-next-line no-restricted-globals -- safe
   check(typeof self == 'object' && self) ||
   check(typeof global == 'object' && global) ||
   // eslint-disable-next-line no-new-func -- fallback
   (function () { return this; })() || Function('return this')();
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js":[function(require,module,exports) {
+},{}],"node_modules/core-js/internals/fails.js":[function(require,module,exports) {
 module.exports = function (exec) {
   try {
     return !!exec();
@@ -1559,51 +1535,30 @@ module.exports = function (exec) {
   }
 };
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js":[function(require,module,exports) {
+},{}],"node_modules/core-js/internals/descriptors.js":[function(require,module,exports) {
 var fails = require('../internals/fails');
 
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
-  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
 });
 
-},{"../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/function-bind-native.js":[function(require,module,exports) {
-var fails = require('../internals/fails');
-
-module.exports = !fails(function () {
-  // eslint-disable-next-line es/no-function-prototype-bind -- safe
-  var test = (function () { /* empty */ }).bind();
-  // eslint-disable-next-line no-prototype-builtins -- safe
-  return typeof test != 'function' || test.hasOwnProperty('prototype');
-});
-
-},{"../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js":[function(require,module,exports) {
-var NATIVE_BIND = require('../internals/function-bind-native');
-
-var call = Function.prototype.call;
-
-module.exports = NATIVE_BIND ? call.bind(call) : function () {
-  return call.apply(call, arguments);
-};
-
-},{"../internals/function-bind-native":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-bind-native.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-property-is-enumerable.js":[function(require,module,exports) {
+},{"../internals/fails":"node_modules/core-js/internals/fails.js"}],"node_modules/core-js/internals/object-property-is-enumerable.js":[function(require,module,exports) {
 'use strict';
-var $propertyIsEnumerable = {}.propertyIsEnumerable;
-// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var nativePropertyIsEnumerable = {}.propertyIsEnumerable;
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Nashorn ~ JDK8 bug
-var NASHORN_BUG = getOwnPropertyDescriptor && !$propertyIsEnumerable.call({ 1: 2 }, 1);
+var NASHORN_BUG = getOwnPropertyDescriptor && !nativePropertyIsEnumerable.call({ 1: 2 }, 1);
 
 // `Object.prototype.propertyIsEnumerable` method implementation
 // https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable
 exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
   var descriptor = getOwnPropertyDescriptor(this, V);
   return !!descriptor && descriptor.enumerable;
-} : $propertyIsEnumerable;
+} : nativePropertyIsEnumerable;
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property-descriptor.js":[function(require,module,exports) {
+},{}],"node_modules/core-js/internals/create-property-descriptor.js":[function(require,module,exports) {
 module.exports = function (bitmap, value) {
   return {
     enumerable: !(bitmap & 1),
@@ -1613,77 +1568,37 @@ module.exports = function (bitmap, value) {
   };
 };
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this-raw.js":[function(require,module,exports) {
-var NATIVE_BIND = require('../internals/function-bind-native');
-
-var FunctionPrototype = Function.prototype;
-var call = FunctionPrototype.call;
-var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
-
-module.exports = function (fn) {
-  return NATIVE_BIND ? uncurryThisWithBind(fn) : function () {
-    return call.apply(fn, arguments);
-  };
-};
-
-},{"../internals/function-bind-native":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-bind-native.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/classof-raw.js":[function(require,module,exports) {
-var uncurryThisRaw = require('../internals/function-uncurry-this-raw');
-
-var toString = uncurryThisRaw({}.toString);
-var stringSlice = uncurryThisRaw(''.slice);
+},{}],"node_modules/core-js/internals/classof-raw.js":[function(require,module,exports) {
+var toString = {}.toString;
 
 module.exports = function (it) {
-  return stringSlice(toString(it), 8, -1);
+  return toString.call(it).slice(8, -1);
 };
 
-},{"../internals/function-uncurry-this-raw":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this-raw.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js":[function(require,module,exports) {
-var classofRaw = require('../internals/classof-raw');
-var uncurryThisRaw = require('../internals/function-uncurry-this-raw');
-
-module.exports = function (fn) {
-  // Nashorn bug:
-  //   https://github.com/zloirock/core-js/issues/1128
-  //   https://github.com/zloirock/core-js/issues/1130
-  if (classofRaw(fn) === 'Function') return uncurryThisRaw(fn);
-};
-
-},{"../internals/classof-raw":"node_modules/react-app-polyfill/node_modules/core-js/internals/classof-raw.js","../internals/function-uncurry-this-raw":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this-raw.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/indexed-object.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
+},{}],"node_modules/core-js/internals/indexed-object.js":[function(require,module,exports) {
 var fails = require('../internals/fails');
 var classof = require('../internals/classof-raw');
 
-var $Object = Object;
-var split = uncurryThis(''.split);
+var split = ''.split;
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 module.exports = fails(function () {
   // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
   // eslint-disable-next-line no-prototype-builtins -- safe
-  return !$Object('z').propertyIsEnumerable(0);
+  return !Object('z').propertyIsEnumerable(0);
 }) ? function (it) {
-  return classof(it) == 'String' ? split(it, '') : $Object(it);
-} : $Object;
+  return classof(it) == 'String' ? split.call(it, '') : Object(it);
+} : Object;
 
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/classof-raw":"node_modules/react-app-polyfill/node_modules/core-js/internals/classof-raw.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/is-null-or-undefined.js":[function(require,module,exports) {
-// we can't use just `it == null` since of `document.all` special case
-// https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-aec
-module.exports = function (it) {
-  return it === null || it === undefined;
-};
-
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/require-object-coercible.js":[function(require,module,exports) {
-var isNullOrUndefined = require('../internals/is-null-or-undefined');
-
-var $TypeError = TypeError;
-
+},{"../internals/fails":"node_modules/core-js/internals/fails.js","../internals/classof-raw":"node_modules/core-js/internals/classof-raw.js"}],"node_modules/core-js/internals/require-object-coercible.js":[function(require,module,exports) {
 // `RequireObjectCoercible` abstract operation
 // https://tc39.es/ecma262/#sec-requireobjectcoercible
 module.exports = function (it) {
-  if (isNullOrUndefined(it)) throw $TypeError("Can't call method on " + it);
+  if (it == undefined) throw TypeError("Can't call method on " + it);
   return it;
 };
 
-},{"../internals/is-null-or-undefined":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-null-or-undefined.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/to-indexed-object.js":[function(require,module,exports) {
+},{}],"node_modules/core-js/internals/to-indexed-object.js":[function(require,module,exports) {
 // toObject with fallback for non-array-like ES3 strings
 var IndexedObject = require('../internals/indexed-object');
 var requireObjectCoercible = require('../internals/require-object-coercible');
@@ -1692,328 +1607,35 @@ module.exports = function (it) {
   return IndexedObject(requireObjectCoercible(it));
 };
 
-},{"../internals/indexed-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/indexed-object.js","../internals/require-object-coercible":"node_modules/react-app-polyfill/node_modules/core-js/internals/require-object-coercible.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/document-all.js":[function(require,module,exports) {
-var documentAll = typeof document == 'object' && document.all;
-
-// https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
-var IS_HTMLDDA = typeof documentAll == 'undefined' && documentAll !== undefined;
-
-module.exports = {
-  all: documentAll,
-  IS_HTMLDDA: IS_HTMLDDA
+},{"../internals/indexed-object":"node_modules/core-js/internals/indexed-object.js","../internals/require-object-coercible":"node_modules/core-js/internals/require-object-coercible.js"}],"node_modules/core-js/internals/is-object.js":[function(require,module,exports) {
+module.exports = function (it) {
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js":[function(require,module,exports) {
-var $documentAll = require('../internals/document-all');
-
-var documentAll = $documentAll.all;
-
-// `IsCallable` abstract operation
-// https://tc39.es/ecma262/#sec-iscallable
-module.exports = $documentAll.IS_HTMLDDA ? function (argument) {
-  return typeof argument == 'function' || argument === documentAll;
-} : function (argument) {
-  return typeof argument == 'function';
-};
-
-},{"../internals/document-all":"node_modules/react-app-polyfill/node_modules/core-js/internals/document-all.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js":[function(require,module,exports) {
-var isCallable = require('../internals/is-callable');
-var $documentAll = require('../internals/document-all');
-
-var documentAll = $documentAll.all;
-
-module.exports = $documentAll.IS_HTMLDDA ? function (it) {
-  return typeof it == 'object' ? it !== null : isCallable(it) || it === documentAll;
-} : function (it) {
-  return typeof it == 'object' ? it !== null : isCallable(it);
-};
-
-},{"../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/document-all":"node_modules/react-app-polyfill/node_modules/core-js/internals/document-all.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js":[function(require,module,exports) {
-
-var global = require('../internals/global');
-var isCallable = require('../internals/is-callable');
-
-var aFunction = function (argument) {
-  return isCallable(argument) ? argument : undefined;
-};
-
-module.exports = function (namespace, method) {
-  return arguments.length < 2 ? aFunction(global[namespace]) : global[namespace] && global[namespace][method];
-};
-
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-is-prototype-of.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
-
-module.exports = uncurryThis({}.isPrototypeOf);
-
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/engine-user-agent.js":[function(require,module,exports) {
-var getBuiltIn = require('../internals/get-built-in');
-
-module.exports = getBuiltIn('navigator', 'userAgent') || '';
-
-},{"../internals/get-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/engine-v8-version.js":[function(require,module,exports) {
-
-
-var global = require('../internals/global');
-var userAgent = require('../internals/engine-user-agent');
-
-var process = global.process;
-var Deno = global.Deno;
-var versions = process && process.versions || Deno && Deno.version;
-var v8 = versions && versions.v8;
-var match, version;
-
-if (v8) {
-  match = v8.split('.');
-  // in old Chrome, versions of V8 isn't V8 = Chrome / 10
-  // but their correct versions are not interesting for us
-  version = match[0] > 0 && match[0] < 4 ? 1 : +(match[0] + match[1]);
-}
-
-// BrowserFS NodeJS `process` polyfill incorrectly set `.v8` to `0.0`
-// so check `userAgent` even if `.v8` exists, but 0
-if (!version && userAgent) {
-  match = userAgent.match(/Edge\/(\d+)/);
-  if (!match || match[1] >= 74) {
-    match = userAgent.match(/Chrome\/(\d+)/);
-    if (match) version = +match[1];
-  }
-}
-
-module.exports = version;
-
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/engine-user-agent":"node_modules/react-app-polyfill/node_modules/core-js/internals/engine-user-agent.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-constructor-detection.js":[function(require,module,exports) {
-/* eslint-disable es/no-symbol -- required for testing */
-var V8_VERSION = require('../internals/engine-v8-version');
-var fails = require('../internals/fails');
-
-// eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
-module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
-  var symbol = Symbol();
-  // Chrome 38 Symbol has incorrect toString conversion
-  // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
-  return !String(symbol) || !(Object(symbol) instanceof Symbol) ||
-    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
-    !Symbol.sham && V8_VERSION && V8_VERSION < 41;
-});
-
-},{"../internals/engine-v8-version":"node_modules/react-app-polyfill/node_modules/core-js/internals/engine-v8-version.js","../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/use-symbol-as-uid.js":[function(require,module,exports) {
-/* eslint-disable es/no-symbol -- required for testing */
-var NATIVE_SYMBOL = require('../internals/symbol-constructor-detection');
-
-module.exports = NATIVE_SYMBOL
-  && !Symbol.sham
-  && typeof Symbol.iterator == 'symbol';
-
-},{"../internals/symbol-constructor-detection":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-constructor-detection.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/is-symbol.js":[function(require,module,exports) {
-var getBuiltIn = require('../internals/get-built-in');
-var isCallable = require('../internals/is-callable');
-var isPrototypeOf = require('../internals/object-is-prototype-of');
-var USE_SYMBOL_AS_UID = require('../internals/use-symbol-as-uid');
-
-var $Object = Object;
-
-module.exports = USE_SYMBOL_AS_UID ? function (it) {
-  return typeof it == 'symbol';
-} : function (it) {
-  var $Symbol = getBuiltIn('Symbol');
-  return isCallable($Symbol) && isPrototypeOf($Symbol.prototype, $Object(it));
-};
-
-},{"../internals/get-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/object-is-prototype-of":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-is-prototype-of.js","../internals/use-symbol-as-uid":"node_modules/react-app-polyfill/node_modules/core-js/internals/use-symbol-as-uid.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/try-to-string.js":[function(require,module,exports) {
-var $String = String;
-
-module.exports = function (argument) {
-  try {
-    return $String(argument);
-  } catch (error) {
-    return 'Object';
-  }
-};
-
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/a-callable.js":[function(require,module,exports) {
-var isCallable = require('../internals/is-callable');
-var tryToString = require('../internals/try-to-string');
-
-var $TypeError = TypeError;
-
-// `Assert: IsCallable(argument) is true`
-module.exports = function (argument) {
-  if (isCallable(argument)) return argument;
-  throw $TypeError(tryToString(argument) + ' is not a function');
-};
-
-},{"../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/try-to-string":"node_modules/react-app-polyfill/node_modules/core-js/internals/try-to-string.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/get-method.js":[function(require,module,exports) {
-var aCallable = require('../internals/a-callable');
-var isNullOrUndefined = require('../internals/is-null-or-undefined');
-
-// `GetMethod` abstract operation
-// https://tc39.es/ecma262/#sec-getmethod
-module.exports = function (V, P) {
-  var func = V[P];
-  return isNullOrUndefined(func) ? undefined : aCallable(func);
-};
-
-},{"../internals/a-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/a-callable.js","../internals/is-null-or-undefined":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-null-or-undefined.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/ordinary-to-primitive.js":[function(require,module,exports) {
-var call = require('../internals/function-call');
-var isCallable = require('../internals/is-callable');
+},{}],"node_modules/core-js/internals/to-primitive.js":[function(require,module,exports) {
 var isObject = require('../internals/is-object');
-
-var $TypeError = TypeError;
-
-// `OrdinaryToPrimitive` abstract operation
-// https://tc39.es/ecma262/#sec-ordinarytoprimitive
-module.exports = function (input, pref) {
-  var fn, val;
-  if (pref === 'string' && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
-  if (isCallable(fn = input.valueOf) && !isObject(val = call(fn, input))) return val;
-  if (pref !== 'string' && isCallable(fn = input.toString) && !isObject(val = call(fn, input))) return val;
-  throw $TypeError("Can't convert object to primitive value");
-};
-
-},{"../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/is-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/is-pure.js":[function(require,module,exports) {
-module.exports = false;
-
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/define-global-property.js":[function(require,module,exports) {
-
-var global = require('../internals/global');
-
-// eslint-disable-next-line es/no-object-defineproperty -- safe
-var defineProperty = Object.defineProperty;
-
-module.exports = function (key, value) {
-  try {
-    defineProperty(global, key, { value: value, configurable: true, writable: true });
-  } catch (error) {
-    global[key] = value;
-  } return value;
-};
-
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/shared-store.js":[function(require,module,exports) {
-
-var global = require('../internals/global');
-var defineGlobalProperty = require('../internals/define-global-property');
-
-var SHARED = '__core-js_shared__';
-var store = global[SHARED] || defineGlobalProperty(SHARED, {});
-
-module.exports = store;
-
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/define-global-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/define-global-property.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/shared.js":[function(require,module,exports) {
-var IS_PURE = require('../internals/is-pure');
-var store = require('../internals/shared-store');
-
-(module.exports = function (key, value) {
-  return store[key] || (store[key] = value !== undefined ? value : {});
-})('versions', []).push({
-  version: '3.25.5',
-  mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.25.5/LICENSE',
-  source: 'https://github.com/zloirock/core-js'
-});
-
-},{"../internals/is-pure":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-pure.js","../internals/shared-store":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared-store.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/to-object.js":[function(require,module,exports) {
-var requireObjectCoercible = require('../internals/require-object-coercible');
-
-var $Object = Object;
-
-// `ToObject` abstract operation
-// https://tc39.es/ecma262/#sec-toobject
-module.exports = function (argument) {
-  return $Object(requireObjectCoercible(argument));
-};
-
-},{"../internals/require-object-coercible":"node_modules/react-app-polyfill/node_modules/core-js/internals/require-object-coercible.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
-var toObject = require('../internals/to-object');
-
-var hasOwnProperty = uncurryThis({}.hasOwnProperty);
-
-// `HasOwnProperty` abstract operation
-// https://tc39.es/ecma262/#sec-hasownproperty
-// eslint-disable-next-line es/no-object-hasown -- safe
-module.exports = Object.hasOwn || function hasOwn(it, key) {
-  return hasOwnProperty(toObject(it), key);
-};
-
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/to-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-object.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/uid.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
-
-var id = 0;
-var postfix = Math.random();
-var toString = uncurryThis(1.0.toString);
-
-module.exports = function (key) {
-  return 'Symbol(' + (key === undefined ? '' : key) + ')_' + toString(++id + postfix, 36);
-};
-
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js":[function(require,module,exports) {
-
-var global = require('../internals/global');
-var shared = require('../internals/shared');
-var hasOwn = require('../internals/has-own-property');
-var uid = require('../internals/uid');
-var NATIVE_SYMBOL = require('../internals/symbol-constructor-detection');
-var USE_SYMBOL_AS_UID = require('../internals/use-symbol-as-uid');
-
-var WellKnownSymbolsStore = shared('wks');
-var Symbol = global.Symbol;
-var symbolFor = Symbol && Symbol['for'];
-var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
-
-module.exports = function (name) {
-  if (!hasOwn(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
-    var description = 'Symbol.' + name;
-    if (NATIVE_SYMBOL && hasOwn(Symbol, name)) {
-      WellKnownSymbolsStore[name] = Symbol[name];
-    } else if (USE_SYMBOL_AS_UID && symbolFor) {
-      WellKnownSymbolsStore[name] = symbolFor(description);
-    } else {
-      WellKnownSymbolsStore[name] = createWellKnownSymbol(description);
-    }
-  } return WellKnownSymbolsStore[name];
-};
-
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/shared":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/uid":"node_modules/react-app-polyfill/node_modules/core-js/internals/uid.js","../internals/symbol-constructor-detection":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-constructor-detection.js","../internals/use-symbol-as-uid":"node_modules/react-app-polyfill/node_modules/core-js/internals/use-symbol-as-uid.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/to-primitive.js":[function(require,module,exports) {
-var call = require('../internals/function-call');
-var isObject = require('../internals/is-object');
-var isSymbol = require('../internals/is-symbol');
-var getMethod = require('../internals/get-method');
-var ordinaryToPrimitive = require('../internals/ordinary-to-primitive');
-var wellKnownSymbol = require('../internals/well-known-symbol');
-
-var $TypeError = TypeError;
-var TO_PRIMITIVE = wellKnownSymbol('toPrimitive');
 
 // `ToPrimitive` abstract operation
 // https://tc39.es/ecma262/#sec-toprimitive
-module.exports = function (input, pref) {
-  if (!isObject(input) || isSymbol(input)) return input;
-  var exoticToPrim = getMethod(input, TO_PRIMITIVE);
-  var result;
-  if (exoticToPrim) {
-    if (pref === undefined) pref = 'default';
-    result = call(exoticToPrim, input, pref);
-    if (!isObject(result) || isSymbol(result)) return result;
-    throw $TypeError("Can't convert object to primitive value");
-  }
-  if (pref === undefined) pref = 'number';
-  return ordinaryToPrimitive(input, pref);
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function (input, PREFERRED_STRING) {
+  if (!isObject(input)) return input;
+  var fn, val;
+  if (PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
+  if (typeof (fn = input.valueOf) == 'function' && !isObject(val = fn.call(input))) return val;
+  if (!PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
+  throw TypeError("Can't convert object to primitive value");
 };
 
-},{"../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/is-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js","../internals/is-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-symbol.js","../internals/get-method":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-method.js","../internals/ordinary-to-primitive":"node_modules/react-app-polyfill/node_modules/core-js/internals/ordinary-to-primitive.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/to-property-key.js":[function(require,module,exports) {
-var toPrimitive = require('../internals/to-primitive');
-var isSymbol = require('../internals/is-symbol');
+},{"../internals/is-object":"node_modules/core-js/internals/is-object.js"}],"node_modules/core-js/internals/has.js":[function(require,module,exports) {
+var hasOwnProperty = {}.hasOwnProperty;
 
-// `ToPropertyKey` abstract operation
-// https://tc39.es/ecma262/#sec-topropertykey
-module.exports = function (argument) {
-  var key = toPrimitive(argument, 'string');
-  return isSymbol(key) ? key : key + '';
+module.exports = function (it, key) {
+  return hasOwnProperty.call(it, key);
 };
 
-},{"../internals/to-primitive":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-primitive.js","../internals/is-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/document-create-element.js":[function(require,module,exports) {
+},{}],"node_modules/core-js/internals/document-create-element.js":[function(require,module,exports) {
 
 var global = require('../internals/global');
 var isObject = require('../internals/is-object');
@@ -2026,115 +1648,72 @@ module.exports = function (it) {
   return EXISTS ? document.createElement(it) : {};
 };
 
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/is-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/ie8-dom-define.js":[function(require,module,exports) {
+},{"../internals/global":"node_modules/core-js/internals/global.js","../internals/is-object":"node_modules/core-js/internals/is-object.js"}],"node_modules/core-js/internals/ie8-dom-define.js":[function(require,module,exports) {
 var DESCRIPTORS = require('../internals/descriptors');
 var fails = require('../internals/fails');
 var createElement = require('../internals/document-create-element');
 
-// Thanks to IE8 for its funny defineProperty
+// Thank's IE8 for his funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
-  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(createElement('div'), 'a', {
     get: function () { return 7; }
   }).a != 7;
 });
 
-},{"../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/document-create-element":"node_modules/react-app-polyfill/node_modules/core-js/internals/document-create-element.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-descriptor.js":[function(require,module,exports) {
+},{"../internals/descriptors":"node_modules/core-js/internals/descriptors.js","../internals/fails":"node_modules/core-js/internals/fails.js","../internals/document-create-element":"node_modules/core-js/internals/document-create-element.js"}],"node_modules/core-js/internals/object-get-own-property-descriptor.js":[function(require,module,exports) {
 var DESCRIPTORS = require('../internals/descriptors');
-var call = require('../internals/function-call');
 var propertyIsEnumerableModule = require('../internals/object-property-is-enumerable');
 var createPropertyDescriptor = require('../internals/create-property-descriptor');
 var toIndexedObject = require('../internals/to-indexed-object');
-var toPropertyKey = require('../internals/to-property-key');
-var hasOwn = require('../internals/has-own-property');
+var toPrimitive = require('../internals/to-primitive');
+var has = require('../internals/has');
 var IE8_DOM_DEFINE = require('../internals/ie8-dom-define');
 
-// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var nativeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // `Object.getOwnPropertyDescriptor` method
 // https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
-exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
+exports.f = DESCRIPTORS ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
   O = toIndexedObject(O);
-  P = toPropertyKey(P);
+  P = toPrimitive(P, true);
   if (IE8_DOM_DEFINE) try {
-    return $getOwnPropertyDescriptor(O, P);
+    return nativeGetOwnPropertyDescriptor(O, P);
   } catch (error) { /* empty */ }
-  if (hasOwn(O, P)) return createPropertyDescriptor(!call(propertyIsEnumerableModule.f, O, P), O[P]);
+  if (has(O, P)) return createPropertyDescriptor(!propertyIsEnumerableModule.f.call(O, P), O[P]);
 };
 
-},{"../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/object-property-is-enumerable":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-property-is-enumerable.js","../internals/create-property-descriptor":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property-descriptor.js","../internals/to-indexed-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-indexed-object.js","../internals/to-property-key":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-property-key.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/ie8-dom-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/ie8-dom-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/v8-prototype-define-bug.js":[function(require,module,exports) {
-var DESCRIPTORS = require('../internals/descriptors');
-var fails = require('../internals/fails');
-
-// V8 ~ Chrome 36-
-// https://bugs.chromium.org/p/v8/issues/detail?id=3334
-module.exports = DESCRIPTORS && fails(function () {
-  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
-  return Object.defineProperty(function () { /* empty */ }, 'prototype', {
-    value: 42,
-    writable: false
-  }).prototype != 42;
-});
-
-},{"../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js":[function(require,module,exports) {
+},{"../internals/descriptors":"node_modules/core-js/internals/descriptors.js","../internals/object-property-is-enumerable":"node_modules/core-js/internals/object-property-is-enumerable.js","../internals/create-property-descriptor":"node_modules/core-js/internals/create-property-descriptor.js","../internals/to-indexed-object":"node_modules/core-js/internals/to-indexed-object.js","../internals/to-primitive":"node_modules/core-js/internals/to-primitive.js","../internals/has":"node_modules/core-js/internals/has.js","../internals/ie8-dom-define":"node_modules/core-js/internals/ie8-dom-define.js"}],"node_modules/core-js/internals/an-object.js":[function(require,module,exports) {
 var isObject = require('../internals/is-object');
 
-var $String = String;
-var $TypeError = TypeError;
-
-// `Assert: Type(argument) is Object`
-module.exports = function (argument) {
-  if (isObject(argument)) return argument;
-  throw $TypeError($String(argument) + ' is not an object');
+module.exports = function (it) {
+  if (!isObject(it)) {
+    throw TypeError(String(it) + ' is not an object');
+  } return it;
 };
 
-},{"../internals/is-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js":[function(require,module,exports) {
+},{"../internals/is-object":"node_modules/core-js/internals/is-object.js"}],"node_modules/core-js/internals/object-define-property.js":[function(require,module,exports) {
 var DESCRIPTORS = require('../internals/descriptors');
 var IE8_DOM_DEFINE = require('../internals/ie8-dom-define');
-var V8_PROTOTYPE_DEFINE_BUG = require('../internals/v8-prototype-define-bug');
 var anObject = require('../internals/an-object');
-var toPropertyKey = require('../internals/to-property-key');
+var toPrimitive = require('../internals/to-primitive');
 
-var $TypeError = TypeError;
-// eslint-disable-next-line es/no-object-defineproperty -- safe
-var $defineProperty = Object.defineProperty;
-// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-var ENUMERABLE = 'enumerable';
-var CONFIGURABLE = 'configurable';
-var WRITABLE = 'writable';
+var nativeDefineProperty = Object.defineProperty;
 
 // `Object.defineProperty` method
 // https://tc39.es/ecma262/#sec-object.defineproperty
-exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P, Attributes) {
+exports.f = DESCRIPTORS ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
   anObject(O);
-  P = toPropertyKey(P);
-  anObject(Attributes);
-  if (typeof O === 'function' && P === 'prototype' && 'value' in Attributes && WRITABLE in Attributes && !Attributes[WRITABLE]) {
-    var current = $getOwnPropertyDescriptor(O, P);
-    if (current && current[WRITABLE]) {
-      O[P] = Attributes.value;
-      Attributes = {
-        configurable: CONFIGURABLE in Attributes ? Attributes[CONFIGURABLE] : current[CONFIGURABLE],
-        enumerable: ENUMERABLE in Attributes ? Attributes[ENUMERABLE] : current[ENUMERABLE],
-        writable: false
-      };
-    }
-  } return $defineProperty(O, P, Attributes);
-} : $defineProperty : function defineProperty(O, P, Attributes) {
-  anObject(O);
-  P = toPropertyKey(P);
+  P = toPrimitive(P, true);
   anObject(Attributes);
   if (IE8_DOM_DEFINE) try {
-    return $defineProperty(O, P, Attributes);
+    return nativeDefineProperty(O, P, Attributes);
   } catch (error) { /* empty */ }
-  if ('get' in Attributes || 'set' in Attributes) throw $TypeError('Accessors not supported');
+  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported');
   if ('value' in Attributes) O[P] = Attributes.value;
   return O;
 };
 
-},{"../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/ie8-dom-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/ie8-dom-define.js","../internals/v8-prototype-define-bug":"node_modules/react-app-polyfill/node_modules/core-js/internals/v8-prototype-define-bug.js","../internals/an-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js","../internals/to-property-key":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-property-key.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/create-non-enumerable-property.js":[function(require,module,exports) {
+},{"../internals/descriptors":"node_modules/core-js/internals/descriptors.js","../internals/ie8-dom-define":"node_modules/core-js/internals/ie8-dom-define.js","../internals/an-object":"node_modules/core-js/internals/an-object.js","../internals/to-primitive":"node_modules/core-js/internals/to-primitive.js"}],"node_modules/core-js/internals/create-non-enumerable-property.js":[function(require,module,exports) {
 var DESCRIPTORS = require('../internals/descriptors');
 var definePropertyModule = require('../internals/object-define-property');
 var createPropertyDescriptor = require('../internals/create-property-descriptor');
@@ -2146,51 +1725,76 @@ module.exports = DESCRIPTORS ? function (object, key, value) {
   return object;
 };
 
-},{"../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js","../internals/create-property-descriptor":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property-descriptor.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/function-name.js":[function(require,module,exports) {
-var DESCRIPTORS = require('../internals/descriptors');
-var hasOwn = require('../internals/has-own-property');
+},{"../internals/descriptors":"node_modules/core-js/internals/descriptors.js","../internals/object-define-property":"node_modules/core-js/internals/object-define-property.js","../internals/create-property-descriptor":"node_modules/core-js/internals/create-property-descriptor.js"}],"node_modules/core-js/internals/set-global.js":[function(require,module,exports) {
 
-var FunctionPrototype = Function.prototype;
-// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-var getDescriptor = DESCRIPTORS && Object.getOwnPropertyDescriptor;
+var global = require('../internals/global');
+var createNonEnumerableProperty = require('../internals/create-non-enumerable-property');
 
-var EXISTS = hasOwn(FunctionPrototype, 'name');
-// additional protection from minified / mangled / dropped function names
-var PROPER = EXISTS && (function something() { /* empty */ }).name === 'something';
-var CONFIGURABLE = EXISTS && (!DESCRIPTORS || (DESCRIPTORS && getDescriptor(FunctionPrototype, 'name').configurable));
-
-module.exports = {
-  EXISTS: EXISTS,
-  PROPER: PROPER,
-  CONFIGURABLE: CONFIGURABLE
+module.exports = function (key, value) {
+  try {
+    createNonEnumerableProperty(global, key, value);
+  } catch (error) {
+    global[key] = value;
+  } return value;
 };
 
-},{"../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/inspect-source.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
-var isCallable = require('../internals/is-callable');
+},{"../internals/global":"node_modules/core-js/internals/global.js","../internals/create-non-enumerable-property":"node_modules/core-js/internals/create-non-enumerable-property.js"}],"node_modules/core-js/internals/shared-store.js":[function(require,module,exports) {
+
+var global = require('../internals/global');
+var setGlobal = require('../internals/set-global');
+
+var SHARED = '__core-js_shared__';
+var store = global[SHARED] || setGlobal(SHARED, {});
+
+module.exports = store;
+
+},{"../internals/global":"node_modules/core-js/internals/global.js","../internals/set-global":"node_modules/core-js/internals/set-global.js"}],"node_modules/core-js/internals/inspect-source.js":[function(require,module,exports) {
 var store = require('../internals/shared-store');
 
-var functionToString = uncurryThis(Function.toString);
+var functionToString = Function.toString;
 
-// this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
-if (!isCallable(store.inspectSource)) {
+// this helper broken in `3.4.1-3.4.4`, so we can't use `shared` helper
+if (typeof store.inspectSource != 'function') {
   store.inspectSource = function (it) {
-    return functionToString(it);
+    return functionToString.call(it);
   };
 }
 
 module.exports = store.inspectSource;
 
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/shared-store":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared-store.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/weak-map-basic-detection.js":[function(require,module,exports) {
+},{"../internals/shared-store":"node_modules/core-js/internals/shared-store.js"}],"node_modules/core-js/internals/native-weak-map.js":[function(require,module,exports) {
 
 var global = require('../internals/global');
-var isCallable = require('../internals/is-callable');
+var inspectSource = require('../internals/inspect-source');
 
 var WeakMap = global.WeakMap;
 
-module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
+module.exports = typeof WeakMap === 'function' && /native code/.test(inspectSource(WeakMap));
 
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/shared-key.js":[function(require,module,exports) {
+},{"../internals/global":"node_modules/core-js/internals/global.js","../internals/inspect-source":"node_modules/core-js/internals/inspect-source.js"}],"node_modules/core-js/internals/is-pure.js":[function(require,module,exports) {
+module.exports = false;
+
+},{}],"node_modules/core-js/internals/shared.js":[function(require,module,exports) {
+var IS_PURE = require('../internals/is-pure');
+var store = require('../internals/shared-store');
+
+(module.exports = function (key, value) {
+  return store[key] || (store[key] = value !== undefined ? value : {});
+})('versions', []).push({
+  version: '3.9.1',
+  mode: IS_PURE ? 'pure' : 'global',
+  copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
+});
+
+},{"../internals/is-pure":"node_modules/core-js/internals/is-pure.js","../internals/shared-store":"node_modules/core-js/internals/shared-store.js"}],"node_modules/core-js/internals/uid.js":[function(require,module,exports) {
+var id = 0;
+var postfix = Math.random();
+
+module.exports = function (key) {
+  return 'Symbol(' + String(key === undefined ? '' : key) + ')_' + (++id + postfix).toString(36);
+};
+
+},{}],"node_modules/core-js/internals/shared-key.js":[function(require,module,exports) {
 var shared = require('../internals/shared');
 var uid = require('../internals/uid');
 
@@ -2200,22 +1804,20 @@ module.exports = function (key) {
   return keys[key] || (keys[key] = uid(key));
 };
 
-},{"../internals/shared":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared.js","../internals/uid":"node_modules/react-app-polyfill/node_modules/core-js/internals/uid.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/hidden-keys.js":[function(require,module,exports) {
+},{"../internals/shared":"node_modules/core-js/internals/shared.js","../internals/uid":"node_modules/core-js/internals/uid.js"}],"node_modules/core-js/internals/hidden-keys.js":[function(require,module,exports) {
 module.exports = {};
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/internal-state.js":[function(require,module,exports) {
+},{}],"node_modules/core-js/internals/internal-state.js":[function(require,module,exports) {
 
-var NATIVE_WEAK_MAP = require('../internals/weak-map-basic-detection');
+var NATIVE_WEAK_MAP = require('../internals/native-weak-map');
 var global = require('../internals/global');
 var isObject = require('../internals/is-object');
 var createNonEnumerableProperty = require('../internals/create-non-enumerable-property');
-var hasOwn = require('../internals/has-own-property');
+var objectHas = require('../internals/has');
 var shared = require('../internals/shared-store');
 var sharedKey = require('../internals/shared-key');
 var hiddenKeys = require('../internals/hidden-keys');
 
-var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
-var TypeError = global.TypeError;
 var WeakMap = global.WeakMap;
 var set, get, has;
 
@@ -2232,39 +1834,35 @@ var getterFor = function (TYPE) {
   };
 };
 
-if (NATIVE_WEAK_MAP || shared.state) {
+if (NATIVE_WEAK_MAP) {
   var store = shared.state || (shared.state = new WeakMap());
-  /* eslint-disable no-self-assign -- prototype methods protection */
-  store.get = store.get;
-  store.has = store.has;
-  store.set = store.set;
-  /* eslint-enable no-self-assign -- prototype methods protection */
+  var wmget = store.get;
+  var wmhas = store.has;
+  var wmset = store.set;
   set = function (it, metadata) {
-    if (store.has(it)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
-    store.set(it, metadata);
+    wmset.call(store, it, metadata);
     return metadata;
   };
   get = function (it) {
-    return store.get(it) || {};
+    return wmget.call(store, it) || {};
   };
   has = function (it) {
-    return store.has(it);
+    return wmhas.call(store, it);
   };
 } else {
   var STATE = sharedKey('state');
   hiddenKeys[STATE] = true;
   set = function (it, metadata) {
-    if (hasOwn(it, STATE)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
     createNonEnumerableProperty(it, STATE, metadata);
     return metadata;
   };
   get = function (it) {
-    return hasOwn(it, STATE) ? it[STATE] : {};
+    return objectHas(it, STATE) ? it[STATE] : {};
   };
   has = function (it) {
-    return hasOwn(it, STATE);
+    return objectHas(it, STATE);
   };
 }
 
@@ -2276,111 +1874,92 @@ module.exports = {
   getterFor: getterFor
 };
 
-},{"../internals/weak-map-basic-detection":"node_modules/react-app-polyfill/node_modules/core-js/internals/weak-map-basic-detection.js","../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/is-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js","../internals/create-non-enumerable-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-non-enumerable-property.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/shared-store":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared-store.js","../internals/shared-key":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared-key.js","../internals/hidden-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/hidden-keys.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/make-built-in.js":[function(require,module,exports) {
-var fails = require('../internals/fails');
-var isCallable = require('../internals/is-callable');
-var hasOwn = require('../internals/has-own-property');
-var DESCRIPTORS = require('../internals/descriptors');
-var CONFIGURABLE_FUNCTION_NAME = require('../internals/function-name').CONFIGURABLE;
+},{"../internals/native-weak-map":"node_modules/core-js/internals/native-weak-map.js","../internals/global":"node_modules/core-js/internals/global.js","../internals/is-object":"node_modules/core-js/internals/is-object.js","../internals/create-non-enumerable-property":"node_modules/core-js/internals/create-non-enumerable-property.js","../internals/has":"node_modules/core-js/internals/has.js","../internals/shared-store":"node_modules/core-js/internals/shared-store.js","../internals/shared-key":"node_modules/core-js/internals/shared-key.js","../internals/hidden-keys":"node_modules/core-js/internals/hidden-keys.js"}],"node_modules/core-js/internals/redefine.js":[function(require,module,exports) {
+
+var global = require('../internals/global');
+var createNonEnumerableProperty = require('../internals/create-non-enumerable-property');
+var has = require('../internals/has');
+var setGlobal = require('../internals/set-global');
 var inspectSource = require('../internals/inspect-source');
 var InternalStateModule = require('../internals/internal-state');
 
-var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
-// eslint-disable-next-line es/no-object-defineproperty -- safe
-var defineProperty = Object.defineProperty;
-
-var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
-  return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
-});
-
+var enforceInternalState = InternalStateModule.enforce;
 var TEMPLATE = String(String).split('String');
 
-var makeBuiltIn = module.exports = function (value, name, options) {
-  if (String(name).slice(0, 7) === 'Symbol(') {
-    name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
+(module.exports = function (O, key, value, options) {
+  var unsafe = options ? !!options.unsafe : false;
+  var simple = options ? !!options.enumerable : false;
+  var noTargetGet = options ? !!options.noTargetGet : false;
+  var state;
+  if (typeof value == 'function') {
+    if (typeof key == 'string' && !has(value, 'name')) {
+      createNonEnumerableProperty(value, 'name', key);
+    }
+    state = enforceInternalState(value);
+    if (!state.source) {
+      state.source = TEMPLATE.join(typeof key == 'string' ? key : '');
+    }
   }
-  if (options && options.getter) name = 'get ' + name;
-  if (options && options.setter) name = 'set ' + name;
-  if (!hasOwn(value, 'name') || (CONFIGURABLE_FUNCTION_NAME && value.name !== name)) {
-    if (DESCRIPTORS) defineProperty(value, 'name', { value: name, configurable: true });
-    else value.name = name;
+  if (O === global) {
+    if (simple) O[key] = value;
+    else setGlobal(key, value);
+    return;
+  } else if (!unsafe) {
+    delete O[key];
+  } else if (!noTargetGet && O[key]) {
+    simple = true;
   }
-  if (CONFIGURABLE_LENGTH && options && hasOwn(options, 'arity') && value.length !== options.arity) {
-    defineProperty(value, 'length', { value: options.arity });
-  }
-  try {
-    if (options && hasOwn(options, 'constructor') && options.constructor) {
-      if (DESCRIPTORS) defineProperty(value, 'prototype', { writable: false });
-    // in V8 ~ Chrome 53, prototypes of some methods, like `Array.prototype.values`, are non-writable
-    } else if (value.prototype) value.prototype = undefined;
-  } catch (error) { /* empty */ }
-  var state = enforceInternalState(value);
-  if (!hasOwn(state, 'source')) {
-    state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
-  } return value;
-};
-
+  if (simple) O[key] = value;
+  else createNonEnumerableProperty(O, key, value);
 // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-// eslint-disable-next-line no-extend-native -- required
-Function.prototype.toString = makeBuiltIn(function toString() {
-  return isCallable(this) && getInternalState(this).source || inspectSource(this);
-}, 'toString');
+})(Function.prototype, 'toString', function toString() {
+  return typeof this == 'function' && getInternalState(this).source || inspectSource(this);
+});
 
-},{"../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/function-name":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-name.js","../internals/inspect-source":"node_modules/react-app-polyfill/node_modules/core-js/internals/inspect-source.js","../internals/internal-state":"node_modules/react-app-polyfill/node_modules/core-js/internals/internal-state.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/define-built-in.js":[function(require,module,exports) {
-var isCallable = require('../internals/is-callable');
-var definePropertyModule = require('../internals/object-define-property');
-var makeBuiltIn = require('../internals/make-built-in');
-var defineGlobalProperty = require('../internals/define-global-property');
+},{"../internals/global":"node_modules/core-js/internals/global.js","../internals/create-non-enumerable-property":"node_modules/core-js/internals/create-non-enumerable-property.js","../internals/has":"node_modules/core-js/internals/has.js","../internals/set-global":"node_modules/core-js/internals/set-global.js","../internals/inspect-source":"node_modules/core-js/internals/inspect-source.js","../internals/internal-state":"node_modules/core-js/internals/internal-state.js"}],"node_modules/core-js/internals/path.js":[function(require,module,exports) {
 
-module.exports = function (O, key, value, options) {
-  if (!options) options = {};
-  var simple = options.enumerable;
-  var name = options.name !== undefined ? options.name : key;
-  if (isCallable(value)) makeBuiltIn(value, name, options);
-  if (options.global) {
-    if (simple) O[key] = value;
-    else defineGlobalProperty(key, value);
-  } else {
-    try {
-      if (!options.unsafe) delete O[key];
-      else if (O[key]) simple = true;
-    } catch (error) { /* empty */ }
-    if (simple) O[key] = value;
-    else definePropertyModule.f(O, key, {
-      value: value,
-      enumerable: false,
-      configurable: !options.nonConfigurable,
-      writable: !options.nonWritable
-    });
-  } return O;
+var global = require('../internals/global');
+
+module.exports = global;
+
+},{"../internals/global":"node_modules/core-js/internals/global.js"}],"node_modules/core-js/internals/get-built-in.js":[function(require,module,exports) {
+
+var path = require('../internals/path');
+var global = require('../internals/global');
+
+var aFunction = function (variable) {
+  return typeof variable == 'function' ? variable : undefined;
 };
 
-},{"../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js","../internals/make-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/make-built-in.js","../internals/define-global-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/define-global-property.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/math-trunc.js":[function(require,module,exports) {
+module.exports = function (namespace, method) {
+  return arguments.length < 2 ? aFunction(path[namespace]) || aFunction(global[namespace])
+    : path[namespace] && path[namespace][method] || global[namespace] && global[namespace][method];
+};
+
+},{"../internals/path":"node_modules/core-js/internals/path.js","../internals/global":"node_modules/core-js/internals/global.js"}],"node_modules/core-js/internals/to-integer.js":[function(require,module,exports) {
 var ceil = Math.ceil;
 var floor = Math.floor;
 
-// `Math.trunc` method
-// https://tc39.es/ecma262/#sec-math.trunc
-// eslint-disable-next-line es/no-math-trunc -- safe
-module.exports = Math.trunc || function trunc(x) {
-  var n = +x;
-  return (n > 0 ? floor : ceil)(n);
-};
-
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/to-integer-or-infinity.js":[function(require,module,exports) {
-var trunc = require('../internals/math-trunc');
-
-// `ToIntegerOrInfinity` abstract operation
-// https://tc39.es/ecma262/#sec-tointegerorinfinity
+// `ToInteger` abstract operation
+// https://tc39.es/ecma262/#sec-tointeger
 module.exports = function (argument) {
-  var number = +argument;
-  // eslint-disable-next-line no-self-compare -- NaN check
-  return number !== number || number === 0 ? 0 : trunc(number);
+  return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor : ceil)(argument);
 };
 
-},{"../internals/math-trunc":"node_modules/react-app-polyfill/node_modules/core-js/internals/math-trunc.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/to-absolute-index.js":[function(require,module,exports) {
-var toIntegerOrInfinity = require('../internals/to-integer-or-infinity');
+},{}],"node_modules/core-js/internals/to-length.js":[function(require,module,exports) {
+var toInteger = require('../internals/to-integer');
+
+var min = Math.min;
+
+// `ToLength` abstract operation
+// https://tc39.es/ecma262/#sec-tolength
+module.exports = function (argument) {
+  return argument > 0 ? min(toInteger(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+};
+
+},{"../internals/to-integer":"node_modules/core-js/internals/to-integer.js"}],"node_modules/core-js/internals/to-absolute-index.js":[function(require,module,exports) {
+var toInteger = require('../internals/to-integer');
 
 var max = Math.max;
 var min = Math.min;
@@ -2389,40 +1968,20 @@ var min = Math.min;
 // Let integer be ? ToInteger(index).
 // If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
 module.exports = function (index, length) {
-  var integer = toIntegerOrInfinity(index);
+  var integer = toInteger(index);
   return integer < 0 ? max(integer + length, 0) : min(integer, length);
 };
 
-},{"../internals/to-integer-or-infinity":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-integer-or-infinity.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/to-length.js":[function(require,module,exports) {
-var toIntegerOrInfinity = require('../internals/to-integer-or-infinity');
-
-var min = Math.min;
-
-// `ToLength` abstract operation
-// https://tc39.es/ecma262/#sec-tolength
-module.exports = function (argument) {
-  return argument > 0 ? min(toIntegerOrInfinity(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
-};
-
-},{"../internals/to-integer-or-infinity":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-integer-or-infinity.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/length-of-array-like.js":[function(require,module,exports) {
-var toLength = require('../internals/to-length');
-
-// `LengthOfArrayLike` abstract operation
-// https://tc39.es/ecma262/#sec-lengthofarraylike
-module.exports = function (obj) {
-  return toLength(obj.length);
-};
-
-},{"../internals/to-length":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-length.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/array-includes.js":[function(require,module,exports) {
+},{"../internals/to-integer":"node_modules/core-js/internals/to-integer.js"}],"node_modules/core-js/internals/array-includes.js":[function(require,module,exports) {
 var toIndexedObject = require('../internals/to-indexed-object');
+var toLength = require('../internals/to-length');
 var toAbsoluteIndex = require('../internals/to-absolute-index');
-var lengthOfArrayLike = require('../internals/length-of-array-like');
 
 // `Array.prototype.{ indexOf, includes }` methods implementation
 var createMethod = function (IS_INCLUDES) {
   return function ($this, el, fromIndex) {
     var O = toIndexedObject($this);
-    var length = lengthOfArrayLike(O);
+    var length = toLength(O.length);
     var index = toAbsoluteIndex(fromIndex, length);
     var value;
     // Array#includes uses SameValueZero equality algorithm
@@ -2447,29 +2006,26 @@ module.exports = {
   indexOf: createMethod(false)
 };
 
-},{"../internals/to-indexed-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-indexed-object.js","../internals/to-absolute-index":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-absolute-index.js","../internals/length-of-array-like":"node_modules/react-app-polyfill/node_modules/core-js/internals/length-of-array-like.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-keys-internal.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
-var hasOwn = require('../internals/has-own-property');
+},{"../internals/to-indexed-object":"node_modules/core-js/internals/to-indexed-object.js","../internals/to-length":"node_modules/core-js/internals/to-length.js","../internals/to-absolute-index":"node_modules/core-js/internals/to-absolute-index.js"}],"node_modules/core-js/internals/object-keys-internal.js":[function(require,module,exports) {
+var has = require('../internals/has');
 var toIndexedObject = require('../internals/to-indexed-object');
 var indexOf = require('../internals/array-includes').indexOf;
 var hiddenKeys = require('../internals/hidden-keys');
-
-var push = uncurryThis([].push);
 
 module.exports = function (object, names) {
   var O = toIndexedObject(object);
   var i = 0;
   var result = [];
   var key;
-  for (key in O) !hasOwn(hiddenKeys, key) && hasOwn(O, key) && push(result, key);
+  for (key in O) !has(hiddenKeys, key) && has(O, key) && result.push(key);
   // Don't enum bug & hidden keys
-  while (names.length > i) if (hasOwn(O, key = names[i++])) {
-    ~indexOf(result, key) || push(result, key);
+  while (names.length > i) if (has(O, key = names[i++])) {
+    ~indexOf(result, key) || result.push(key);
   }
   return result;
 };
 
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/to-indexed-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-indexed-object.js","../internals/array-includes":"node_modules/react-app-polyfill/node_modules/core-js/internals/array-includes.js","../internals/hidden-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/hidden-keys.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/enum-bug-keys.js":[function(require,module,exports) {
+},{"../internals/has":"node_modules/core-js/internals/has.js","../internals/to-indexed-object":"node_modules/core-js/internals/to-indexed-object.js","../internals/array-includes":"node_modules/core-js/internals/array-includes.js","../internals/hidden-keys":"node_modules/core-js/internals/hidden-keys.js"}],"node_modules/core-js/internals/enum-bug-keys.js":[function(require,module,exports) {
 // IE8- don't enum bug keys
 module.exports = [
   'constructor',
@@ -2481,7 +2037,7 @@ module.exports = [
   'valueOf'
 ];
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-names.js":[function(require,module,exports) {
+},{}],"node_modules/core-js/internals/object-get-own-property-names.js":[function(require,module,exports) {
 var internalObjectKeys = require('../internals/object-keys-internal');
 var enumBugKeys = require('../internals/enum-bug-keys');
 
@@ -2489,52 +2045,44 @@ var hiddenKeys = enumBugKeys.concat('length', 'prototype');
 
 // `Object.getOwnPropertyNames` method
 // https://tc39.es/ecma262/#sec-object.getownpropertynames
-// eslint-disable-next-line es/no-object-getownpropertynames -- safe
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
   return internalObjectKeys(O, hiddenKeys);
 };
 
-},{"../internals/object-keys-internal":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-keys-internal.js","../internals/enum-bug-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/enum-bug-keys.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-symbols.js":[function(require,module,exports) {
-// eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
+},{"../internals/object-keys-internal":"node_modules/core-js/internals/object-keys-internal.js","../internals/enum-bug-keys":"node_modules/core-js/internals/enum-bug-keys.js"}],"node_modules/core-js/internals/object-get-own-property-symbols.js":[function(require,module,exports) {
 exports.f = Object.getOwnPropertySymbols;
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/own-keys.js":[function(require,module,exports) {
+},{}],"node_modules/core-js/internals/own-keys.js":[function(require,module,exports) {
 var getBuiltIn = require('../internals/get-built-in');
-var uncurryThis = require('../internals/function-uncurry-this');
 var getOwnPropertyNamesModule = require('../internals/object-get-own-property-names');
 var getOwnPropertySymbolsModule = require('../internals/object-get-own-property-symbols');
 var anObject = require('../internals/an-object');
-
-var concat = uncurryThis([].concat);
 
 // all object keys, includes non-enumerable and symbols
 module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
   var keys = getOwnPropertyNamesModule.f(anObject(it));
   var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
-  return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
+  return getOwnPropertySymbols ? keys.concat(getOwnPropertySymbols(it)) : keys;
 };
 
-},{"../internals/get-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js","../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/object-get-own-property-names":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-names.js","../internals/object-get-own-property-symbols":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-symbols.js","../internals/an-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/copy-constructor-properties.js":[function(require,module,exports) {
-var hasOwn = require('../internals/has-own-property');
+},{"../internals/get-built-in":"node_modules/core-js/internals/get-built-in.js","../internals/object-get-own-property-names":"node_modules/core-js/internals/object-get-own-property-names.js","../internals/object-get-own-property-symbols":"node_modules/core-js/internals/object-get-own-property-symbols.js","../internals/an-object":"node_modules/core-js/internals/an-object.js"}],"node_modules/core-js/internals/copy-constructor-properties.js":[function(require,module,exports) {
+var has = require('../internals/has');
 var ownKeys = require('../internals/own-keys');
 var getOwnPropertyDescriptorModule = require('../internals/object-get-own-property-descriptor');
 var definePropertyModule = require('../internals/object-define-property');
 
-module.exports = function (target, source, exceptions) {
+module.exports = function (target, source) {
   var keys = ownKeys(source);
   var defineProperty = definePropertyModule.f;
   var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
   for (var i = 0; i < keys.length; i++) {
     var key = keys[i];
-    if (!hasOwn(target, key) && !(exceptions && hasOwn(exceptions, key))) {
-      defineProperty(target, key, getOwnPropertyDescriptor(source, key));
-    }
+    if (!has(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
   }
 };
 
-},{"../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/own-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/own-keys.js","../internals/object-get-own-property-descriptor":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-descriptor.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/is-forced.js":[function(require,module,exports) {
+},{"../internals/has":"node_modules/core-js/internals/has.js","../internals/own-keys":"node_modules/core-js/internals/own-keys.js","../internals/object-get-own-property-descriptor":"node_modules/core-js/internals/object-get-own-property-descriptor.js","../internals/object-define-property":"node_modules/core-js/internals/object-define-property.js"}],"node_modules/core-js/internals/is-forced.js":[function(require,module,exports) {
 var fails = require('../internals/fails');
-var isCallable = require('../internals/is-callable');
 
 var replacement = /#|\.prototype\./;
 
@@ -2542,7 +2090,7 @@ var isForced = function (feature, detection) {
   var value = data[normalize(feature)];
   return value == POLYFILL ? true
     : value == NATIVE ? false
-    : isCallable(detection) ? fails(detection)
+    : typeof detection == 'function' ? fails(detection)
     : !!detection;
 };
 
@@ -2556,30 +2104,29 @@ var POLYFILL = isForced.POLYFILL = 'P';
 
 module.exports = isForced;
 
-},{"../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js":[function(require,module,exports) {
+},{"../internals/fails":"node_modules/core-js/internals/fails.js"}],"node_modules/core-js/internals/export.js":[function(require,module,exports) {
 
 var global = require('../internals/global');
 var getOwnPropertyDescriptor = require('../internals/object-get-own-property-descriptor').f;
 var createNonEnumerableProperty = require('../internals/create-non-enumerable-property');
-var defineBuiltIn = require('../internals/define-built-in');
-var defineGlobalProperty = require('../internals/define-global-property');
+var redefine = require('../internals/redefine');
+var setGlobal = require('../internals/set-global');
 var copyConstructorProperties = require('../internals/copy-constructor-properties');
 var isForced = require('../internals/is-forced');
 
 /*
-  options.target         - name of the target object
-  options.global         - target is the global object
-  options.stat           - export as static methods of target
-  options.proto          - export as prototype methods of target
-  options.real           - real prototype method for the `pure` version
-  options.forced         - export even if the native feature is available
-  options.bind           - bind methods to the target, required for the `pure` version
-  options.wrap           - wrap constructors to preventing global pollution, required for the `pure` version
-  options.unsafe         - use the simple assignment of property instead of delete + defineProperty
-  options.sham           - add a flag to not completely full polyfills
-  options.enumerable     - export as enumerable property
-  options.dontCallGetSet - prevent calling a getter on target
-  options.name           - the .name of the function if it does not match the key
+  options.target      - name of the target object
+  options.global      - target is the global object
+  options.stat        - export as static methods of target
+  options.proto       - export as prototype methods of target
+  options.real        - real prototype method for the `pure` version
+  options.forced      - export even if the native feature is available
+  options.bind        - bind methods to the target, required for the `pure` version
+  options.wrap        - wrap constructors to preventing global pollution, required for the `pure` version
+  options.unsafe      - use the simple assignment of property instead of delete + defineProperty
+  options.sham        - add a flag to not completely full polyfills
+  options.enumerable  - export as enumerable property
+  options.noTargetGet - prevent calling a getter on target
 */
 module.exports = function (options, source) {
   var TARGET = options.target;
@@ -2589,190 +2136,164 @@ module.exports = function (options, source) {
   if (GLOBAL) {
     target = global;
   } else if (STATIC) {
-    target = global[TARGET] || defineGlobalProperty(TARGET, {});
+    target = global[TARGET] || setGlobal(TARGET, {});
   } else {
     target = (global[TARGET] || {}).prototype;
   }
   if (target) for (key in source) {
     sourceProperty = source[key];
-    if (options.dontCallGetSet) {
+    if (options.noTargetGet) {
       descriptor = getOwnPropertyDescriptor(target, key);
       targetProperty = descriptor && descriptor.value;
     } else targetProperty = target[key];
     FORCED = isForced(GLOBAL ? key : TARGET + (STATIC ? '.' : '#') + key, options.forced);
     // contained in target
     if (!FORCED && targetProperty !== undefined) {
-      if (typeof sourceProperty == typeof targetProperty) continue;
+      if (typeof sourceProperty === typeof targetProperty) continue;
       copyConstructorProperties(sourceProperty, targetProperty);
     }
     // add a flag to not completely full polyfills
     if (options.sham || (targetProperty && targetProperty.sham)) {
       createNonEnumerableProperty(sourceProperty, 'sham', true);
     }
-    defineBuiltIn(target, key, sourceProperty, options);
+    // extend global
+    redefine(target, key, sourceProperty, options);
   }
 };
 
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/object-get-own-property-descriptor":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-descriptor.js","../internals/create-non-enumerable-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-non-enumerable-property.js","../internals/define-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/define-built-in.js","../internals/define-global-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/define-global-property.js","../internals/copy-constructor-properties":"node_modules/react-app-polyfill/node_modules/core-js/internals/copy-constructor-properties.js","../internals/is-forced":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-forced.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/is-array.js":[function(require,module,exports) {
+},{"../internals/global":"node_modules/core-js/internals/global.js","../internals/object-get-own-property-descriptor":"node_modules/core-js/internals/object-get-own-property-descriptor.js","../internals/create-non-enumerable-property":"node_modules/core-js/internals/create-non-enumerable-property.js","../internals/redefine":"node_modules/core-js/internals/redefine.js","../internals/set-global":"node_modules/core-js/internals/set-global.js","../internals/copy-constructor-properties":"node_modules/core-js/internals/copy-constructor-properties.js","../internals/is-forced":"node_modules/core-js/internals/is-forced.js"}],"node_modules/core-js/internals/is-array.js":[function(require,module,exports) {
 var classof = require('../internals/classof-raw');
 
 // `IsArray` abstract operation
 // https://tc39.es/ecma262/#sec-isarray
-// eslint-disable-next-line es/no-array-isarray -- safe
-module.exports = Array.isArray || function isArray(argument) {
-  return classof(argument) == 'Array';
+module.exports = Array.isArray || function isArray(arg) {
+  return classof(arg) == 'Array';
 };
 
-},{"../internals/classof-raw":"node_modules/react-app-polyfill/node_modules/core-js/internals/classof-raw.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/does-not-exceed-safe-integer.js":[function(require,module,exports) {
-var $TypeError = TypeError;
-var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF; // 2 ** 53 - 1 == 9007199254740991
+},{"../internals/classof-raw":"node_modules/core-js/internals/classof-raw.js"}],"node_modules/core-js/internals/to-object.js":[function(require,module,exports) {
+var requireObjectCoercible = require('../internals/require-object-coercible');
 
-module.exports = function (it) {
-  if (it > MAX_SAFE_INTEGER) throw $TypeError('Maximum allowed index exceeded');
-  return it;
+// `ToObject` abstract operation
+// https://tc39.es/ecma262/#sec-toobject
+module.exports = function (argument) {
+  return Object(requireObjectCoercible(argument));
 };
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property.js":[function(require,module,exports) {
+},{"../internals/require-object-coercible":"node_modules/core-js/internals/require-object-coercible.js"}],"node_modules/core-js/internals/create-property.js":[function(require,module,exports) {
 'use strict';
-var toPropertyKey = require('../internals/to-property-key');
+var toPrimitive = require('../internals/to-primitive');
 var definePropertyModule = require('../internals/object-define-property');
 var createPropertyDescriptor = require('../internals/create-property-descriptor');
 
 module.exports = function (object, key, value) {
-  var propertyKey = toPropertyKey(key);
+  var propertyKey = toPrimitive(key);
   if (propertyKey in object) definePropertyModule.f(object, propertyKey, createPropertyDescriptor(0, value));
   else object[propertyKey] = value;
 };
 
-},{"../internals/to-property-key":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-property-key.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js","../internals/create-property-descriptor":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property-descriptor.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string-tag-support.js":[function(require,module,exports) {
-var wellKnownSymbol = require('../internals/well-known-symbol');
+},{"../internals/to-primitive":"node_modules/core-js/internals/to-primitive.js","../internals/object-define-property":"node_modules/core-js/internals/object-define-property.js","../internals/create-property-descriptor":"node_modules/core-js/internals/create-property-descriptor.js"}],"node_modules/core-js/internals/engine-is-node.js":[function(require,module,exports) {
 
-var TO_STRING_TAG = wellKnownSymbol('toStringTag');
-var test = {};
+var classof = require('../internals/classof-raw');
+var global = require('../internals/global');
 
-test[TO_STRING_TAG] = 'z';
+module.exports = classof(global.process) == 'process';
 
-module.exports = String(test) === '[object z]';
-
-},{"../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/classof.js":[function(require,module,exports) {
-var TO_STRING_TAG_SUPPORT = require('../internals/to-string-tag-support');
-var isCallable = require('../internals/is-callable');
-var classofRaw = require('../internals/classof-raw');
-var wellKnownSymbol = require('../internals/well-known-symbol');
-
-var TO_STRING_TAG = wellKnownSymbol('toStringTag');
-var $Object = Object;
-
-// ES3 wrong here
-var CORRECT_ARGUMENTS = classofRaw(function () { return arguments; }()) == 'Arguments';
-
-// fallback for IE11 Script Access Denied error
-var tryGet = function (it, key) {
-  try {
-    return it[key];
-  } catch (error) { /* empty */ }
-};
-
-// getting tag from ES6+ `Object.prototype.toString`
-module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
-  var O, tag, result;
-  return it === undefined ? 'Undefined' : it === null ? 'Null'
-    // @@toStringTag case
-    : typeof (tag = tryGet(O = $Object(it), TO_STRING_TAG)) == 'string' ? tag
-    // builtinTag case
-    : CORRECT_ARGUMENTS ? classofRaw(O)
-    // ES3 arguments fallback
-    : (result = classofRaw(O)) == 'Object' && isCallable(O.callee) ? 'Arguments' : result;
-};
-
-},{"../internals/to-string-tag-support":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string-tag-support.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/classof-raw":"node_modules/react-app-polyfill/node_modules/core-js/internals/classof-raw.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/is-constructor.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
-var fails = require('../internals/fails');
-var isCallable = require('../internals/is-callable');
-var classof = require('../internals/classof');
+},{"../internals/classof-raw":"node_modules/core-js/internals/classof-raw.js","../internals/global":"node_modules/core-js/internals/global.js"}],"node_modules/core-js/internals/engine-user-agent.js":[function(require,module,exports) {
 var getBuiltIn = require('../internals/get-built-in');
-var inspectSource = require('../internals/inspect-source');
 
-var noop = function () { /* empty */ };
-var empty = [];
-var construct = getBuiltIn('Reflect', 'construct');
-var constructorRegExp = /^\s*(?:class|function)\b/;
-var exec = uncurryThis(constructorRegExp.exec);
-var INCORRECT_TO_STRING = !constructorRegExp.exec(noop);
+module.exports = getBuiltIn('navigator', 'userAgent') || '';
 
-var isConstructorModern = function isConstructor(argument) {
-  if (!isCallable(argument)) return false;
-  try {
-    construct(noop, empty, argument);
-    return true;
-  } catch (error) {
-    return false;
+},{"../internals/get-built-in":"node_modules/core-js/internals/get-built-in.js"}],"node_modules/core-js/internals/engine-v8-version.js":[function(require,module,exports) {
+
+
+var global = require('../internals/global');
+var userAgent = require('../internals/engine-user-agent');
+
+var process = global.process;
+var versions = process && process.versions;
+var v8 = versions && versions.v8;
+var match, version;
+
+if (v8) {
+  match = v8.split('.');
+  version = match[0] + match[1];
+} else if (userAgent) {
+  match = userAgent.match(/Edge\/(\d+)/);
+  if (!match || match[1] >= 74) {
+    match = userAgent.match(/Chrome\/(\d+)/);
+    if (match) version = match[1];
   }
+}
+
+module.exports = version && +version;
+
+},{"../internals/global":"node_modules/core-js/internals/global.js","../internals/engine-user-agent":"node_modules/core-js/internals/engine-user-agent.js"}],"node_modules/core-js/internals/native-symbol.js":[function(require,module,exports) {
+var IS_NODE = require('../internals/engine-is-node');
+var V8_VERSION = require('../internals/engine-v8-version');
+var fails = require('../internals/fails');
+
+module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
+  /* global Symbol -- required for testing */
+  return !Symbol.sham &&
+    // Chrome 38 Symbol has incorrect toString conversion
+    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
+    (IS_NODE ? V8_VERSION === 38 : V8_VERSION > 37 && V8_VERSION < 41);
+});
+
+},{"../internals/engine-is-node":"node_modules/core-js/internals/engine-is-node.js","../internals/engine-v8-version":"node_modules/core-js/internals/engine-v8-version.js","../internals/fails":"node_modules/core-js/internals/fails.js"}],"node_modules/core-js/internals/use-symbol-as-uid.js":[function(require,module,exports) {
+var NATIVE_SYMBOL = require('../internals/native-symbol');
+
+module.exports = NATIVE_SYMBOL
+  /* global Symbol -- safe */
+  && !Symbol.sham
+  && typeof Symbol.iterator == 'symbol';
+
+},{"../internals/native-symbol":"node_modules/core-js/internals/native-symbol.js"}],"node_modules/core-js/internals/well-known-symbol.js":[function(require,module,exports) {
+
+var global = require('../internals/global');
+var shared = require('../internals/shared');
+var has = require('../internals/has');
+var uid = require('../internals/uid');
+var NATIVE_SYMBOL = require('../internals/native-symbol');
+var USE_SYMBOL_AS_UID = require('../internals/use-symbol-as-uid');
+
+var WellKnownSymbolsStore = shared('wks');
+var Symbol = global.Symbol;
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
+
+module.exports = function (name) {
+  if (!has(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
+    if (NATIVE_SYMBOL && has(Symbol, name)) {
+      WellKnownSymbolsStore[name] = Symbol[name];
+    } else {
+      WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+    }
+  } return WellKnownSymbolsStore[name];
 };
 
-var isConstructorLegacy = function isConstructor(argument) {
-  if (!isCallable(argument)) return false;
-  switch (classof(argument)) {
-    case 'AsyncFunction':
-    case 'GeneratorFunction':
-    case 'AsyncGeneratorFunction': return false;
-  }
-  try {
-    // we can't check .prototype since constructors produced by .bind haven't it
-    // `Function#toString` throws on some built-it function in some legacy engines
-    // (for example, `DOMQuad` and similar in FF41-)
-    return INCORRECT_TO_STRING || !!exec(constructorRegExp, inspectSource(argument));
-  } catch (error) {
-    return true;
-  }
-};
-
-isConstructorLegacy.sham = true;
-
-// `IsConstructor` abstract operation
-// https://tc39.es/ecma262/#sec-isconstructor
-module.exports = !construct || fails(function () {
-  var called;
-  return isConstructorModern(isConstructorModern.call)
-    || !isConstructorModern(Object)
-    || !isConstructorModern(function () { called = true; })
-    || called;
-}) ? isConstructorLegacy : isConstructorModern;
-
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/classof":"node_modules/react-app-polyfill/node_modules/core-js/internals/classof.js","../internals/get-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js","../internals/inspect-source":"node_modules/react-app-polyfill/node_modules/core-js/internals/inspect-source.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/array-species-constructor.js":[function(require,module,exports) {
-var isArray = require('../internals/is-array');
-var isConstructor = require('../internals/is-constructor');
+},{"../internals/global":"node_modules/core-js/internals/global.js","../internals/shared":"node_modules/core-js/internals/shared.js","../internals/has":"node_modules/core-js/internals/has.js","../internals/uid":"node_modules/core-js/internals/uid.js","../internals/native-symbol":"node_modules/core-js/internals/native-symbol.js","../internals/use-symbol-as-uid":"node_modules/core-js/internals/use-symbol-as-uid.js"}],"node_modules/core-js/internals/array-species-create.js":[function(require,module,exports) {
 var isObject = require('../internals/is-object');
+var isArray = require('../internals/is-array');
 var wellKnownSymbol = require('../internals/well-known-symbol');
 
 var SPECIES = wellKnownSymbol('species');
-var $Array = Array;
-
-// a part of `ArraySpeciesCreate` abstract operation
-// https://tc39.es/ecma262/#sec-arrayspeciescreate
-module.exports = function (originalArray) {
-  var C;
-  if (isArray(originalArray)) {
-    C = originalArray.constructor;
-    // cross-realm fallback
-    if (isConstructor(C) && (C === $Array || isArray(C.prototype))) C = undefined;
-    else if (isObject(C)) {
-      C = C[SPECIES];
-      if (C === null) C = undefined;
-    }
-  } return C === undefined ? $Array : C;
-};
-
-},{"../internals/is-array":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-array.js","../internals/is-constructor":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-constructor.js","../internals/is-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/array-species-create.js":[function(require,module,exports) {
-var arraySpeciesConstructor = require('../internals/array-species-constructor');
 
 // `ArraySpeciesCreate` abstract operation
 // https://tc39.es/ecma262/#sec-arrayspeciescreate
 module.exports = function (originalArray, length) {
-  return new (arraySpeciesConstructor(originalArray))(length === 0 ? 0 : length);
+  var C;
+  if (isArray(originalArray)) {
+    C = originalArray.constructor;
+    // cross-realm fallback
+    if (typeof C == 'function' && (C === Array || isArray(C.prototype))) C = undefined;
+    else if (isObject(C)) {
+      C = C[SPECIES];
+      if (C === null) C = undefined;
+    }
+  } return new (C === undefined ? Array : C)(length === 0 ? 0 : length);
 };
 
-},{"../internals/array-species-constructor":"node_modules/react-app-polyfill/node_modules/core-js/internals/array-species-constructor.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/array-method-has-species-support.js":[function(require,module,exports) {
+},{"../internals/is-object":"node_modules/core-js/internals/is-object.js","../internals/is-array":"node_modules/core-js/internals/is-array.js","../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/core-js/internals/array-method-has-species-support.js":[function(require,module,exports) {
 var fails = require('../internals/fails');
 var wellKnownSymbol = require('../internals/well-known-symbol');
 var V8_VERSION = require('../internals/engine-v8-version');
@@ -2793,15 +2314,14 @@ module.exports = function (METHOD_NAME) {
   });
 };
 
-},{"../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js","../internals/engine-v8-version":"node_modules/react-app-polyfill/node_modules/core-js/internals/engine-v8-version.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.array.concat.js":[function(require,module,exports) {
+},{"../internals/fails":"node_modules/core-js/internals/fails.js","../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js","../internals/engine-v8-version":"node_modules/core-js/internals/engine-v8-version.js"}],"node_modules/core-js/modules/es.array.concat.js":[function(require,module,exports) {
 'use strict';
 var $ = require('../internals/export');
 var fails = require('../internals/fails');
 var isArray = require('../internals/is-array');
 var isObject = require('../internals/is-object');
 var toObject = require('../internals/to-object');
-var lengthOfArrayLike = require('../internals/length-of-array-like');
-var doesNotExceedSafeInteger = require('../internals/does-not-exceed-safe-integer');
+var toLength = require('../internals/to-length');
 var createProperty = require('../internals/create-property');
 var arraySpeciesCreate = require('../internals/array-species-create');
 var arrayMethodHasSpeciesSupport = require('../internals/array-method-has-species-support');
@@ -2809,6 +2329,8 @@ var wellKnownSymbol = require('../internals/well-known-symbol');
 var V8_VERSION = require('../internals/engine-v8-version');
 
 var IS_CONCAT_SPREADABLE = wellKnownSymbol('isConcatSpreadable');
+var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
+var MAXIMUM_ALLOWED_INDEX_EXCEEDED = 'Maximum allowed index exceeded';
 
 // We can't use this feature detection in V8 since it causes
 // deoptimization and serious performance degradation
@@ -2832,7 +2354,7 @@ var FORCED = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT;
 // `Array.prototype.concat` method
 // https://tc39.es/ecma262/#sec-array.prototype.concat
 // with adding support of @@isConcatSpreadable and @@species
-$({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
+$({ target: 'Array', proto: true, forced: FORCED }, {
   // eslint-disable-next-line no-unused-vars -- required for `.length`
   concat: function concat(arg) {
     var O = toObject(this);
@@ -2842,11 +2364,11 @@ $({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
     for (i = -1, length = arguments.length; i < length; i++) {
       E = i === -1 ? O : arguments[i];
       if (isConcatSpreadable(E)) {
-        len = lengthOfArrayLike(E);
-        doesNotExceedSafeInteger(n + len);
+        len = toLength(E.length);
+        if (n + len > MAX_SAFE_INTEGER) throw TypeError(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
         for (k = 0; k < len; k++, n++) if (k in E) createProperty(A, n, E[k]);
       } else {
-        doesNotExceedSafeInteger(n + 1);
+        if (n >= MAX_SAFE_INTEGER) throw TypeError(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
         createProperty(A, n++, E);
       }
     }
@@ -2855,7 +2377,45 @@ $({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
   }
 });
 
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/is-array":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-array.js","../internals/is-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js","../internals/to-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-object.js","../internals/length-of-array-like":"node_modules/react-app-polyfill/node_modules/core-js/internals/length-of-array-like.js","../internals/does-not-exceed-safe-integer":"node_modules/react-app-polyfill/node_modules/core-js/internals/does-not-exceed-safe-integer.js","../internals/create-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property.js","../internals/array-species-create":"node_modules/react-app-polyfill/node_modules/core-js/internals/array-species-create.js","../internals/array-method-has-species-support":"node_modules/react-app-polyfill/node_modules/core-js/internals/array-method-has-species-support.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js","../internals/engine-v8-version":"node_modules/react-app-polyfill/node_modules/core-js/internals/engine-v8-version.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-to-string.js":[function(require,module,exports) {
+},{"../internals/export":"node_modules/core-js/internals/export.js","../internals/fails":"node_modules/core-js/internals/fails.js","../internals/is-array":"node_modules/core-js/internals/is-array.js","../internals/is-object":"node_modules/core-js/internals/is-object.js","../internals/to-object":"node_modules/core-js/internals/to-object.js","../internals/to-length":"node_modules/core-js/internals/to-length.js","../internals/create-property":"node_modules/core-js/internals/create-property.js","../internals/array-species-create":"node_modules/core-js/internals/array-species-create.js","../internals/array-method-has-species-support":"node_modules/core-js/internals/array-method-has-species-support.js","../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js","../internals/engine-v8-version":"node_modules/core-js/internals/engine-v8-version.js"}],"node_modules/core-js/internals/to-string-tag-support.js":[function(require,module,exports) {
+var wellKnownSymbol = require('../internals/well-known-symbol');
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+var test = {};
+
+test[TO_STRING_TAG] = 'z';
+
+module.exports = String(test) === '[object z]';
+
+},{"../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/core-js/internals/classof.js":[function(require,module,exports) {
+var TO_STRING_TAG_SUPPORT = require('../internals/to-string-tag-support');
+var classofRaw = require('../internals/classof-raw');
+var wellKnownSymbol = require('../internals/well-known-symbol');
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+// ES3 wrong here
+var CORRECT_ARGUMENTS = classofRaw(function () { return arguments; }()) == 'Arguments';
+
+// fallback for IE11 Script Access Denied error
+var tryGet = function (it, key) {
+  try {
+    return it[key];
+  } catch (error) { /* empty */ }
+};
+
+// getting tag from ES6+ `Object.prototype.toString`
+module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
+  var O, tag, result;
+  return it === undefined ? 'Undefined' : it === null ? 'Null'
+    // @@toStringTag case
+    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG)) == 'string' ? tag
+    // builtinTag case
+    : CORRECT_ARGUMENTS ? classofRaw(O)
+    // ES3 arguments fallback
+    : (result = classofRaw(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : result;
+};
+
+},{"../internals/to-string-tag-support":"node_modules/core-js/internals/to-string-tag-support.js","../internals/classof-raw":"node_modules/core-js/internals/classof-raw.js","../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/core-js/internals/object-to-string.js":[function(require,module,exports) {
 'use strict';
 var TO_STRING_TAG_SUPPORT = require('../internals/to-string-tag-support');
 var classof = require('../internals/classof');
@@ -2866,69 +2426,53 @@ module.exports = TO_STRING_TAG_SUPPORT ? {}.toString : function toString() {
   return '[object ' + classof(this) + ']';
 };
 
-},{"../internals/to-string-tag-support":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string-tag-support.js","../internals/classof":"node_modules/react-app-polyfill/node_modules/core-js/internals/classof.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.object.to-string.js":[function(require,module,exports) {
+},{"../internals/to-string-tag-support":"node_modules/core-js/internals/to-string-tag-support.js","../internals/classof":"node_modules/core-js/internals/classof.js"}],"node_modules/core-js/modules/es.object.to-string.js":[function(require,module,exports) {
 var TO_STRING_TAG_SUPPORT = require('../internals/to-string-tag-support');
-var defineBuiltIn = require('../internals/define-built-in');
+var redefine = require('../internals/redefine');
 var toString = require('../internals/object-to-string');
 
 // `Object.prototype.toString` method
 // https://tc39.es/ecma262/#sec-object.prototype.tostring
 if (!TO_STRING_TAG_SUPPORT) {
-  defineBuiltIn(Object.prototype, 'toString', toString, { unsafe: true });
+  redefine(Object.prototype, 'toString', toString, { unsafe: true });
 }
 
-},{"../internals/to-string-tag-support":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string-tag-support.js","../internals/define-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/define-built-in.js","../internals/object-to-string":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-to-string.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string.js":[function(require,module,exports) {
-var classof = require('../internals/classof');
-
-var $String = String;
-
-module.exports = function (argument) {
-  if (classof(argument) === 'Symbol') throw TypeError('Cannot convert a Symbol value to a string');
-  return $String(argument);
-};
-
-},{"../internals/classof":"node_modules/react-app-polyfill/node_modules/core-js/internals/classof.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-keys.js":[function(require,module,exports) {
+},{"../internals/to-string-tag-support":"node_modules/core-js/internals/to-string-tag-support.js","../internals/redefine":"node_modules/core-js/internals/redefine.js","../internals/object-to-string":"node_modules/core-js/internals/object-to-string.js"}],"node_modules/core-js/internals/object-keys.js":[function(require,module,exports) {
 var internalObjectKeys = require('../internals/object-keys-internal');
 var enumBugKeys = require('../internals/enum-bug-keys');
 
 // `Object.keys` method
 // https://tc39.es/ecma262/#sec-object.keys
-// eslint-disable-next-line es/no-object-keys -- safe
 module.exports = Object.keys || function keys(O) {
   return internalObjectKeys(O, enumBugKeys);
 };
 
-},{"../internals/object-keys-internal":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-keys-internal.js","../internals/enum-bug-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/enum-bug-keys.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-properties.js":[function(require,module,exports) {
+},{"../internals/object-keys-internal":"node_modules/core-js/internals/object-keys-internal.js","../internals/enum-bug-keys":"node_modules/core-js/internals/enum-bug-keys.js"}],"node_modules/core-js/internals/object-define-properties.js":[function(require,module,exports) {
 var DESCRIPTORS = require('../internals/descriptors');
-var V8_PROTOTYPE_DEFINE_BUG = require('../internals/v8-prototype-define-bug');
 var definePropertyModule = require('../internals/object-define-property');
 var anObject = require('../internals/an-object');
-var toIndexedObject = require('../internals/to-indexed-object');
 var objectKeys = require('../internals/object-keys');
 
 // `Object.defineProperties` method
 // https://tc39.es/ecma262/#sec-object.defineproperties
-// eslint-disable-next-line es/no-object-defineproperties -- safe
-exports.f = DESCRIPTORS && !V8_PROTOTYPE_DEFINE_BUG ? Object.defineProperties : function defineProperties(O, Properties) {
+module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperties(O, Properties) {
   anObject(O);
-  var props = toIndexedObject(Properties);
   var keys = objectKeys(Properties);
   var length = keys.length;
   var index = 0;
   var key;
-  while (length > index) definePropertyModule.f(O, key = keys[index++], props[key]);
+  while (length > index) definePropertyModule.f(O, key = keys[index++], Properties[key]);
   return O;
 };
 
-},{"../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/v8-prototype-define-bug":"node_modules/react-app-polyfill/node_modules/core-js/internals/v8-prototype-define-bug.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js","../internals/an-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js","../internals/to-indexed-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-indexed-object.js","../internals/object-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-keys.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/html.js":[function(require,module,exports) {
+},{"../internals/descriptors":"node_modules/core-js/internals/descriptors.js","../internals/object-define-property":"node_modules/core-js/internals/object-define-property.js","../internals/an-object":"node_modules/core-js/internals/an-object.js","../internals/object-keys":"node_modules/core-js/internals/object-keys.js"}],"node_modules/core-js/internals/html.js":[function(require,module,exports) {
 var getBuiltIn = require('../internals/get-built-in');
 
 module.exports = getBuiltIn('document', 'documentElement');
 
-},{"../internals/get-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-create.js":[function(require,module,exports) {
-/* global ActiveXObject -- old IE, WSH */
+},{"../internals/get-built-in":"node_modules/core-js/internals/get-built-in.js"}],"node_modules/core-js/internals/object-create.js":[function(require,module,exports) {
 var anObject = require('../internals/an-object');
-var definePropertiesModule = require('../internals/object-define-properties');
+var defineProperties = require('../internals/object-define-properties');
 var enumBugKeys = require('../internals/enum-bug-keys');
 var hiddenKeys = require('../internals/hidden-keys');
 var html = require('../internals/html');
@@ -2981,13 +2525,10 @@ var NullProtoObjectViaIFrame = function () {
 var activeXDocument;
 var NullProtoObject = function () {
   try {
-    activeXDocument = new ActiveXObject('htmlfile');
+    /* global ActiveXObject -- old IE */
+    activeXDocument = document.domain && new ActiveXObject('htmlfile');
   } catch (error) { /* ignore */ }
-  NullProtoObject = typeof document != 'undefined'
-    ? document.domain && activeXDocument
-      ? NullProtoObjectViaActiveX(activeXDocument) // old IE
-      : NullProtoObjectViaIFrame()
-    : NullProtoObjectViaActiveX(activeXDocument); // WSH
+  NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
   var length = enumBugKeys.length;
   while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
   return NullProtoObject();
@@ -2997,7 +2538,6 @@ hiddenKeys[IE_PROTO] = true;
 
 // `Object.create` method
 // https://tc39.es/ecma262/#sec-object.create
-// eslint-disable-next-line es/no-object-create -- safe
 module.exports = Object.create || function create(O, Properties) {
   var result;
   if (O !== null) {
@@ -3007,154 +2547,123 @@ module.exports = Object.create || function create(O, Properties) {
     // add "__proto__" for Object.getPrototypeOf polyfill
     result[IE_PROTO] = O;
   } else result = NullProtoObject();
-  return Properties === undefined ? result : definePropertiesModule.f(result, Properties);
+  return Properties === undefined ? result : defineProperties(result, Properties);
 };
 
-},{"../internals/an-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js","../internals/object-define-properties":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-properties.js","../internals/enum-bug-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/enum-bug-keys.js","../internals/hidden-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/hidden-keys.js","../internals/html":"node_modules/react-app-polyfill/node_modules/core-js/internals/html.js","../internals/document-create-element":"node_modules/react-app-polyfill/node_modules/core-js/internals/document-create-element.js","../internals/shared-key":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared-key.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/array-slice-simple.js":[function(require,module,exports) {
-var toAbsoluteIndex = require('../internals/to-absolute-index');
-var lengthOfArrayLike = require('../internals/length-of-array-like');
-var createProperty = require('../internals/create-property');
-
-var $Array = Array;
-var max = Math.max;
-
-module.exports = function (O, start, end) {
-  var length = lengthOfArrayLike(O);
-  var k = toAbsoluteIndex(start, length);
-  var fin = toAbsoluteIndex(end === undefined ? length : end, length);
-  var result = $Array(max(fin - k, 0));
-  for (var n = 0; k < fin; k++, n++) createProperty(result, n, O[k]);
-  result.length = n;
-  return result;
-};
-
-},{"../internals/to-absolute-index":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-absolute-index.js","../internals/length-of-array-like":"node_modules/react-app-polyfill/node_modules/core-js/internals/length-of-array-like.js","../internals/create-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-names-external.js":[function(require,module,exports) {
-/* eslint-disable es/no-object-getownpropertynames -- safe */
-var classof = require('../internals/classof-raw');
+},{"../internals/an-object":"node_modules/core-js/internals/an-object.js","../internals/object-define-properties":"node_modules/core-js/internals/object-define-properties.js","../internals/enum-bug-keys":"node_modules/core-js/internals/enum-bug-keys.js","../internals/hidden-keys":"node_modules/core-js/internals/hidden-keys.js","../internals/html":"node_modules/core-js/internals/html.js","../internals/document-create-element":"node_modules/core-js/internals/document-create-element.js","../internals/shared-key":"node_modules/core-js/internals/shared-key.js"}],"node_modules/core-js/internals/object-get-own-property-names-external.js":[function(require,module,exports) {
 var toIndexedObject = require('../internals/to-indexed-object');
-var $getOwnPropertyNames = require('../internals/object-get-own-property-names').f;
-var arraySlice = require('../internals/array-slice-simple');
+var nativeGetOwnPropertyNames = require('../internals/object-get-own-property-names').f;
+
+var toString = {}.toString;
 
 var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
   ? Object.getOwnPropertyNames(window) : [];
 
 var getWindowNames = function (it) {
   try {
-    return $getOwnPropertyNames(it);
+    return nativeGetOwnPropertyNames(it);
   } catch (error) {
-    return arraySlice(windowNames);
+    return windowNames.slice();
   }
 };
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 module.exports.f = function getOwnPropertyNames(it) {
-  return windowNames && classof(it) == 'Window'
+  return windowNames && toString.call(it) == '[object Window]'
     ? getWindowNames(it)
-    : $getOwnPropertyNames(toIndexedObject(it));
+    : nativeGetOwnPropertyNames(toIndexedObject(it));
 };
 
-},{"../internals/classof-raw":"node_modules/react-app-polyfill/node_modules/core-js/internals/classof-raw.js","../internals/to-indexed-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-indexed-object.js","../internals/object-get-own-property-names":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-names.js","../internals/array-slice-simple":"node_modules/react-app-polyfill/node_modules/core-js/internals/array-slice-simple.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-wrapped.js":[function(require,module,exports) {
+},{"../internals/to-indexed-object":"node_modules/core-js/internals/to-indexed-object.js","../internals/object-get-own-property-names":"node_modules/core-js/internals/object-get-own-property-names.js"}],"node_modules/core-js/internals/well-known-symbol-wrapped.js":[function(require,module,exports) {
 var wellKnownSymbol = require('../internals/well-known-symbol');
 
 exports.f = wellKnownSymbol;
 
-},{"../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/path.js":[function(require,module,exports) {
-
-var global = require('../internals/global');
-
-module.exports = global;
-
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js":[function(require,module,exports) {
+},{"../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/core-js/internals/define-well-known-symbol.js":[function(require,module,exports) {
 var path = require('../internals/path');
-var hasOwn = require('../internals/has-own-property');
+var has = require('../internals/has');
 var wrappedWellKnownSymbolModule = require('../internals/well-known-symbol-wrapped');
 var defineProperty = require('../internals/object-define-property').f;
 
 module.exports = function (NAME) {
   var Symbol = path.Symbol || (path.Symbol = {});
-  if (!hasOwn(Symbol, NAME)) defineProperty(Symbol, NAME, {
+  if (!has(Symbol, NAME)) defineProperty(Symbol, NAME, {
     value: wrappedWellKnownSymbolModule.f(NAME)
   });
 };
 
-},{"../internals/path":"node_modules/react-app-polyfill/node_modules/core-js/internals/path.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/well-known-symbol-wrapped":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-wrapped.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-define-to-primitive.js":[function(require,module,exports) {
-var call = require('../internals/function-call');
-var getBuiltIn = require('../internals/get-built-in');
-var wellKnownSymbol = require('../internals/well-known-symbol');
-var defineBuiltIn = require('../internals/define-built-in');
-
-module.exports = function () {
-  var Symbol = getBuiltIn('Symbol');
-  var SymbolPrototype = Symbol && Symbol.prototype;
-  var valueOf = SymbolPrototype && SymbolPrototype.valueOf;
-  var TO_PRIMITIVE = wellKnownSymbol('toPrimitive');
-
-  if (SymbolPrototype && !SymbolPrototype[TO_PRIMITIVE]) {
-    // `Symbol.prototype[@@toPrimitive]` method
-    // https://tc39.es/ecma262/#sec-symbol.prototype-@@toprimitive
-    // eslint-disable-next-line no-unused-vars -- required for .length
-    defineBuiltIn(SymbolPrototype, TO_PRIMITIVE, function (hint) {
-      return call(valueOf, this);
-    }, { arity: 1 });
-  }
-};
-
-},{"../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/get-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js","../internals/define-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/define-built-in.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/set-to-string-tag.js":[function(require,module,exports) {
+},{"../internals/path":"node_modules/core-js/internals/path.js","../internals/has":"node_modules/core-js/internals/has.js","../internals/well-known-symbol-wrapped":"node_modules/core-js/internals/well-known-symbol-wrapped.js","../internals/object-define-property":"node_modules/core-js/internals/object-define-property.js"}],"node_modules/core-js/internals/set-to-string-tag.js":[function(require,module,exports) {
 var defineProperty = require('../internals/object-define-property').f;
-var hasOwn = require('../internals/has-own-property');
+var has = require('../internals/has');
 var wellKnownSymbol = require('../internals/well-known-symbol');
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 
-module.exports = function (target, TAG, STATIC) {
-  if (target && !STATIC) target = target.prototype;
-  if (target && !hasOwn(target, TO_STRING_TAG)) {
-    defineProperty(target, TO_STRING_TAG, { configurable: true, value: TAG });
+module.exports = function (it, TAG, STATIC) {
+  if (it && !has(it = STATIC ? it : it.prototype, TO_STRING_TAG)) {
+    defineProperty(it, TO_STRING_TAG, { configurable: true, value: TAG });
   }
 };
 
-},{"../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/function-bind-context.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
-var aCallable = require('../internals/a-callable');
-var NATIVE_BIND = require('../internals/function-bind-native');
+},{"../internals/object-define-property":"node_modules/core-js/internals/object-define-property.js","../internals/has":"node_modules/core-js/internals/has.js","../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/core-js/internals/a-function.js":[function(require,module,exports) {
+module.exports = function (it) {
+  if (typeof it != 'function') {
+    throw TypeError(String(it) + ' is not a function');
+  } return it;
+};
 
-var bind = uncurryThis(uncurryThis.bind);
+},{}],"node_modules/core-js/internals/function-bind-context.js":[function(require,module,exports) {
+var aFunction = require('../internals/a-function');
 
 // optional / simple context binding
-module.exports = function (fn, that) {
-  aCallable(fn);
-  return that === undefined ? fn : NATIVE_BIND ? bind(fn, that) : function (/* ...args */) {
+module.exports = function (fn, that, length) {
+  aFunction(fn);
+  if (that === undefined) return fn;
+  switch (length) {
+    case 0: return function () {
+      return fn.call(that);
+    };
+    case 1: return function (a) {
+      return fn.call(that, a);
+    };
+    case 2: return function (a, b) {
+      return fn.call(that, a, b);
+    };
+    case 3: return function (a, b, c) {
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function (/* ...args */) {
     return fn.apply(that, arguments);
   };
 };
 
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/a-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/a-callable.js","../internals/function-bind-native":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-bind-native.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/array-iteration.js":[function(require,module,exports) {
+},{"../internals/a-function":"node_modules/core-js/internals/a-function.js"}],"node_modules/core-js/internals/array-iteration.js":[function(require,module,exports) {
 var bind = require('../internals/function-bind-context');
-var uncurryThis = require('../internals/function-uncurry-this');
 var IndexedObject = require('../internals/indexed-object');
 var toObject = require('../internals/to-object');
-var lengthOfArrayLike = require('../internals/length-of-array-like');
+var toLength = require('../internals/to-length');
 var arraySpeciesCreate = require('../internals/array-species-create');
 
-var push = uncurryThis([].push);
+var push = [].push;
 
-// `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterReject }` methods implementation
+// `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterOut }` methods implementation
 var createMethod = function (TYPE) {
   var IS_MAP = TYPE == 1;
   var IS_FILTER = TYPE == 2;
   var IS_SOME = TYPE == 3;
   var IS_EVERY = TYPE == 4;
   var IS_FIND_INDEX = TYPE == 6;
-  var IS_FILTER_REJECT = TYPE == 7;
+  var IS_FILTER_OUT = TYPE == 7;
   var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
   return function ($this, callbackfn, that, specificCreate) {
     var O = toObject($this);
     var self = IndexedObject(O);
-    var boundFunction = bind(callbackfn, that);
-    var length = lengthOfArrayLike(self);
+    var boundFunction = bind(callbackfn, that, 3);
+    var length = toLength(self.length);
     var index = 0;
     var create = specificCreate || arraySpeciesCreate;
-    var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_REJECT ? create($this, 0) : undefined;
+    var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_OUT ? create($this, 0) : undefined;
     var value, result;
     for (;length > index; index++) if (NO_HOLES || index in self) {
       value = self[index];
@@ -3165,10 +2674,10 @@ var createMethod = function (TYPE) {
           case 3: return true;              // some
           case 5: return value;             // find
           case 6: return index;             // findIndex
-          case 2: push(target, value);      // filter
+          case 2: push.call(target, value); // filter
         } else switch (TYPE) {
           case 4: return false;             // every
-          case 7: push(target, value);      // filterReject
+          case 7: push.call(target, value); // filterOut
         }
       }
     }
@@ -3198,28 +2707,29 @@ module.exports = {
   // `Array.prototype.findIndex` method
   // https://tc39.es/ecma262/#sec-array.prototype.findIndex
   findIndex: createMethod(6),
-  // `Array.prototype.filterReject` method
+  // `Array.prototype.filterOut` method
   // https://github.com/tc39/proposal-array-filtering
-  filterReject: createMethod(7)
+  filterOut: createMethod(7)
 };
 
-},{"../internals/function-bind-context":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-bind-context.js","../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/indexed-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/indexed-object.js","../internals/to-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-object.js","../internals/length-of-array-like":"node_modules/react-app-polyfill/node_modules/core-js/internals/length-of-array-like.js","../internals/array-species-create":"node_modules/react-app-polyfill/node_modules/core-js/internals/array-species-create.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.constructor.js":[function(require,module,exports) {
+},{"../internals/function-bind-context":"node_modules/core-js/internals/function-bind-context.js","../internals/indexed-object":"node_modules/core-js/internals/indexed-object.js","../internals/to-object":"node_modules/core-js/internals/to-object.js","../internals/to-length":"node_modules/core-js/internals/to-length.js","../internals/array-species-create":"node_modules/core-js/internals/array-species-create.js"}],"node_modules/core-js/modules/es.symbol.js":[function(require,module,exports) {
 
 'use strict';
 var $ = require('../internals/export');
 var global = require('../internals/global');
-var call = require('../internals/function-call');
-var uncurryThis = require('../internals/function-uncurry-this');
+var getBuiltIn = require('../internals/get-built-in');
 var IS_PURE = require('../internals/is-pure');
 var DESCRIPTORS = require('../internals/descriptors');
-var NATIVE_SYMBOL = require('../internals/symbol-constructor-detection');
+var NATIVE_SYMBOL = require('../internals/native-symbol');
+var USE_SYMBOL_AS_UID = require('../internals/use-symbol-as-uid');
 var fails = require('../internals/fails');
-var hasOwn = require('../internals/has-own-property');
-var isPrototypeOf = require('../internals/object-is-prototype-of');
+var has = require('../internals/has');
+var isArray = require('../internals/is-array');
+var isObject = require('../internals/is-object');
 var anObject = require('../internals/an-object');
+var toObject = require('../internals/to-object');
 var toIndexedObject = require('../internals/to-indexed-object');
-var toPropertyKey = require('../internals/to-property-key');
-var $toString = require('../internals/to-string');
+var toPrimitive = require('../internals/to-primitive');
 var createPropertyDescriptor = require('../internals/create-property-descriptor');
 var nativeObjectCreate = require('../internals/object-create');
 var objectKeys = require('../internals/object-keys');
@@ -3228,17 +2738,16 @@ var getOwnPropertyNamesExternal = require('../internals/object-get-own-property-
 var getOwnPropertySymbolsModule = require('../internals/object-get-own-property-symbols');
 var getOwnPropertyDescriptorModule = require('../internals/object-get-own-property-descriptor');
 var definePropertyModule = require('../internals/object-define-property');
-var definePropertiesModule = require('../internals/object-define-properties');
 var propertyIsEnumerableModule = require('../internals/object-property-is-enumerable');
-var defineBuiltIn = require('../internals/define-built-in');
+var createNonEnumerableProperty = require('../internals/create-non-enumerable-property');
+var redefine = require('../internals/redefine');
 var shared = require('../internals/shared');
 var sharedKey = require('../internals/shared-key');
 var hiddenKeys = require('../internals/hidden-keys');
 var uid = require('../internals/uid');
 var wellKnownSymbol = require('../internals/well-known-symbol');
 var wrappedWellKnownSymbolModule = require('../internals/well-known-symbol-wrapped');
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-var defineSymbolToPrimitive = require('../internals/symbol-define-to-primitive');
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 var setToStringTag = require('../internals/set-to-string-tag');
 var InternalStateModule = require('../internals/internal-state');
 var $forEach = require('../internals/array-iteration').forEach;
@@ -3246,25 +2755,22 @@ var $forEach = require('../internals/array-iteration').forEach;
 var HIDDEN = sharedKey('hidden');
 var SYMBOL = 'Symbol';
 var PROTOTYPE = 'prototype';
-
+var TO_PRIMITIVE = wellKnownSymbol('toPrimitive');
 var setInternalState = InternalStateModule.set;
 var getInternalState = InternalStateModule.getterFor(SYMBOL);
-
 var ObjectPrototype = Object[PROTOTYPE];
 var $Symbol = global.Symbol;
-var SymbolPrototype = $Symbol && $Symbol[PROTOTYPE];
-var TypeError = global.TypeError;
-var QObject = global.QObject;
+var $stringify = getBuiltIn('JSON', 'stringify');
 var nativeGetOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
 var nativeDefineProperty = definePropertyModule.f;
 var nativeGetOwnPropertyNames = getOwnPropertyNamesExternal.f;
 var nativePropertyIsEnumerable = propertyIsEnumerableModule.f;
-var push = uncurryThis([].push);
-
 var AllSymbols = shared('symbols');
 var ObjectPrototypeSymbols = shared('op-symbols');
+var StringToSymbolRegistry = shared('string-to-symbol-registry');
+var SymbolToStringRegistry = shared('symbol-to-string-registry');
 var WellKnownSymbolsStore = shared('wks');
-
+var QObject = global.QObject;
 // Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
 var USE_SETTER = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
 
@@ -3283,7 +2789,7 @@ var setSymbolDescriptor = DESCRIPTORS && fails(function () {
 } : nativeDefineProperty;
 
 var wrap = function (tag, description) {
-  var symbol = AllSymbols[tag] = nativeObjectCreate(SymbolPrototype);
+  var symbol = AllSymbols[tag] = nativeObjectCreate($Symbol[PROTOTYPE]);
   setInternalState(symbol, {
     type: SYMBOL,
     tag: tag,
@@ -3293,17 +2799,23 @@ var wrap = function (tag, description) {
   return symbol;
 };
 
+var isSymbol = USE_SYMBOL_AS_UID ? function (it) {
+  return typeof it == 'symbol';
+} : function (it) {
+  return Object(it) instanceof $Symbol;
+};
+
 var $defineProperty = function defineProperty(O, P, Attributes) {
   if (O === ObjectPrototype) $defineProperty(ObjectPrototypeSymbols, P, Attributes);
   anObject(O);
-  var key = toPropertyKey(P);
+  var key = toPrimitive(P, true);
   anObject(Attributes);
-  if (hasOwn(AllSymbols, key)) {
+  if (has(AllSymbols, key)) {
     if (!Attributes.enumerable) {
-      if (!hasOwn(O, HIDDEN)) nativeDefineProperty(O, HIDDEN, createPropertyDescriptor(1, {}));
+      if (!has(O, HIDDEN)) nativeDefineProperty(O, HIDDEN, createPropertyDescriptor(1, {}));
       O[HIDDEN][key] = true;
     } else {
-      if (hasOwn(O, HIDDEN) && O[HIDDEN][key]) O[HIDDEN][key] = false;
+      if (has(O, HIDDEN) && O[HIDDEN][key]) O[HIDDEN][key] = false;
       Attributes = nativeObjectCreate(Attributes, { enumerable: createPropertyDescriptor(0, false) });
     } return setSymbolDescriptor(O, key, Attributes);
   } return nativeDefineProperty(O, key, Attributes);
@@ -3314,7 +2826,7 @@ var $defineProperties = function defineProperties(O, Properties) {
   var properties = toIndexedObject(Properties);
   var keys = objectKeys(properties).concat($getOwnPropertySymbols(properties));
   $forEach(keys, function (key) {
-    if (!DESCRIPTORS || call($propertyIsEnumerable, properties, key)) $defineProperty(O, key, properties[key]);
+    if (!DESCRIPTORS || $propertyIsEnumerable.call(properties, key)) $defineProperty(O, key, properties[key]);
   });
   return O;
 };
@@ -3324,19 +2836,18 @@ var $create = function create(O, Properties) {
 };
 
 var $propertyIsEnumerable = function propertyIsEnumerable(V) {
-  var P = toPropertyKey(V);
-  var enumerable = call(nativePropertyIsEnumerable, this, P);
-  if (this === ObjectPrototype && hasOwn(AllSymbols, P) && !hasOwn(ObjectPrototypeSymbols, P)) return false;
-  return enumerable || !hasOwn(this, P) || !hasOwn(AllSymbols, P) || hasOwn(this, HIDDEN) && this[HIDDEN][P]
-    ? enumerable : true;
+  var P = toPrimitive(V, true);
+  var enumerable = nativePropertyIsEnumerable.call(this, P);
+  if (this === ObjectPrototype && has(AllSymbols, P) && !has(ObjectPrototypeSymbols, P)) return false;
+  return enumerable || !has(this, P) || !has(AllSymbols, P) || has(this, HIDDEN) && this[HIDDEN][P] ? enumerable : true;
 };
 
 var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(O, P) {
   var it = toIndexedObject(O);
-  var key = toPropertyKey(P);
-  if (it === ObjectPrototype && hasOwn(AllSymbols, key) && !hasOwn(ObjectPrototypeSymbols, key)) return;
+  var key = toPrimitive(P, true);
+  if (it === ObjectPrototype && has(AllSymbols, key) && !has(ObjectPrototypeSymbols, key)) return;
   var descriptor = nativeGetOwnPropertyDescriptor(it, key);
-  if (descriptor && hasOwn(AllSymbols, key) && !(hasOwn(it, HIDDEN) && it[HIDDEN][key])) {
+  if (descriptor && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key])) {
     descriptor.enumerable = true;
   }
   return descriptor;
@@ -3346,18 +2857,18 @@ var $getOwnPropertyNames = function getOwnPropertyNames(O) {
   var names = nativeGetOwnPropertyNames(toIndexedObject(O));
   var result = [];
   $forEach(names, function (key) {
-    if (!hasOwn(AllSymbols, key) && !hasOwn(hiddenKeys, key)) push(result, key);
+    if (!has(AllSymbols, key) && !has(hiddenKeys, key)) result.push(key);
   });
   return result;
 };
 
-var $getOwnPropertySymbols = function (O) {
+var $getOwnPropertySymbols = function getOwnPropertySymbols(O) {
   var IS_OBJECT_PROTOTYPE = O === ObjectPrototype;
   var names = nativeGetOwnPropertyNames(IS_OBJECT_PROTOTYPE ? ObjectPrototypeSymbols : toIndexedObject(O));
   var result = [];
   $forEach(names, function (key) {
-    if (hasOwn(AllSymbols, key) && (!IS_OBJECT_PROTOTYPE || hasOwn(ObjectPrototype, key))) {
-      push(result, AllSymbols[key]);
+    if (has(AllSymbols, key) && (!IS_OBJECT_PROTOTYPE || has(ObjectPrototype, key))) {
+      result.push(AllSymbols[key]);
     }
   });
   return result;
@@ -3367,31 +2878,28 @@ var $getOwnPropertySymbols = function (O) {
 // https://tc39.es/ecma262/#sec-symbol-constructor
 if (!NATIVE_SYMBOL) {
   $Symbol = function Symbol() {
-    if (isPrototypeOf(SymbolPrototype, this)) throw TypeError('Symbol is not a constructor');
-    var description = !arguments.length || arguments[0] === undefined ? undefined : $toString(arguments[0]);
+    if (this instanceof $Symbol) throw TypeError('Symbol is not a constructor');
+    var description = !arguments.length || arguments[0] === undefined ? undefined : String(arguments[0]);
     var tag = uid(description);
     var setter = function (value) {
-      if (this === ObjectPrototype) call(setter, ObjectPrototypeSymbols, value);
-      if (hasOwn(this, HIDDEN) && hasOwn(this[HIDDEN], tag)) this[HIDDEN][tag] = false;
+      if (this === ObjectPrototype) setter.call(ObjectPrototypeSymbols, value);
+      if (has(this, HIDDEN) && has(this[HIDDEN], tag)) this[HIDDEN][tag] = false;
       setSymbolDescriptor(this, tag, createPropertyDescriptor(1, value));
     };
     if (DESCRIPTORS && USE_SETTER) setSymbolDescriptor(ObjectPrototype, tag, { configurable: true, set: setter });
     return wrap(tag, description);
   };
 
-  SymbolPrototype = $Symbol[PROTOTYPE];
-
-  defineBuiltIn(SymbolPrototype, 'toString', function toString() {
+  redefine($Symbol[PROTOTYPE], 'toString', function toString() {
     return getInternalState(this).tag;
   });
 
-  defineBuiltIn($Symbol, 'withoutSetter', function (description) {
+  redefine($Symbol, 'withoutSetter', function (description) {
     return wrap(uid(description), description);
   });
 
   propertyIsEnumerableModule.f = $propertyIsEnumerable;
   definePropertyModule.f = $defineProperty;
-  definePropertiesModule.f = $defineProperties;
   getOwnPropertyDescriptorModule.f = $getOwnPropertyDescriptor;
   getOwnPropertyNamesModule.f = getOwnPropertyNamesExternal.f = $getOwnPropertyNames;
   getOwnPropertySymbolsModule.f = $getOwnPropertySymbols;
@@ -3402,19 +2910,19 @@ if (!NATIVE_SYMBOL) {
 
   if (DESCRIPTORS) {
     // https://github.com/tc39/proposal-Symbol-description
-    nativeDefineProperty(SymbolPrototype, 'description', {
+    nativeDefineProperty($Symbol[PROTOTYPE], 'description', {
       configurable: true,
       get: function description() {
         return getInternalState(this).description;
       }
     });
     if (!IS_PURE) {
-      defineBuiltIn(ObjectPrototype, 'propertyIsEnumerable', $propertyIsEnumerable, { unsafe: true });
+      redefine(ObjectPrototype, 'propertyIsEnumerable', $propertyIsEnumerable, { unsafe: true });
     }
   }
 }
 
-$({ global: true, constructor: true, wrap: true, forced: !NATIVE_SYMBOL, sham: !NATIVE_SYMBOL }, {
+$({ global: true, wrap: true, forced: !NATIVE_SYMBOL, sham: !NATIVE_SYMBOL }, {
   Symbol: $Symbol
 });
 
@@ -3423,6 +2931,22 @@ $forEach(objectKeys(WellKnownSymbolsStore), function (name) {
 });
 
 $({ target: SYMBOL, stat: true, forced: !NATIVE_SYMBOL }, {
+  // `Symbol.for` method
+  // https://tc39.es/ecma262/#sec-symbol.for
+  'for': function (key) {
+    var string = String(key);
+    if (has(StringToSymbolRegistry, string)) return StringToSymbolRegistry[string];
+    var symbol = $Symbol(string);
+    StringToSymbolRegistry[string] = symbol;
+    SymbolToStringRegistry[symbol] = string;
+    return symbol;
+  },
+  // `Symbol.keyFor` method
+  // https://tc39.es/ecma262/#sec-symbol.keyfor
+  keyFor: function keyFor(sym) {
+    if (!isSymbol(sym)) throw TypeError(sym + ' is not a symbol');
+    if (has(SymbolToStringRegistry, sym)) return SymbolToStringRegistry[sym];
+  },
   useSetter: function () { USE_SETTER = true; },
   useSimple: function () { USE_SETTER = false; }
 });
@@ -3445,195 +2969,71 @@ $({ target: 'Object', stat: true, forced: !NATIVE_SYMBOL, sham: !DESCRIPTORS }, 
 $({ target: 'Object', stat: true, forced: !NATIVE_SYMBOL }, {
   // `Object.getOwnPropertyNames` method
   // https://tc39.es/ecma262/#sec-object.getownpropertynames
-  getOwnPropertyNames: $getOwnPropertyNames
+  getOwnPropertyNames: $getOwnPropertyNames,
+  // `Object.getOwnPropertySymbols` method
+  // https://tc39.es/ecma262/#sec-object.getownpropertysymbols
+  getOwnPropertySymbols: $getOwnPropertySymbols
 });
+
+// Chrome 38 and 39 `Object.getOwnPropertySymbols` fails on primitives
+// https://bugs.chromium.org/p/v8/issues/detail?id=3443
+$({ target: 'Object', stat: true, forced: fails(function () { getOwnPropertySymbolsModule.f(1); }) }, {
+  getOwnPropertySymbols: function getOwnPropertySymbols(it) {
+    return getOwnPropertySymbolsModule.f(toObject(it));
+  }
+});
+
+// `JSON.stringify` method behavior with symbols
+// https://tc39.es/ecma262/#sec-json.stringify
+if ($stringify) {
+  var FORCED_JSON_STRINGIFY = !NATIVE_SYMBOL || fails(function () {
+    var symbol = $Symbol();
+    // MS Edge converts symbol values to JSON as {}
+    return $stringify([symbol]) != '[null]'
+      // WebKit converts symbol values to JSON as null
+      || $stringify({ a: symbol }) != '{}'
+      // V8 throws on boxed symbols
+      || $stringify(Object(symbol)) != '{}';
+  });
+
+  $({ target: 'JSON', stat: true, forced: FORCED_JSON_STRINGIFY }, {
+    // eslint-disable-next-line no-unused-vars -- required for `.length`
+    stringify: function stringify(it, replacer, space) {
+      var args = [it];
+      var index = 1;
+      var $replacer;
+      while (arguments.length > index) args.push(arguments[index++]);
+      $replacer = replacer;
+      if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+      if (!isArray(replacer)) replacer = function (key, value) {
+        if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
+        if (!isSymbol(value)) return value;
+      };
+      args[1] = replacer;
+      return $stringify.apply(null, args);
+    }
+  });
+}
 
 // `Symbol.prototype[@@toPrimitive]` method
 // https://tc39.es/ecma262/#sec-symbol.prototype-@@toprimitive
-defineSymbolToPrimitive();
-
+if (!$Symbol[PROTOTYPE][TO_PRIMITIVE]) {
+  createNonEnumerableProperty($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+}
 // `Symbol.prototype[@@toStringTag]` property
 // https://tc39.es/ecma262/#sec-symbol.prototype-@@tostringtag
 setToStringTag($Symbol, SYMBOL);
 
 hiddenKeys[HIDDEN] = true;
 
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/is-pure":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-pure.js","../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/symbol-constructor-detection":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-constructor-detection.js","../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/object-is-prototype-of":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-is-prototype-of.js","../internals/an-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js","../internals/to-indexed-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-indexed-object.js","../internals/to-property-key":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-property-key.js","../internals/to-string":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string.js","../internals/create-property-descriptor":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property-descriptor.js","../internals/object-create":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-create.js","../internals/object-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-keys.js","../internals/object-get-own-property-names":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-names.js","../internals/object-get-own-property-names-external":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-names-external.js","../internals/object-get-own-property-symbols":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-symbols.js","../internals/object-get-own-property-descriptor":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-descriptor.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js","../internals/object-define-properties":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-properties.js","../internals/object-property-is-enumerable":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-property-is-enumerable.js","../internals/define-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/define-built-in.js","../internals/shared":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared.js","../internals/shared-key":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared-key.js","../internals/hidden-keys":"node_modules/react-app-polyfill/node_modules/core-js/internals/hidden-keys.js","../internals/uid":"node_modules/react-app-polyfill/node_modules/core-js/internals/uid.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js","../internals/well-known-symbol-wrapped":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-wrapped.js","../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js","../internals/symbol-define-to-primitive":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-define-to-primitive.js","../internals/set-to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/internals/set-to-string-tag.js","../internals/internal-state":"node_modules/react-app-polyfill/node_modules/core-js/internals/internal-state.js","../internals/array-iteration":"node_modules/react-app-polyfill/node_modules/core-js/internals/array-iteration.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-registry-detection.js":[function(require,module,exports) {
-var NATIVE_SYMBOL = require('../internals/symbol-constructor-detection');
-
-/* eslint-disable es/no-symbol -- safe */
-module.exports = NATIVE_SYMBOL && !!Symbol['for'] && !!Symbol.keyFor;
-
-},{"../internals/symbol-constructor-detection":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-constructor-detection.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.for.js":[function(require,module,exports) {
-var $ = require('../internals/export');
-var getBuiltIn = require('../internals/get-built-in');
-var hasOwn = require('../internals/has-own-property');
-var toString = require('../internals/to-string');
-var shared = require('../internals/shared');
-var NATIVE_SYMBOL_REGISTRY = require('../internals/symbol-registry-detection');
-
-var StringToSymbolRegistry = shared('string-to-symbol-registry');
-var SymbolToStringRegistry = shared('symbol-to-string-registry');
-
-// `Symbol.for` method
-// https://tc39.es/ecma262/#sec-symbol.for
-$({ target: 'Symbol', stat: true, forced: !NATIVE_SYMBOL_REGISTRY }, {
-  'for': function (key) {
-    var string = toString(key);
-    if (hasOwn(StringToSymbolRegistry, string)) return StringToSymbolRegistry[string];
-    var symbol = getBuiltIn('Symbol')(string);
-    StringToSymbolRegistry[string] = symbol;
-    SymbolToStringRegistry[symbol] = string;
-    return symbol;
-  }
-});
-
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/get-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/to-string":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string.js","../internals/shared":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared.js","../internals/symbol-registry-detection":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-registry-detection.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.key-for.js":[function(require,module,exports) {
-var $ = require('../internals/export');
-var hasOwn = require('../internals/has-own-property');
-var isSymbol = require('../internals/is-symbol');
-var tryToString = require('../internals/try-to-string');
-var shared = require('../internals/shared');
-var NATIVE_SYMBOL_REGISTRY = require('../internals/symbol-registry-detection');
-
-var SymbolToStringRegistry = shared('symbol-to-string-registry');
-
-// `Symbol.keyFor` method
-// https://tc39.es/ecma262/#sec-symbol.keyfor
-$({ target: 'Symbol', stat: true, forced: !NATIVE_SYMBOL_REGISTRY }, {
-  keyFor: function keyFor(sym) {
-    if (!isSymbol(sym)) throw TypeError(tryToString(sym) + ' is not a symbol');
-    if (hasOwn(SymbolToStringRegistry, sym)) return SymbolToStringRegistry[sym];
-  }
-});
-
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/is-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-symbol.js","../internals/try-to-string":"node_modules/react-app-polyfill/node_modules/core-js/internals/try-to-string.js","../internals/shared":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared.js","../internals/symbol-registry-detection":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-registry-detection.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/function-apply.js":[function(require,module,exports) {
-var NATIVE_BIND = require('../internals/function-bind-native');
-
-var FunctionPrototype = Function.prototype;
-var apply = FunctionPrototype.apply;
-var call = FunctionPrototype.call;
-
-// eslint-disable-next-line es/no-reflect -- safe
-module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? call.bind(apply) : function () {
-  return call.apply(apply, arguments);
-});
-
-},{"../internals/function-bind-native":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-bind-native.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/array-slice.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
-
-module.exports = uncurryThis([].slice);
-
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.json.stringify.js":[function(require,module,exports) {
-var $ = require('../internals/export');
-var getBuiltIn = require('../internals/get-built-in');
-var apply = require('../internals/function-apply');
-var call = require('../internals/function-call');
-var uncurryThis = require('../internals/function-uncurry-this');
-var fails = require('../internals/fails');
-var isArray = require('../internals/is-array');
-var isCallable = require('../internals/is-callable');
-var isObject = require('../internals/is-object');
-var isSymbol = require('../internals/is-symbol');
-var arraySlice = require('../internals/array-slice');
-var NATIVE_SYMBOL = require('../internals/symbol-constructor-detection');
-
-var $stringify = getBuiltIn('JSON', 'stringify');
-var exec = uncurryThis(/./.exec);
-var charAt = uncurryThis(''.charAt);
-var charCodeAt = uncurryThis(''.charCodeAt);
-var replace = uncurryThis(''.replace);
-var numberToString = uncurryThis(1.0.toString);
-
-var tester = /[\uD800-\uDFFF]/g;
-var low = /^[\uD800-\uDBFF]$/;
-var hi = /^[\uDC00-\uDFFF]$/;
-
-var WRONG_SYMBOLS_CONVERSION = !NATIVE_SYMBOL || fails(function () {
-  var symbol = getBuiltIn('Symbol')();
-  // MS Edge converts symbol values to JSON as {}
-  return $stringify([symbol]) != '[null]'
-    // WebKit converts symbol values to JSON as null
-    || $stringify({ a: symbol }) != '{}'
-    // V8 throws on boxed symbols
-    || $stringify(Object(symbol)) != '{}';
-});
-
-// https://github.com/tc39/proposal-well-formed-stringify
-var ILL_FORMED_UNICODE = fails(function () {
-  return $stringify('\uDF06\uD834') !== '"\\udf06\\ud834"'
-    || $stringify('\uDEAD') !== '"\\udead"';
-});
-
-var stringifyWithSymbolsFix = function (it, replacer) {
-  var args = arraySlice(arguments);
-  var $replacer = replacer;
-  if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
-  if (!isArray(replacer)) replacer = function (key, value) {
-    if (isCallable($replacer)) value = call($replacer, this, key, value);
-    if (!isSymbol(value)) return value;
-  };
-  args[1] = replacer;
-  return apply($stringify, null, args);
-};
-
-var fixIllFormed = function (match, offset, string) {
-  var prev = charAt(string, offset - 1);
-  var next = charAt(string, offset + 1);
-  if ((exec(low, match) && !exec(hi, next)) || (exec(hi, match) && !exec(low, prev))) {
-    return '\\u' + numberToString(charCodeAt(match, 0), 16);
-  } return match;
-};
-
-if ($stringify) {
-  // `JSON.stringify` method
-  // https://tc39.es/ecma262/#sec-json.stringify
-  $({ target: 'JSON', stat: true, arity: 3, forced: WRONG_SYMBOLS_CONVERSION || ILL_FORMED_UNICODE }, {
-    // eslint-disable-next-line no-unused-vars -- required for `.length`
-    stringify: function stringify(it, replacer, space) {
-      var args = arraySlice(arguments);
-      var result = apply(WRONG_SYMBOLS_CONVERSION ? stringifyWithSymbolsFix : $stringify, null, args);
-      return ILL_FORMED_UNICODE && typeof result == 'string' ? replace(result, tester, fixIllFormed) : result;
-    }
-  });
-}
-
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/get-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js","../internals/function-apply":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-apply.js","../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/is-array":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-array.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/is-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js","../internals/is-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-symbol.js","../internals/array-slice":"node_modules/react-app-polyfill/node_modules/core-js/internals/array-slice.js","../internals/symbol-constructor-detection":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-constructor-detection.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.object.get-own-property-symbols.js":[function(require,module,exports) {
-var $ = require('../internals/export');
-var NATIVE_SYMBOL = require('../internals/symbol-constructor-detection');
-var fails = require('../internals/fails');
-var getOwnPropertySymbolsModule = require('../internals/object-get-own-property-symbols');
-var toObject = require('../internals/to-object');
-
-// V8 ~ Chrome 38 and 39 `Object.getOwnPropertySymbols` fails on primitives
-// https://bugs.chromium.org/p/v8/issues/detail?id=3443
-var FORCED = !NATIVE_SYMBOL || fails(function () { getOwnPropertySymbolsModule.f(1); });
-
-// `Object.getOwnPropertySymbols` method
-// https://tc39.es/ecma262/#sec-object.getownpropertysymbols
-$({ target: 'Object', stat: true, forced: FORCED }, {
-  getOwnPropertySymbols: function getOwnPropertySymbols(it) {
-    var $getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
-    return $getOwnPropertySymbols ? $getOwnPropertySymbols(toObject(it)) : [];
-  }
-});
-
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/symbol-constructor-detection":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-constructor-detection.js","../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/object-get-own-property-symbols":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-own-property-symbols.js","../internals/to-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-object.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.js":[function(require,module,exports) {
-// TODO: Remove this module from `core-js@4` since it's split to modules listed below
-require('../modules/es.symbol.constructor');
-require('../modules/es.symbol.for');
-require('../modules/es.symbol.key-for');
-require('../modules/es.json.stringify');
-require('../modules/es.object.get-own-property-symbols');
-
-},{"../modules/es.symbol.constructor":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.constructor.js","../modules/es.symbol.for":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.for.js","../modules/es.symbol.key-for":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.key-for.js","../modules/es.json.stringify":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.json.stringify.js","../modules/es.object.get-own-property-symbols":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.object.get-own-property-symbols.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.async-iterator.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/export":"node_modules/core-js/internals/export.js","../internals/global":"node_modules/core-js/internals/global.js","../internals/get-built-in":"node_modules/core-js/internals/get-built-in.js","../internals/is-pure":"node_modules/core-js/internals/is-pure.js","../internals/descriptors":"node_modules/core-js/internals/descriptors.js","../internals/native-symbol":"node_modules/core-js/internals/native-symbol.js","../internals/use-symbol-as-uid":"node_modules/core-js/internals/use-symbol-as-uid.js","../internals/fails":"node_modules/core-js/internals/fails.js","../internals/has":"node_modules/core-js/internals/has.js","../internals/is-array":"node_modules/core-js/internals/is-array.js","../internals/is-object":"node_modules/core-js/internals/is-object.js","../internals/an-object":"node_modules/core-js/internals/an-object.js","../internals/to-object":"node_modules/core-js/internals/to-object.js","../internals/to-indexed-object":"node_modules/core-js/internals/to-indexed-object.js","../internals/to-primitive":"node_modules/core-js/internals/to-primitive.js","../internals/create-property-descriptor":"node_modules/core-js/internals/create-property-descriptor.js","../internals/object-create":"node_modules/core-js/internals/object-create.js","../internals/object-keys":"node_modules/core-js/internals/object-keys.js","../internals/object-get-own-property-names":"node_modules/core-js/internals/object-get-own-property-names.js","../internals/object-get-own-property-names-external":"node_modules/core-js/internals/object-get-own-property-names-external.js","../internals/object-get-own-property-symbols":"node_modules/core-js/internals/object-get-own-property-symbols.js","../internals/object-get-own-property-descriptor":"node_modules/core-js/internals/object-get-own-property-descriptor.js","../internals/object-define-property":"node_modules/core-js/internals/object-define-property.js","../internals/object-property-is-enumerable":"node_modules/core-js/internals/object-property-is-enumerable.js","../internals/create-non-enumerable-property":"node_modules/core-js/internals/create-non-enumerable-property.js","../internals/redefine":"node_modules/core-js/internals/redefine.js","../internals/shared":"node_modules/core-js/internals/shared.js","../internals/shared-key":"node_modules/core-js/internals/shared-key.js","../internals/hidden-keys":"node_modules/core-js/internals/hidden-keys.js","../internals/uid":"node_modules/core-js/internals/uid.js","../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js","../internals/well-known-symbol-wrapped":"node_modules/core-js/internals/well-known-symbol-wrapped.js","../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js","../internals/set-to-string-tag":"node_modules/core-js/internals/set-to-string-tag.js","../internals/internal-state":"node_modules/core-js/internals/internal-state.js","../internals/array-iteration":"node_modules/core-js/internals/array-iteration.js"}],"node_modules/core-js/modules/es.symbol.async-iterator.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.asyncIterator` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.asynciterator
 defineWellKnownSymbol('asyncIterator');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.description.js":[function(require,module,exports) {
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.description.js":[function(require,module,exports) {
 
 // `Symbol.prototype.description` getter
 // https://tc39.es/ecma262/#sec-symbol.prototype.description
@@ -3641,156 +3041,136 @@ defineWellKnownSymbol('asyncIterator');
 var $ = require('../internals/export');
 var DESCRIPTORS = require('../internals/descriptors');
 var global = require('../internals/global');
-var uncurryThis = require('../internals/function-uncurry-this');
-var hasOwn = require('../internals/has-own-property');
-var isCallable = require('../internals/is-callable');
-var isPrototypeOf = require('../internals/object-is-prototype-of');
-var toString = require('../internals/to-string');
+var has = require('../internals/has');
+var isObject = require('../internals/is-object');
 var defineProperty = require('../internals/object-define-property').f;
 var copyConstructorProperties = require('../internals/copy-constructor-properties');
 
 var NativeSymbol = global.Symbol;
-var SymbolPrototype = NativeSymbol && NativeSymbol.prototype;
 
-if (DESCRIPTORS && isCallable(NativeSymbol) && (!('description' in SymbolPrototype) ||
+if (DESCRIPTORS && typeof NativeSymbol == 'function' && (!('description' in NativeSymbol.prototype) ||
   // Safari 12 bug
   NativeSymbol().description !== undefined
 )) {
   var EmptyStringDescriptionStore = {};
   // wrap Symbol constructor for correct work with undefined description
   var SymbolWrapper = function Symbol() {
-    var description = arguments.length < 1 || arguments[0] === undefined ? undefined : toString(arguments[0]);
-    var result = isPrototypeOf(SymbolPrototype, this)
+    var description = arguments.length < 1 || arguments[0] === undefined ? undefined : String(arguments[0]);
+    var result = this instanceof SymbolWrapper
       ? new NativeSymbol(description)
       // in Edge 13, String(Symbol(undefined)) === 'Symbol(undefined)'
       : description === undefined ? NativeSymbol() : NativeSymbol(description);
     if (description === '') EmptyStringDescriptionStore[result] = true;
     return result;
   };
-
   copyConstructorProperties(SymbolWrapper, NativeSymbol);
-  SymbolWrapper.prototype = SymbolPrototype;
-  SymbolPrototype.constructor = SymbolWrapper;
+  var symbolPrototype = SymbolWrapper.prototype = NativeSymbol.prototype;
+  symbolPrototype.constructor = SymbolWrapper;
 
-  var NATIVE_SYMBOL = String(NativeSymbol('test')) == 'Symbol(test)';
-  var thisSymbolValue = uncurryThis(SymbolPrototype.valueOf);
-  var symbolDescriptiveString = uncurryThis(SymbolPrototype.toString);
+  var symbolToString = symbolPrototype.toString;
+  var native = String(NativeSymbol('test')) == 'Symbol(test)';
   var regexp = /^Symbol\((.*)\)[^)]+$/;
-  var replace = uncurryThis(''.replace);
-  var stringSlice = uncurryThis(''.slice);
-
-  defineProperty(SymbolPrototype, 'description', {
+  defineProperty(symbolPrototype, 'description', {
     configurable: true,
     get: function description() {
-      var symbol = thisSymbolValue(this);
-      if (hasOwn(EmptyStringDescriptionStore, symbol)) return '';
-      var string = symbolDescriptiveString(symbol);
-      var desc = NATIVE_SYMBOL ? stringSlice(string, 7, -1) : replace(string, regexp, '$1');
+      var symbol = isObject(this) ? this.valueOf() : this;
+      var string = symbolToString.call(symbol);
+      if (has(EmptyStringDescriptionStore, symbol)) return '';
+      var desc = native ? string.slice(7, -1) : string.replace(regexp, '$1');
       return desc === '' ? undefined : desc;
     }
   });
 
-  $({ global: true, constructor: true, forced: true }, {
+  $({ global: true, forced: true }, {
     Symbol: SymbolWrapper
   });
 }
 
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js","../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/object-is-prototype-of":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-is-prototype-of.js","../internals/to-string":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js","../internals/copy-constructor-properties":"node_modules/react-app-polyfill/node_modules/core-js/internals/copy-constructor-properties.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.has-instance.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/export":"node_modules/core-js/internals/export.js","../internals/descriptors":"node_modules/core-js/internals/descriptors.js","../internals/global":"node_modules/core-js/internals/global.js","../internals/has":"node_modules/core-js/internals/has.js","../internals/is-object":"node_modules/core-js/internals/is-object.js","../internals/object-define-property":"node_modules/core-js/internals/object-define-property.js","../internals/copy-constructor-properties":"node_modules/core-js/internals/copy-constructor-properties.js"}],"node_modules/core-js/modules/es.symbol.has-instance.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.hasInstance` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.hasinstance
 defineWellKnownSymbol('hasInstance');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.is-concat-spreadable.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.is-concat-spreadable.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.isConcatSpreadable` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.isconcatspreadable
 defineWellKnownSymbol('isConcatSpreadable');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.iterator.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.iterator.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.iterator` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.iterator
 defineWellKnownSymbol('iterator');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.match.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.match.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.match` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.match
 defineWellKnownSymbol('match');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.match-all.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.match-all.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.matchAll` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.matchall
 defineWellKnownSymbol('matchAll');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.replace.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.replace.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.replace` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.replace
 defineWellKnownSymbol('replace');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.search.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.search.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.search` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.search
 defineWellKnownSymbol('search');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.species.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.species.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.species` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.species
 defineWellKnownSymbol('species');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.split.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.split.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.split` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.split
 defineWellKnownSymbol('split');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.to-primitive.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-var defineSymbolToPrimitive = require('../internals/symbol-define-to-primitive');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.to-primitive.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.toPrimitive` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.toprimitive
 defineWellKnownSymbol('toPrimitive');
 
-// `Symbol.prototype[@@toPrimitive]` method
-// https://tc39.es/ecma262/#sec-symbol.prototype-@@toprimitive
-defineSymbolToPrimitive();
-
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js","../internals/symbol-define-to-primitive":"node_modules/react-app-polyfill/node_modules/core-js/internals/symbol-define-to-primitive.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.to-string-tag.js":[function(require,module,exports) {
-var getBuiltIn = require('../internals/get-built-in');
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-var setToStringTag = require('../internals/set-to-string-tag');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.to-string-tag.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.toStringTag` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.tostringtag
 defineWellKnownSymbol('toStringTag');
 
-// `Symbol.prototype[@@toStringTag]` property
-// https://tc39.es/ecma262/#sec-symbol.prototype-@@tostringtag
-setToStringTag(getBuiltIn('Symbol'), 'Symbol');
-
-},{"../internals/get-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-built-in.js","../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js","../internals/set-to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/internals/set-to-string-tag.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.unscopables.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.symbol.unscopables.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
 
 // `Symbol.unscopables` well-known symbol
 // https://tc39.es/ecma262/#sec-symbol.unscopables
 defineWellKnownSymbol('unscopables');
 
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.json.to-string-tag.js":[function(require,module,exports) {
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/es.json.to-string-tag.js":[function(require,module,exports) {
 
 var global = require('../internals/global');
 var setToStringTag = require('../internals/set-to-string-tag');
@@ -3799,14 +3179,14 @@ var setToStringTag = require('../internals/set-to-string-tag');
 // https://tc39.es/ecma262/#sec-json-@@tostringtag
 setToStringTag(global.JSON, 'JSON', true);
 
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/set-to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/internals/set-to-string-tag.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.math.to-string-tag.js":[function(require,module,exports) {
+},{"../internals/global":"node_modules/core-js/internals/global.js","../internals/set-to-string-tag":"node_modules/core-js/internals/set-to-string-tag.js"}],"node_modules/core-js/modules/es.math.to-string-tag.js":[function(require,module,exports) {
 var setToStringTag = require('../internals/set-to-string-tag');
 
 // Math[@@toStringTag] property
 // https://tc39.es/ecma262/#sec-math-@@tostringtag
 setToStringTag(Math, 'Math', true);
 
-},{"../internals/set-to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/internals/set-to-string-tag.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.reflect.to-string-tag.js":[function(require,module,exports) {
+},{"../internals/set-to-string-tag":"node_modules/core-js/internals/set-to-string-tag.js"}],"node_modules/core-js/modules/es.reflect.to-string-tag.js":[function(require,module,exports) {
 
 var $ = require('../internals/export');
 var global = require('../internals/global');
@@ -3818,7 +3198,7 @@ $({ global: true }, { Reflect: {} });
 // https://tc39.es/ecma262/#sec-reflect-@@tostringtag
 setToStringTag(global.Reflect, 'Reflect', true);
 
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/set-to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/internals/set-to-string-tag.js"}],"node_modules/react-app-polyfill/node_modules/core-js/es/symbol/index.js":[function(require,module,exports) {
+},{"../internals/export":"node_modules/core-js/internals/export.js","../internals/global":"node_modules/core-js/internals/global.js","../internals/set-to-string-tag":"node_modules/core-js/internals/set-to-string-tag.js"}],"node_modules/core-js/es/symbol/index.js":[function(require,module,exports) {
 require('../../modules/es.array.concat');
 require('../../modules/es.object.to-string');
 require('../../modules/es.symbol');
@@ -3843,129 +3223,126 @@ var path = require('../../internals/path');
 
 module.exports = path.Symbol;
 
-},{"../../modules/es.array.concat":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.array.concat.js","../../modules/es.object.to-string":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.object.to-string.js","../../modules/es.symbol":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.js","../../modules/es.symbol.async-iterator":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.async-iterator.js","../../modules/es.symbol.description":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.description.js","../../modules/es.symbol.has-instance":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.has-instance.js","../../modules/es.symbol.is-concat-spreadable":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.is-concat-spreadable.js","../../modules/es.symbol.iterator":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.iterator.js","../../modules/es.symbol.match":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.match.js","../../modules/es.symbol.match-all":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.match-all.js","../../modules/es.symbol.replace":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.replace.js","../../modules/es.symbol.search":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.search.js","../../modules/es.symbol.species":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.species.js","../../modules/es.symbol.split":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.split.js","../../modules/es.symbol.to-primitive":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.to-primitive.js","../../modules/es.symbol.to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.to-string-tag.js","../../modules/es.symbol.unscopables":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.symbol.unscopables.js","../../modules/es.json.to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.json.to-string-tag.js","../../modules/es.math.to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.math.to-string-tag.js","../../modules/es.reflect.to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.reflect.to-string-tag.js","../../internals/path":"node_modules/react-app-polyfill/node_modules/core-js/internals/path.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/dom-iterables.js":[function(require,module,exports) {
-// iterable DOM collections
-// flag - `iterable` interface - 'entries', 'keys', 'values', 'forEach' methods
+},{"../../modules/es.array.concat":"node_modules/core-js/modules/es.array.concat.js","../../modules/es.object.to-string":"node_modules/core-js/modules/es.object.to-string.js","../../modules/es.symbol":"node_modules/core-js/modules/es.symbol.js","../../modules/es.symbol.async-iterator":"node_modules/core-js/modules/es.symbol.async-iterator.js","../../modules/es.symbol.description":"node_modules/core-js/modules/es.symbol.description.js","../../modules/es.symbol.has-instance":"node_modules/core-js/modules/es.symbol.has-instance.js","../../modules/es.symbol.is-concat-spreadable":"node_modules/core-js/modules/es.symbol.is-concat-spreadable.js","../../modules/es.symbol.iterator":"node_modules/core-js/modules/es.symbol.iterator.js","../../modules/es.symbol.match":"node_modules/core-js/modules/es.symbol.match.js","../../modules/es.symbol.match-all":"node_modules/core-js/modules/es.symbol.match-all.js","../../modules/es.symbol.replace":"node_modules/core-js/modules/es.symbol.replace.js","../../modules/es.symbol.search":"node_modules/core-js/modules/es.symbol.search.js","../../modules/es.symbol.species":"node_modules/core-js/modules/es.symbol.species.js","../../modules/es.symbol.split":"node_modules/core-js/modules/es.symbol.split.js","../../modules/es.symbol.to-primitive":"node_modules/core-js/modules/es.symbol.to-primitive.js","../../modules/es.symbol.to-string-tag":"node_modules/core-js/modules/es.symbol.to-string-tag.js","../../modules/es.symbol.unscopables":"node_modules/core-js/modules/es.symbol.unscopables.js","../../modules/es.json.to-string-tag":"node_modules/core-js/modules/es.json.to-string-tag.js","../../modules/es.math.to-string-tag":"node_modules/core-js/modules/es.math.to-string-tag.js","../../modules/es.reflect.to-string-tag":"node_modules/core-js/modules/es.reflect.to-string-tag.js","../../internals/path":"node_modules/core-js/internals/path.js"}],"node_modules/core-js/modules/esnext.symbol.async-dispose.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
+
+// `Symbol.asyncDispose` well-known symbol
+// https://github.com/tc39/proposal-using-statement
+defineWellKnownSymbol('asyncDispose');
+
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/esnext.symbol.dispose.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
+
+// `Symbol.dispose` well-known symbol
+// https://github.com/tc39/proposal-using-statement
+defineWellKnownSymbol('dispose');
+
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/esnext.symbol.observable.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
+
+// `Symbol.observable` well-known symbol
+// https://github.com/tc39/proposal-observable
+defineWellKnownSymbol('observable');
+
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/esnext.symbol.pattern-match.js":[function(require,module,exports) {
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
+
+// `Symbol.patternMatch` well-known symbol
+// https://github.com/tc39/proposal-pattern-matching
+defineWellKnownSymbol('patternMatch');
+
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/modules/esnext.symbol.replace-all.js":[function(require,module,exports) {
+// TODO: remove from `core-js@4`
+var defineWellKnownSymbol = require('../internals/define-well-known-symbol');
+
+defineWellKnownSymbol('replaceAll');
+
+},{"../internals/define-well-known-symbol":"node_modules/core-js/internals/define-well-known-symbol.js"}],"node_modules/core-js/features/symbol/index.js":[function(require,module,exports) {
+var parent = require('../../es/symbol');
+require('../../modules/esnext.symbol.async-dispose');
+require('../../modules/esnext.symbol.dispose');
+require('../../modules/esnext.symbol.observable');
+require('../../modules/esnext.symbol.pattern-match');
+// TODO: Remove from `core-js@4`
+require('../../modules/esnext.symbol.replace-all');
+
+module.exports = parent;
+
+},{"../../es/symbol":"node_modules/core-js/es/symbol/index.js","../../modules/esnext.symbol.async-dispose":"node_modules/core-js/modules/esnext.symbol.async-dispose.js","../../modules/esnext.symbol.dispose":"node_modules/core-js/modules/esnext.symbol.dispose.js","../../modules/esnext.symbol.observable":"node_modules/core-js/modules/esnext.symbol.observable.js","../../modules/esnext.symbol.pattern-match":"node_modules/core-js/modules/esnext.symbol.pattern-match.js","../../modules/esnext.symbol.replace-all":"node_modules/core-js/modules/esnext.symbol.replace-all.js"}],"node_modules/core-js/internals/string-multibyte.js":[function(require,module,exports) {
+var toInteger = require('../internals/to-integer');
+var requireObjectCoercible = require('../internals/require-object-coercible');
+
+// `String.prototype.{ codePointAt, at }` methods implementation
+var createMethod = function (CONVERT_TO_STRING) {
+  return function ($this, pos) {
+    var S = String(requireObjectCoercible($this));
+    var position = toInteger(pos);
+    var size = S.length;
+    var first, second;
+    if (position < 0 || position >= size) return CONVERT_TO_STRING ? '' : undefined;
+    first = S.charCodeAt(position);
+    return first < 0xD800 || first > 0xDBFF || position + 1 === size
+      || (second = S.charCodeAt(position + 1)) < 0xDC00 || second > 0xDFFF
+        ? CONVERT_TO_STRING ? S.charAt(position) : first
+        : CONVERT_TO_STRING ? S.slice(position, position + 2) : (first - 0xD800 << 10) + (second - 0xDC00) + 0x10000;
+  };
+};
+
 module.exports = {
-  CSSRuleList: 0,
-  CSSStyleDeclaration: 0,
-  CSSValueList: 0,
-  ClientRectList: 0,
-  DOMRectList: 0,
-  DOMStringList: 0,
-  DOMTokenList: 1,
-  DataTransferItemList: 0,
-  FileList: 0,
-  HTMLAllCollection: 0,
-  HTMLCollection: 0,
-  HTMLFormElement: 0,
-  HTMLSelectElement: 0,
-  MediaList: 0,
-  MimeTypeArray: 0,
-  NamedNodeMap: 0,
-  NodeList: 1,
-  PaintRequestList: 0,
-  Plugin: 0,
-  PluginArray: 0,
-  SVGLengthList: 0,
-  SVGNumberList: 0,
-  SVGPathSegList: 0,
-  SVGPointList: 0,
-  SVGStringList: 0,
-  SVGTransformList: 0,
-  SourceBufferList: 0,
-  StyleSheetList: 0,
-  TextTrackCueList: 0,
-  TextTrackList: 0,
-  TouchList: 0
+  // `String.prototype.codePointAt` method
+  // https://tc39.es/ecma262/#sec-string.prototype.codepointat
+  codeAt: createMethod(false),
+  // `String.prototype.at` method
+  // https://github.com/mathiasbynens/String.prototype.at
+  charAt: createMethod(true)
 };
 
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/dom-token-list-prototype.js":[function(require,module,exports) {
-// in old WebKit versions, `element.classList` is not an instance of global `DOMTokenList`
-var documentCreateElement = require('../internals/document-create-element');
-
-var classList = documentCreateElement('span').classList;
-var DOMTokenListPrototype = classList && classList.constructor && classList.constructor.prototype;
-
-module.exports = DOMTokenListPrototype === Object.prototype ? undefined : DOMTokenListPrototype;
-
-},{"../internals/document-create-element":"node_modules/react-app-polyfill/node_modules/core-js/internals/document-create-element.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/add-to-unscopables.js":[function(require,module,exports) {
-var wellKnownSymbol = require('../internals/well-known-symbol');
-var create = require('../internals/object-create');
-var defineProperty = require('../internals/object-define-property').f;
-
-var UNSCOPABLES = wellKnownSymbol('unscopables');
-var ArrayPrototype = Array.prototype;
-
-// Array.prototype[@@unscopables]
-// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
-if (ArrayPrototype[UNSCOPABLES] == undefined) {
-  defineProperty(ArrayPrototype, UNSCOPABLES, {
-    configurable: true,
-    value: create(null)
-  });
-}
-
-// add a key to Array.prototype[@@unscopables]
-module.exports = function (key) {
-  ArrayPrototype[UNSCOPABLES][key] = true;
-};
-
-},{"../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js","../internals/object-create":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-create.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/iterators.js":[function(require,module,exports) {
-module.exports = {};
-
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/internals/correct-prototype-getter.js":[function(require,module,exports) {
+},{"../internals/to-integer":"node_modules/core-js/internals/to-integer.js","../internals/require-object-coercible":"node_modules/core-js/internals/require-object-coercible.js"}],"node_modules/core-js/internals/correct-prototype-getter.js":[function(require,module,exports) {
 var fails = require('../internals/fails');
 
 module.exports = !fails(function () {
   function F() { /* empty */ }
   F.prototype.constructor = null;
-  // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
   return Object.getPrototypeOf(new F()) !== F.prototype;
 });
 
-},{"../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-prototype-of.js":[function(require,module,exports) {
-var hasOwn = require('../internals/has-own-property');
-var isCallable = require('../internals/is-callable');
+},{"../internals/fails":"node_modules/core-js/internals/fails.js"}],"node_modules/core-js/internals/object-get-prototype-of.js":[function(require,module,exports) {
+var has = require('../internals/has');
 var toObject = require('../internals/to-object');
 var sharedKey = require('../internals/shared-key');
 var CORRECT_PROTOTYPE_GETTER = require('../internals/correct-prototype-getter');
 
 var IE_PROTO = sharedKey('IE_PROTO');
-var $Object = Object;
-var ObjectPrototype = $Object.prototype;
+var ObjectPrototype = Object.prototype;
 
 // `Object.getPrototypeOf` method
 // https://tc39.es/ecma262/#sec-object.getprototypeof
-// eslint-disable-next-line es/no-object-getprototypeof -- safe
-module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O) {
-  var object = toObject(O);
-  if (hasOwn(object, IE_PROTO)) return object[IE_PROTO];
-  var constructor = object.constructor;
-  if (isCallable(constructor) && object instanceof constructor) {
-    return constructor.prototype;
-  } return object instanceof $Object ? ObjectPrototype : null;
+module.exports = CORRECT_PROTOTYPE_GETTER ? Object.getPrototypeOf : function (O) {
+  O = toObject(O);
+  if (has(O, IE_PROTO)) return O[IE_PROTO];
+  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
+    return O.constructor.prototype;
+  } return O instanceof Object ? ObjectPrototype : null;
 };
 
-},{"../internals/has-own-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/has-own-property.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/to-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-object.js","../internals/shared-key":"node_modules/react-app-polyfill/node_modules/core-js/internals/shared-key.js","../internals/correct-prototype-getter":"node_modules/react-app-polyfill/node_modules/core-js/internals/correct-prototype-getter.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/iterators-core.js":[function(require,module,exports) {
+},{"../internals/has":"node_modules/core-js/internals/has.js","../internals/to-object":"node_modules/core-js/internals/to-object.js","../internals/shared-key":"node_modules/core-js/internals/shared-key.js","../internals/correct-prototype-getter":"node_modules/core-js/internals/correct-prototype-getter.js"}],"node_modules/core-js/internals/iterators-core.js":[function(require,module,exports) {
 'use strict';
 var fails = require('../internals/fails');
-var isCallable = require('../internals/is-callable');
-var isObject = require('../internals/is-object');
-var create = require('../internals/object-create');
 var getPrototypeOf = require('../internals/object-get-prototype-of');
-var defineBuiltIn = require('../internals/define-built-in');
+var createNonEnumerableProperty = require('../internals/create-non-enumerable-property');
+var has = require('../internals/has');
 var wellKnownSymbol = require('../internals/well-known-symbol');
 var IS_PURE = require('../internals/is-pure');
 
 var ITERATOR = wellKnownSymbol('iterator');
 var BUGGY_SAFARI_ITERATORS = false;
 
+var returnThis = function () { return this; };
+
 // `%IteratorPrototype%` object
 // https://tc39.es/ecma262/#sec-%iteratorprototype%-object
 var IteratorPrototype, PrototypeOfArrayIteratorPrototype, arrayIterator;
 
-/* eslint-disable es/no-array-prototype-keys -- safe */
 if ([].keys) {
   arrayIterator = [].keys();
   // Safari 8 has buggy iterators w/o `next`
@@ -3976,21 +3353,17 @@ if ([].keys) {
   }
 }
 
-var NEW_ITERATOR_PROTOTYPE = !isObject(IteratorPrototype) || fails(function () {
+var NEW_ITERATOR_PROTOTYPE = IteratorPrototype == undefined || fails(function () {
   var test = {};
   // FF44- legacy iterators case
   return IteratorPrototype[ITERATOR].call(test) !== test;
 });
 
 if (NEW_ITERATOR_PROTOTYPE) IteratorPrototype = {};
-else if (IS_PURE) IteratorPrototype = create(IteratorPrototype);
 
-// `%IteratorPrototype%[@@iterator]()` method
-// https://tc39.es/ecma262/#sec-%iteratorprototype%-@@iterator
-if (!isCallable(IteratorPrototype[ITERATOR])) {
-  defineBuiltIn(IteratorPrototype, ITERATOR, function () {
-    return this;
-  });
+// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+if ((!IS_PURE || NEW_ITERATOR_PROTOTYPE) && !has(IteratorPrototype, ITERATOR)) {
+  createNonEnumerableProperty(IteratorPrototype, ITERATOR, returnThis);
 }
 
 module.exports = {
@@ -3998,7 +3371,10 @@ module.exports = {
   BUGGY_SAFARI_ITERATORS: BUGGY_SAFARI_ITERATORS
 };
 
-},{"../internals/fails":"node_modules/react-app-polyfill/node_modules/core-js/internals/fails.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/is-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-object.js","../internals/object-create":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-create.js","../internals/object-get-prototype-of":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-prototype-of.js","../internals/define-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/define-built-in.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js","../internals/is-pure":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-pure.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/iterator-create-constructor.js":[function(require,module,exports) {
+},{"../internals/fails":"node_modules/core-js/internals/fails.js","../internals/object-get-prototype-of":"node_modules/core-js/internals/object-get-prototype-of.js","../internals/create-non-enumerable-property":"node_modules/core-js/internals/create-non-enumerable-property.js","../internals/has":"node_modules/core-js/internals/has.js","../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js","../internals/is-pure":"node_modules/core-js/internals/is-pure.js"}],"node_modules/core-js/internals/iterators.js":[function(require,module,exports) {
+module.exports = {};
+
+},{}],"node_modules/core-js/internals/create-iterator-constructor.js":[function(require,module,exports) {
 'use strict';
 var IteratorPrototype = require('../internals/iterators-core').IteratorPrototype;
 var create = require('../internals/object-create');
@@ -4008,73 +3384,63 @@ var Iterators = require('../internals/iterators');
 
 var returnThis = function () { return this; };
 
-module.exports = function (IteratorConstructor, NAME, next, ENUMERABLE_NEXT) {
+module.exports = function (IteratorConstructor, NAME, next) {
   var TO_STRING_TAG = NAME + ' Iterator';
-  IteratorConstructor.prototype = create(IteratorPrototype, { next: createPropertyDescriptor(+!ENUMERABLE_NEXT, next) });
+  IteratorConstructor.prototype = create(IteratorPrototype, { next: createPropertyDescriptor(1, next) });
   setToStringTag(IteratorConstructor, TO_STRING_TAG, false, true);
   Iterators[TO_STRING_TAG] = returnThis;
   return IteratorConstructor;
 };
 
-},{"../internals/iterators-core":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterators-core.js","../internals/object-create":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-create.js","../internals/create-property-descriptor":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property-descriptor.js","../internals/set-to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/internals/set-to-string-tag.js","../internals/iterators":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterators.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/a-possible-prototype.js":[function(require,module,exports) {
-var isCallable = require('../internals/is-callable');
+},{"../internals/iterators-core":"node_modules/core-js/internals/iterators-core.js","../internals/object-create":"node_modules/core-js/internals/object-create.js","../internals/create-property-descriptor":"node_modules/core-js/internals/create-property-descriptor.js","../internals/set-to-string-tag":"node_modules/core-js/internals/set-to-string-tag.js","../internals/iterators":"node_modules/core-js/internals/iterators.js"}],"node_modules/core-js/internals/a-possible-prototype.js":[function(require,module,exports) {
+var isObject = require('../internals/is-object');
 
-var $String = String;
-var $TypeError = TypeError;
-
-module.exports = function (argument) {
-  if (typeof argument == 'object' || isCallable(argument)) return argument;
-  throw $TypeError("Can't set " + $String(argument) + ' as a prototype');
+module.exports = function (it) {
+  if (!isObject(it) && it !== null) {
+    throw TypeError("Can't set " + String(it) + ' as a prototype');
+  } return it;
 };
 
-},{"../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/object-set-prototype-of.js":[function(require,module,exports) {
+},{"../internals/is-object":"node_modules/core-js/internals/is-object.js"}],"node_modules/core-js/internals/object-set-prototype-of.js":[function(require,module,exports) {
 /* eslint-disable no-proto -- safe */
-var uncurryThis = require('../internals/function-uncurry-this');
 var anObject = require('../internals/an-object');
 var aPossiblePrototype = require('../internals/a-possible-prototype');
 
 // `Object.setPrototypeOf` method
 // https://tc39.es/ecma262/#sec-object.setprototypeof
 // Works with __proto__ only. Old v8 can't work with null proto objects.
-// eslint-disable-next-line es/no-object-setprototypeof -- safe
 module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
   var CORRECT_SETTER = false;
   var test = {};
   var setter;
   try {
-    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-    setter = uncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
-    setter(test, []);
+    setter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set;
+    setter.call(test, []);
     CORRECT_SETTER = test instanceof Array;
   } catch (error) { /* empty */ }
   return function setPrototypeOf(O, proto) {
     anObject(O);
     aPossiblePrototype(proto);
-    if (CORRECT_SETTER) setter(O, proto);
+    if (CORRECT_SETTER) setter.call(O, proto);
     else O.__proto__ = proto;
     return O;
   };
 }() : undefined);
 
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/an-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js","../internals/a-possible-prototype":"node_modules/react-app-polyfill/node_modules/core-js/internals/a-possible-prototype.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/iterator-define.js":[function(require,module,exports) {
+},{"../internals/an-object":"node_modules/core-js/internals/an-object.js","../internals/a-possible-prototype":"node_modules/core-js/internals/a-possible-prototype.js"}],"node_modules/core-js/internals/define-iterator.js":[function(require,module,exports) {
 'use strict';
 var $ = require('../internals/export');
-var call = require('../internals/function-call');
-var IS_PURE = require('../internals/is-pure');
-var FunctionName = require('../internals/function-name');
-var isCallable = require('../internals/is-callable');
-var createIteratorConstructor = require('../internals/iterator-create-constructor');
+var createIteratorConstructor = require('../internals/create-iterator-constructor');
 var getPrototypeOf = require('../internals/object-get-prototype-of');
 var setPrototypeOf = require('../internals/object-set-prototype-of');
 var setToStringTag = require('../internals/set-to-string-tag');
 var createNonEnumerableProperty = require('../internals/create-non-enumerable-property');
-var defineBuiltIn = require('../internals/define-built-in');
+var redefine = require('../internals/redefine');
 var wellKnownSymbol = require('../internals/well-known-symbol');
+var IS_PURE = require('../internals/is-pure');
 var Iterators = require('../internals/iterators');
 var IteratorsCore = require('../internals/iterators-core');
 
-var PROPER_FUNCTION_NAME = FunctionName.PROPER;
-var CONFIGURABLE_FUNCTION_NAME = FunctionName.CONFIGURABLE;
 var IteratorPrototype = IteratorsCore.IteratorPrototype;
 var BUGGY_SAFARI_ITERATORS = IteratorsCore.BUGGY_SAFARI_ITERATORS;
 var ITERATOR = wellKnownSymbol('iterator');
@@ -4110,12 +3476,12 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
   // fix native
   if (anyNativeIterator) {
     CurrentIteratorPrototype = getPrototypeOf(anyNativeIterator.call(new Iterable()));
-    if (CurrentIteratorPrototype !== Object.prototype && CurrentIteratorPrototype.next) {
+    if (IteratorPrototype !== Object.prototype && CurrentIteratorPrototype.next) {
       if (!IS_PURE && getPrototypeOf(CurrentIteratorPrototype) !== IteratorPrototype) {
         if (setPrototypeOf) {
           setPrototypeOf(CurrentIteratorPrototype, IteratorPrototype);
-        } else if (!isCallable(CurrentIteratorPrototype[ITERATOR])) {
-          defineBuiltIn(CurrentIteratorPrototype, ITERATOR, returnThis);
+        } else if (typeof CurrentIteratorPrototype[ITERATOR] != 'function') {
+          createNonEnumerableProperty(CurrentIteratorPrototype, ITERATOR, returnThis);
         }
       }
       // Set @@toStringTag to native iterators
@@ -4124,15 +3490,17 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
     }
   }
 
-  // fix Array.prototype.{ values, @@iterator }.name in V8 / FF
-  if (PROPER_FUNCTION_NAME && DEFAULT == VALUES && nativeIterator && nativeIterator.name !== VALUES) {
-    if (!IS_PURE && CONFIGURABLE_FUNCTION_NAME) {
-      createNonEnumerableProperty(IterablePrototype, 'name', VALUES);
-    } else {
-      INCORRECT_VALUES_NAME = true;
-      defaultIterator = function values() { return call(nativeIterator, this); };
-    }
+  // fix Array#{values, @@iterator}.name in V8 / FF
+  if (DEFAULT == VALUES && nativeIterator && nativeIterator.name !== VALUES) {
+    INCORRECT_VALUES_NAME = true;
+    defaultIterator = function values() { return nativeIterator.call(this); };
   }
+
+  // define iterator
+  if ((!IS_PURE || FORCED) && IterablePrototype[ITERATOR] !== defaultIterator) {
+    createNonEnumerableProperty(IterablePrototype, ITERATOR, defaultIterator);
+  }
+  Iterators[NAME] = defaultIterator;
 
   // export additional methods
   if (DEFAULT) {
@@ -4143,262 +3511,19 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
     };
     if (FORCED) for (KEY in methods) {
       if (BUGGY_SAFARI_ITERATORS || INCORRECT_VALUES_NAME || !(KEY in IterablePrototype)) {
-        defineBuiltIn(IterablePrototype, KEY, methods[KEY]);
+        redefine(IterablePrototype, KEY, methods[KEY]);
       }
     } else $({ target: NAME, proto: true, forced: BUGGY_SAFARI_ITERATORS || INCORRECT_VALUES_NAME }, methods);
   }
 
-  // define iterator
-  if ((!IS_PURE || FORCED) && IterablePrototype[ITERATOR] !== defaultIterator) {
-    defineBuiltIn(IterablePrototype, ITERATOR, defaultIterator, { name: DEFAULT });
-  }
-  Iterators[NAME] = defaultIterator;
-
   return methods;
 };
 
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/is-pure":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-pure.js","../internals/function-name":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-name.js","../internals/is-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-callable.js","../internals/iterator-create-constructor":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterator-create-constructor.js","../internals/object-get-prototype-of":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-get-prototype-of.js","../internals/object-set-prototype-of":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-set-prototype-of.js","../internals/set-to-string-tag":"node_modules/react-app-polyfill/node_modules/core-js/internals/set-to-string-tag.js","../internals/create-non-enumerable-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-non-enumerable-property.js","../internals/define-built-in":"node_modules/react-app-polyfill/node_modules/core-js/internals/define-built-in.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js","../internals/iterators":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterators.js","../internals/iterators-core":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterators-core.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/create-iter-result-object.js":[function(require,module,exports) {
-// `CreateIterResultObject` abstract operation
-// https://tc39.es/ecma262/#sec-createiterresultobject
-module.exports = function (value, done) {
-  return { value: value, done: done };
-};
-
-},{}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.array.iterator.js":[function(require,module,exports) {
-'use strict';
-var toIndexedObject = require('../internals/to-indexed-object');
-var addToUnscopables = require('../internals/add-to-unscopables');
-var Iterators = require('../internals/iterators');
-var InternalStateModule = require('../internals/internal-state');
-var defineProperty = require('../internals/object-define-property').f;
-var defineIterator = require('../internals/iterator-define');
-var createIterResultObject = require('../internals/create-iter-result-object');
-var IS_PURE = require('../internals/is-pure');
-var DESCRIPTORS = require('../internals/descriptors');
-
-var ARRAY_ITERATOR = 'Array Iterator';
-var setInternalState = InternalStateModule.set;
-var getInternalState = InternalStateModule.getterFor(ARRAY_ITERATOR);
-
-// `Array.prototype.entries` method
-// https://tc39.es/ecma262/#sec-array.prototype.entries
-// `Array.prototype.keys` method
-// https://tc39.es/ecma262/#sec-array.prototype.keys
-// `Array.prototype.values` method
-// https://tc39.es/ecma262/#sec-array.prototype.values
-// `Array.prototype[@@iterator]` method
-// https://tc39.es/ecma262/#sec-array.prototype-@@iterator
-// `CreateArrayIterator` internal method
-// https://tc39.es/ecma262/#sec-createarrayiterator
-module.exports = defineIterator(Array, 'Array', function (iterated, kind) {
-  setInternalState(this, {
-    type: ARRAY_ITERATOR,
-    target: toIndexedObject(iterated), // target
-    index: 0,                          // next index
-    kind: kind                         // kind
-  });
-// `%ArrayIteratorPrototype%.next` method
-// https://tc39.es/ecma262/#sec-%arrayiteratorprototype%.next
-}, function () {
-  var state = getInternalState(this);
-  var target = state.target;
-  var kind = state.kind;
-  var index = state.index++;
-  if (!target || index >= target.length) {
-    state.target = undefined;
-    return createIterResultObject(undefined, true);
-  }
-  if (kind == 'keys') return createIterResultObject(index, false);
-  if (kind == 'values') return createIterResultObject(target[index], false);
-  return createIterResultObject([index, target[index]], false);
-}, 'values');
-
-// argumentsList[@@iterator] is %ArrayProto_values%
-// https://tc39.es/ecma262/#sec-createunmappedargumentsobject
-// https://tc39.es/ecma262/#sec-createmappedargumentsobject
-var values = Iterators.Arguments = Iterators.Array;
-
-// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
-addToUnscopables('keys');
-addToUnscopables('values');
-addToUnscopables('entries');
-
-// V8 ~ Chrome 45- bug
-if (!IS_PURE && DESCRIPTORS && values.name !== 'values') try {
-  defineProperty(values, 'name', { value: 'values' });
-} catch (error) { /* empty */ }
-
-},{"../internals/to-indexed-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-indexed-object.js","../internals/add-to-unscopables":"node_modules/react-app-polyfill/node_modules/core-js/internals/add-to-unscopables.js","../internals/iterators":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterators.js","../internals/internal-state":"node_modules/react-app-polyfill/node_modules/core-js/internals/internal-state.js","../internals/object-define-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/object-define-property.js","../internals/iterator-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterator-define.js","../internals/create-iter-result-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-iter-result-object.js","../internals/is-pure":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-pure.js","../internals/descriptors":"node_modules/react-app-polyfill/node_modules/core-js/internals/descriptors.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/web.dom-collections.iterator.js":[function(require,module,exports) {
-
-var global = require('../internals/global');
-var DOMIterables = require('../internals/dom-iterables');
-var DOMTokenListPrototype = require('../internals/dom-token-list-prototype');
-var ArrayIteratorMethods = require('../modules/es.array.iterator');
-var createNonEnumerableProperty = require('../internals/create-non-enumerable-property');
-var wellKnownSymbol = require('../internals/well-known-symbol');
-
-var ITERATOR = wellKnownSymbol('iterator');
-var TO_STRING_TAG = wellKnownSymbol('toStringTag');
-var ArrayValues = ArrayIteratorMethods.values;
-
-var handlePrototype = function (CollectionPrototype, COLLECTION_NAME) {
-  if (CollectionPrototype) {
-    // some Chrome versions have non-configurable methods on DOMTokenList
-    if (CollectionPrototype[ITERATOR] !== ArrayValues) try {
-      createNonEnumerableProperty(CollectionPrototype, ITERATOR, ArrayValues);
-    } catch (error) {
-      CollectionPrototype[ITERATOR] = ArrayValues;
-    }
-    if (!CollectionPrototype[TO_STRING_TAG]) {
-      createNonEnumerableProperty(CollectionPrototype, TO_STRING_TAG, COLLECTION_NAME);
-    }
-    if (DOMIterables[COLLECTION_NAME]) for (var METHOD_NAME in ArrayIteratorMethods) {
-      // some Chrome versions have non-configurable methods on DOMTokenList
-      if (CollectionPrototype[METHOD_NAME] !== ArrayIteratorMethods[METHOD_NAME]) try {
-        createNonEnumerableProperty(CollectionPrototype, METHOD_NAME, ArrayIteratorMethods[METHOD_NAME]);
-      } catch (error) {
-        CollectionPrototype[METHOD_NAME] = ArrayIteratorMethods[METHOD_NAME];
-      }
-    }
-  }
-};
-
-for (var COLLECTION_NAME in DOMIterables) {
-  handlePrototype(global[COLLECTION_NAME] && global[COLLECTION_NAME].prototype, COLLECTION_NAME);
-}
-
-handlePrototype(DOMTokenListPrototype, 'DOMTokenList');
-
-},{"../internals/global":"node_modules/react-app-polyfill/node_modules/core-js/internals/global.js","../internals/dom-iterables":"node_modules/react-app-polyfill/node_modules/core-js/internals/dom-iterables.js","../internals/dom-token-list-prototype":"node_modules/react-app-polyfill/node_modules/core-js/internals/dom-token-list-prototype.js","../modules/es.array.iterator":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.array.iterator.js","../internals/create-non-enumerable-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-non-enumerable-property.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/stable/symbol/index.js":[function(require,module,exports) {
-var parent = require('../../es/symbol');
-require('../../modules/web.dom-collections.iterator');
-
-module.exports = parent;
-
-},{"../../es/symbol":"node_modules/react-app-polyfill/node_modules/core-js/es/symbol/index.js","../../modules/web.dom-collections.iterator":"node_modules/react-app-polyfill/node_modules/core-js/modules/web.dom-collections.iterator.js"}],"node_modules/react-app-polyfill/node_modules/core-js/actual/symbol/index.js":[function(require,module,exports) {
-var parent = require('../../stable/symbol');
-
-module.exports = parent;
-
-},{"../../stable/symbol":"node_modules/react-app-polyfill/node_modules/core-js/stable/symbol/index.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.async-dispose.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-
-// `Symbol.asyncDispose` well-known symbol
-// https://github.com/tc39/proposal-using-statement
-defineWellKnownSymbol('asyncDispose');
-
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.dispose.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-
-// `Symbol.dispose` well-known symbol
-// https://github.com/tc39/proposal-using-statement
-defineWellKnownSymbol('dispose');
-
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.matcher.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-
-// `Symbol.matcher` well-known symbol
-// https://github.com/tc39/proposal-pattern-matching
-defineWellKnownSymbol('matcher');
-
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.metadata-key.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-
-// `Symbol.metadataKey` well-known symbol
-// https://github.com/tc39/proposal-decorator-metadata
-defineWellKnownSymbol('metadataKey');
-
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.observable.js":[function(require,module,exports) {
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-
-// `Symbol.observable` well-known symbol
-// https://github.com/tc39/proposal-observable
-defineWellKnownSymbol('observable');
-
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.metadata.js":[function(require,module,exports) {
-// TODO: Remove from `core-js@4`
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-
-// `Symbol.metadata` well-known symbol
-// https://github.com/tc39/proposal-decorators
-defineWellKnownSymbol('metadata');
-
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.pattern-match.js":[function(require,module,exports) {
-// TODO: remove from `core-js@4`
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-
-// `Symbol.patternMatch` well-known symbol
-// https://github.com/tc39/proposal-pattern-matching
-defineWellKnownSymbol('patternMatch');
-
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.replace-all.js":[function(require,module,exports) {
-// TODO: remove from `core-js@4`
-var defineWellKnownSymbol = require('../internals/well-known-symbol-define');
-
-defineWellKnownSymbol('replaceAll');
-
-},{"../internals/well-known-symbol-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol-define.js"}],"node_modules/react-app-polyfill/node_modules/core-js/full/symbol/index.js":[function(require,module,exports) {
-var parent = require('../../actual/symbol');
-require('../../modules/esnext.symbol.async-dispose');
-require('../../modules/esnext.symbol.dispose');
-require('../../modules/esnext.symbol.matcher');
-require('../../modules/esnext.symbol.metadata-key');
-require('../../modules/esnext.symbol.observable');
-// TODO: Remove from `core-js@4`
-require('../../modules/esnext.symbol.metadata');
-require('../../modules/esnext.symbol.pattern-match');
-require('../../modules/esnext.symbol.replace-all');
-
-module.exports = parent;
-
-},{"../../actual/symbol":"node_modules/react-app-polyfill/node_modules/core-js/actual/symbol/index.js","../../modules/esnext.symbol.async-dispose":"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.async-dispose.js","../../modules/esnext.symbol.dispose":"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.dispose.js","../../modules/esnext.symbol.matcher":"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.matcher.js","../../modules/esnext.symbol.metadata-key":"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.metadata-key.js","../../modules/esnext.symbol.observable":"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.observable.js","../../modules/esnext.symbol.metadata":"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.metadata.js","../../modules/esnext.symbol.pattern-match":"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.pattern-match.js","../../modules/esnext.symbol.replace-all":"node_modules/react-app-polyfill/node_modules/core-js/modules/esnext.symbol.replace-all.js"}],"node_modules/react-app-polyfill/node_modules/core-js/features/symbol/index.js":[function(require,module,exports) {
-module.exports = require('../../full/symbol');
-
-},{"../../full/symbol":"node_modules/react-app-polyfill/node_modules/core-js/full/symbol/index.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/string-multibyte.js":[function(require,module,exports) {
-var uncurryThis = require('../internals/function-uncurry-this');
-var toIntegerOrInfinity = require('../internals/to-integer-or-infinity');
-var toString = require('../internals/to-string');
-var requireObjectCoercible = require('../internals/require-object-coercible');
-
-var charAt = uncurryThis(''.charAt);
-var charCodeAt = uncurryThis(''.charCodeAt);
-var stringSlice = uncurryThis(''.slice);
-
-var createMethod = function (CONVERT_TO_STRING) {
-  return function ($this, pos) {
-    var S = toString(requireObjectCoercible($this));
-    var position = toIntegerOrInfinity(pos);
-    var size = S.length;
-    var first, second;
-    if (position < 0 || position >= size) return CONVERT_TO_STRING ? '' : undefined;
-    first = charCodeAt(S, position);
-    return first < 0xD800 || first > 0xDBFF || position + 1 === size
-      || (second = charCodeAt(S, position + 1)) < 0xDC00 || second > 0xDFFF
-        ? CONVERT_TO_STRING
-          ? charAt(S, position)
-          : first
-        : CONVERT_TO_STRING
-          ? stringSlice(S, position, position + 2)
-          : (first - 0xD800 << 10) + (second - 0xDC00) + 0x10000;
-  };
-};
-
-module.exports = {
-  // `String.prototype.codePointAt` method
-  // https://tc39.es/ecma262/#sec-string.prototype.codepointat
-  codeAt: createMethod(false),
-  // `String.prototype.at` method
-  // https://github.com/mathiasbynens/String.prototype.at
-  charAt: createMethod(true)
-};
-
-},{"../internals/function-uncurry-this":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-uncurry-this.js","../internals/to-integer-or-infinity":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-integer-or-infinity.js","../internals/to-string":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string.js","../internals/require-object-coercible":"node_modules/react-app-polyfill/node_modules/core-js/internals/require-object-coercible.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.string.iterator.js":[function(require,module,exports) {
+},{"../internals/export":"node_modules/core-js/internals/export.js","../internals/create-iterator-constructor":"node_modules/core-js/internals/create-iterator-constructor.js","../internals/object-get-prototype-of":"node_modules/core-js/internals/object-get-prototype-of.js","../internals/object-set-prototype-of":"node_modules/core-js/internals/object-set-prototype-of.js","../internals/set-to-string-tag":"node_modules/core-js/internals/set-to-string-tag.js","../internals/create-non-enumerable-property":"node_modules/core-js/internals/create-non-enumerable-property.js","../internals/redefine":"node_modules/core-js/internals/redefine.js","../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js","../internals/is-pure":"node_modules/core-js/internals/is-pure.js","../internals/iterators":"node_modules/core-js/internals/iterators.js","../internals/iterators-core":"node_modules/core-js/internals/iterators-core.js"}],"node_modules/core-js/modules/es.string.iterator.js":[function(require,module,exports) {
 'use strict';
 var charAt = require('../internals/string-multibyte').charAt;
-var toString = require('../internals/to-string');
 var InternalStateModule = require('../internals/internal-state');
-var defineIterator = require('../internals/iterator-define');
-var createIterResultObject = require('../internals/create-iter-result-object');
+var defineIterator = require('../internals/define-iterator');
 
 var STRING_ITERATOR = 'String Iterator';
 var setInternalState = InternalStateModule.set;
@@ -4409,7 +3534,7 @@ var getInternalState = InternalStateModule.getterFor(STRING_ITERATOR);
 defineIterator(String, 'String', function (iterated) {
   setInternalState(this, {
     type: STRING_ITERATOR,
-    string: toString(iterated),
+    string: String(iterated),
     index: 0
   });
 // `%StringIteratorPrototype%.next` method
@@ -4419,38 +3544,23 @@ defineIterator(String, 'String', function (iterated) {
   var string = state.string;
   var index = state.index;
   var point;
-  if (index >= string.length) return createIterResultObject(undefined, true);
+  if (index >= string.length) return { value: undefined, done: true };
   point = charAt(string, index);
   state.index += point.length;
-  return createIterResultObject(point, false);
+  return { value: point, done: false };
 });
 
-},{"../internals/string-multibyte":"node_modules/react-app-polyfill/node_modules/core-js/internals/string-multibyte.js","../internals/to-string":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-string.js","../internals/internal-state":"node_modules/react-app-polyfill/node_modules/core-js/internals/internal-state.js","../internals/iterator-define":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterator-define.js","../internals/create-iter-result-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-iter-result-object.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/iterator-close.js":[function(require,module,exports) {
-var call = require('../internals/function-call');
+},{"../internals/string-multibyte":"node_modules/core-js/internals/string-multibyte.js","../internals/internal-state":"node_modules/core-js/internals/internal-state.js","../internals/define-iterator":"node_modules/core-js/internals/define-iterator.js"}],"node_modules/core-js/internals/iterator-close.js":[function(require,module,exports) {
 var anObject = require('../internals/an-object');
-var getMethod = require('../internals/get-method');
 
-module.exports = function (iterator, kind, value) {
-  var innerResult, innerError;
-  anObject(iterator);
-  try {
-    innerResult = getMethod(iterator, 'return');
-    if (!innerResult) {
-      if (kind === 'throw') throw value;
-      return value;
-    }
-    innerResult = call(innerResult, iterator);
-  } catch (error) {
-    innerError = true;
-    innerResult = error;
+module.exports = function (iterator) {
+  var returnMethod = iterator['return'];
+  if (returnMethod !== undefined) {
+    return anObject(returnMethod.call(iterator)).value;
   }
-  if (kind === 'throw') throw value;
-  if (innerError) throw innerResult;
-  anObject(innerResult);
-  return value;
 };
 
-},{"../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/an-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js","../internals/get-method":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-method.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/call-with-safe-iteration-closing.js":[function(require,module,exports) {
+},{"../internals/an-object":"node_modules/core-js/internals/an-object.js"}],"node_modules/core-js/internals/call-with-safe-iteration-closing.js":[function(require,module,exports) {
 var anObject = require('../internals/an-object');
 var iteratorClose = require('../internals/iterator-close');
 
@@ -4458,12 +3568,14 @@ var iteratorClose = require('../internals/iterator-close');
 module.exports = function (iterator, fn, value, ENTRIES) {
   try {
     return ENTRIES ? fn(anObject(value)[0], value[1]) : fn(value);
+  // 7.4.6 IteratorClose(iterator, completion)
   } catch (error) {
-    iteratorClose(iterator, 'throw', error);
+    iteratorClose(iterator);
+    throw error;
   }
 };
 
-},{"../internals/an-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js","../internals/iterator-close":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterator-close.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/is-array-iterator-method.js":[function(require,module,exports) {
+},{"../internals/an-object":"node_modules/core-js/internals/an-object.js","../internals/iterator-close":"node_modules/core-js/internals/iterator-close.js"}],"node_modules/core-js/internals/is-array-iterator-method.js":[function(require,module,exports) {
 var wellKnownSymbol = require('../internals/well-known-symbol');
 var Iterators = require('../internals/iterators');
 
@@ -4475,75 +3587,53 @@ module.exports = function (it) {
   return it !== undefined && (Iterators.Array === it || ArrayPrototype[ITERATOR] === it);
 };
 
-},{"../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js","../internals/iterators":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterators.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/get-iterator-method.js":[function(require,module,exports) {
+},{"../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js","../internals/iterators":"node_modules/core-js/internals/iterators.js"}],"node_modules/core-js/internals/get-iterator-method.js":[function(require,module,exports) {
 var classof = require('../internals/classof');
-var getMethod = require('../internals/get-method');
-var isNullOrUndefined = require('../internals/is-null-or-undefined');
 var Iterators = require('../internals/iterators');
 var wellKnownSymbol = require('../internals/well-known-symbol');
 
 var ITERATOR = wellKnownSymbol('iterator');
 
 module.exports = function (it) {
-  if (!isNullOrUndefined(it)) return getMethod(it, ITERATOR)
-    || getMethod(it, '@@iterator')
+  if (it != undefined) return it[ITERATOR]
+    || it['@@iterator']
     || Iterators[classof(it)];
 };
 
-},{"../internals/classof":"node_modules/react-app-polyfill/node_modules/core-js/internals/classof.js","../internals/get-method":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-method.js","../internals/is-null-or-undefined":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-null-or-undefined.js","../internals/iterators":"node_modules/react-app-polyfill/node_modules/core-js/internals/iterators.js","../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/get-iterator.js":[function(require,module,exports) {
-var call = require('../internals/function-call');
-var aCallable = require('../internals/a-callable');
-var anObject = require('../internals/an-object');
-var tryToString = require('../internals/try-to-string');
-var getIteratorMethod = require('../internals/get-iterator-method');
-
-var $TypeError = TypeError;
-
-module.exports = function (argument, usingIterator) {
-  var iteratorMethod = arguments.length < 2 ? getIteratorMethod(argument) : usingIterator;
-  if (aCallable(iteratorMethod)) return anObject(call(iteratorMethod, argument));
-  throw $TypeError(tryToString(argument) + ' is not iterable');
-};
-
-},{"../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/a-callable":"node_modules/react-app-polyfill/node_modules/core-js/internals/a-callable.js","../internals/an-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/an-object.js","../internals/try-to-string":"node_modules/react-app-polyfill/node_modules/core-js/internals/try-to-string.js","../internals/get-iterator-method":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-iterator-method.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/array-from.js":[function(require,module,exports) {
+},{"../internals/classof":"node_modules/core-js/internals/classof.js","../internals/iterators":"node_modules/core-js/internals/iterators.js","../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/core-js/internals/array-from.js":[function(require,module,exports) {
 'use strict';
 var bind = require('../internals/function-bind-context');
-var call = require('../internals/function-call');
 var toObject = require('../internals/to-object');
 var callWithSafeIterationClosing = require('../internals/call-with-safe-iteration-closing');
 var isArrayIteratorMethod = require('../internals/is-array-iterator-method');
-var isConstructor = require('../internals/is-constructor');
-var lengthOfArrayLike = require('../internals/length-of-array-like');
+var toLength = require('../internals/to-length');
 var createProperty = require('../internals/create-property');
-var getIterator = require('../internals/get-iterator');
 var getIteratorMethod = require('../internals/get-iterator-method');
-
-var $Array = Array;
 
 // `Array.from` method implementation
 // https://tc39.es/ecma262/#sec-array.from
 module.exports = function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
   var O = toObject(arrayLike);
-  var IS_CONSTRUCTOR = isConstructor(this);
+  var C = typeof this == 'function' ? this : Array;
   var argumentsLength = arguments.length;
   var mapfn = argumentsLength > 1 ? arguments[1] : undefined;
   var mapping = mapfn !== undefined;
-  if (mapping) mapfn = bind(mapfn, argumentsLength > 2 ? arguments[2] : undefined);
   var iteratorMethod = getIteratorMethod(O);
   var index = 0;
   var length, result, step, iterator, next, value;
+  if (mapping) mapfn = bind(mapfn, argumentsLength > 2 ? arguments[2] : undefined, 2);
   // if the target is not iterable or it's an array with the default iterator - use a simple case
-  if (iteratorMethod && !(this === $Array && isArrayIteratorMethod(iteratorMethod))) {
-    iterator = getIterator(O, iteratorMethod);
+  if (iteratorMethod != undefined && !(C == Array && isArrayIteratorMethod(iteratorMethod))) {
+    iterator = iteratorMethod.call(O);
     next = iterator.next;
-    result = IS_CONSTRUCTOR ? new this() : [];
-    for (;!(step = call(next, iterator)).done; index++) {
+    result = new C();
+    for (;!(step = next.call(iterator)).done; index++) {
       value = mapping ? callWithSafeIterationClosing(iterator, mapfn, [step.value, index], true) : step.value;
       createProperty(result, index, value);
     }
   } else {
-    length = lengthOfArrayLike(O);
-    result = IS_CONSTRUCTOR ? new this(length) : $Array(length);
+    length = toLength(O.length);
+    result = new C(length);
     for (;length > index; index++) {
       value = mapping ? mapfn(O[index], index) : O[index];
       createProperty(result, index, value);
@@ -4553,7 +3643,7 @@ module.exports = function from(arrayLike /* , mapfn = undefined, thisArg = undef
   return result;
 };
 
-},{"../internals/function-bind-context":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-bind-context.js","../internals/function-call":"node_modules/react-app-polyfill/node_modules/core-js/internals/function-call.js","../internals/to-object":"node_modules/react-app-polyfill/node_modules/core-js/internals/to-object.js","../internals/call-with-safe-iteration-closing":"node_modules/react-app-polyfill/node_modules/core-js/internals/call-with-safe-iteration-closing.js","../internals/is-array-iterator-method":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-array-iterator-method.js","../internals/is-constructor":"node_modules/react-app-polyfill/node_modules/core-js/internals/is-constructor.js","../internals/length-of-array-like":"node_modules/react-app-polyfill/node_modules/core-js/internals/length-of-array-like.js","../internals/create-property":"node_modules/react-app-polyfill/node_modules/core-js/internals/create-property.js","../internals/get-iterator":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-iterator.js","../internals/get-iterator-method":"node_modules/react-app-polyfill/node_modules/core-js/internals/get-iterator-method.js"}],"node_modules/react-app-polyfill/node_modules/core-js/internals/check-correctness-of-iteration.js":[function(require,module,exports) {
+},{"../internals/function-bind-context":"node_modules/core-js/internals/function-bind-context.js","../internals/to-object":"node_modules/core-js/internals/to-object.js","../internals/call-with-safe-iteration-closing":"node_modules/core-js/internals/call-with-safe-iteration-closing.js","../internals/is-array-iterator-method":"node_modules/core-js/internals/is-array-iterator-method.js","../internals/to-length":"node_modules/core-js/internals/to-length.js","../internals/create-property":"node_modules/core-js/internals/create-property.js","../internals/get-iterator-method":"node_modules/core-js/internals/get-iterator-method.js"}],"node_modules/core-js/internals/check-correctness-of-iteration.js":[function(require,module,exports) {
 var wellKnownSymbol = require('../internals/well-known-symbol');
 
 var ITERATOR = wellKnownSymbol('iterator');
@@ -4572,7 +3662,7 @@ try {
   iteratorWithReturn[ITERATOR] = function () {
     return this;
   };
-  // eslint-disable-next-line es/no-array-from, no-throw-literal -- required for testing
+  // eslint-disable-next-line no-throw-literal -- required for testing
   Array.from(iteratorWithReturn, function () { throw 2; });
 } catch (error) { /* empty */ }
 
@@ -4593,13 +3683,12 @@ module.exports = function (exec, SKIP_CLOSING) {
   return ITERATION_SUPPORT;
 };
 
-},{"../internals/well-known-symbol":"node_modules/react-app-polyfill/node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/react-app-polyfill/node_modules/core-js/modules/es.array.from.js":[function(require,module,exports) {
+},{"../internals/well-known-symbol":"node_modules/core-js/internals/well-known-symbol.js"}],"node_modules/core-js/modules/es.array.from.js":[function(require,module,exports) {
 var $ = require('../internals/export');
 var from = require('../internals/array-from');
 var checkCorrectnessOfIteration = require('../internals/check-correctness-of-iteration');
 
 var INCORRECT_ITERATION = !checkCorrectnessOfIteration(function (iterable) {
-  // eslint-disable-next-line es/no-array-from -- required for testing
   Array.from(iterable);
 });
 
@@ -4609,32 +3698,19 @@ $({ target: 'Array', stat: true, forced: INCORRECT_ITERATION }, {
   from: from
 });
 
-},{"../internals/export":"node_modules/react-app-polyfill/node_modules/core-js/internals/export.js","../internals/array-from":"node_modules/react-app-polyfill/node_modules/core-js/internals/array-from.js","../internals/check-correctness-of-iteration":"node_modules/react-app-polyfill/node_modules/core-js/internals/check-correctness-of-iteration.js"}],"node_modules/react-app-polyfill/node_modules/core-js/es/array/from.js":[function(require,module,exports) {
+},{"../internals/export":"node_modules/core-js/internals/export.js","../internals/array-from":"node_modules/core-js/internals/array-from.js","../internals/check-correctness-of-iteration":"node_modules/core-js/internals/check-correctness-of-iteration.js"}],"node_modules/core-js/es/array/from.js":[function(require,module,exports) {
 require('../../modules/es.string.iterator');
 require('../../modules/es.array.from');
 var path = require('../../internals/path');
 
 module.exports = path.Array.from;
 
-},{"../../modules/es.string.iterator":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.string.iterator.js","../../modules/es.array.from":"node_modules/react-app-polyfill/node_modules/core-js/modules/es.array.from.js","../../internals/path":"node_modules/react-app-polyfill/node_modules/core-js/internals/path.js"}],"node_modules/react-app-polyfill/node_modules/core-js/stable/array/from.js":[function(require,module,exports) {
+},{"../../modules/es.string.iterator":"node_modules/core-js/modules/es.string.iterator.js","../../modules/es.array.from":"node_modules/core-js/modules/es.array.from.js","../../internals/path":"node_modules/core-js/internals/path.js"}],"node_modules/core-js/features/array/from.js":[function(require,module,exports) {
 var parent = require('../../es/array/from');
 
 module.exports = parent;
 
-},{"../../es/array/from":"node_modules/react-app-polyfill/node_modules/core-js/es/array/from.js"}],"node_modules/react-app-polyfill/node_modules/core-js/actual/array/from.js":[function(require,module,exports) {
-var parent = require('../../stable/array/from');
-
-module.exports = parent;
-
-},{"../../stable/array/from":"node_modules/react-app-polyfill/node_modules/core-js/stable/array/from.js"}],"node_modules/react-app-polyfill/node_modules/core-js/full/array/from.js":[function(require,module,exports) {
-var parent = require('../../actual/array/from');
-
-module.exports = parent;
-
-},{"../../actual/array/from":"node_modules/react-app-polyfill/node_modules/core-js/actual/array/from.js"}],"node_modules/react-app-polyfill/node_modules/core-js/features/array/from.js":[function(require,module,exports) {
-module.exports = require('../../full/array/from');
-
-},{"../../full/array/from":"node_modules/react-app-polyfill/node_modules/core-js/full/array/from.js"}],"node_modules/react-app-polyfill/ie11.js":[function(require,module,exports) {
+},{"../../es/array/from":"node_modules/core-js/es/array/from.js"}],"node_modules/react-app-polyfill/ie11.js":[function(require,module,exports) {
 /**
  * Copyright (c) 2015-present, Facebook, Inc.
  *
@@ -4667,7 +3743,7 @@ require('core-js/features/symbol'); // Support iterable spread (...Set, ...Map)
 
 
 require('core-js/features/array/from');
-},{"promise/lib/rejection-tracking":"node_modules/promise/lib/rejection-tracking.js","promise/lib/es6-extensions.js":"node_modules/promise/lib/es6-extensions.js","whatwg-fetch":"node_modules/whatwg-fetch/fetch.js","object-assign":"node_modules/object-assign/index.js","core-js/features/symbol":"node_modules/react-app-polyfill/node_modules/core-js/features/symbol/index.js","core-js/features/array/from":"node_modules/react-app-polyfill/node_modules/core-js/features/array/from.js"}],"../node_modules/react/cjs/react.development.js":[function(require,module,exports) {
+},{"promise/lib/rejection-tracking":"node_modules/promise/lib/rejection-tracking.js","promise/lib/es6-extensions.js":"node_modules/promise/lib/es6-extensions.js","whatwg-fetch":"node_modules/whatwg-fetch/fetch.js","object-assign":"node_modules/object-assign/index.js","core-js/features/symbol":"node_modules/core-js/features/symbol/index.js","core-js/features/array/from":"node_modules/core-js/features/array/from.js"}],"../node_modules/react/cjs/react.development.js":[function(require,module,exports) {
 /**
  * @license React
  * react.development.js
@@ -37658,8 +36734,7 @@ if ("development" === 'production') {
   };
 }
 },{"react-dom":"../node_modules/react-dom/index.js"}],"node_modules/react-is/cjs/react-is.development.js":[function(require,module,exports) {
-/**
- * @license React
+/** @license React v16.13.1
  * react-is.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -37671,63 +36746,34 @@ if ("development" === 'production') {
 
 if ("development" !== "production") {
   (function () {
-    'use strict'; // ATTENTION
-    // When adding new symbols to this file,
-    // Please consider also adding to 'react-devtools-shared/src/backend/ReactSymbols'
-    // The Symbol used to tag the ReactElement-like types.
+    'use strict'; // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+    // nor polyfill, then a plain number is used for performance.
 
-    var REACT_ELEMENT_TYPE = Symbol.for('react.element');
-    var REACT_PORTAL_TYPE = Symbol.for('react.portal');
-    var REACT_FRAGMENT_TYPE = Symbol.for('react.fragment');
-    var REACT_STRICT_MODE_TYPE = Symbol.for('react.strict_mode');
-    var REACT_PROFILER_TYPE = Symbol.for('react.profiler');
-    var REACT_PROVIDER_TYPE = Symbol.for('react.provider');
-    var REACT_CONTEXT_TYPE = Symbol.for('react.context');
-    var REACT_SERVER_CONTEXT_TYPE = Symbol.for('react.server_context');
-    var REACT_FORWARD_REF_TYPE = Symbol.for('react.forward_ref');
-    var REACT_SUSPENSE_TYPE = Symbol.for('react.suspense');
-    var REACT_SUSPENSE_LIST_TYPE = Symbol.for('react.suspense_list');
-    var REACT_MEMO_TYPE = Symbol.for('react.memo');
-    var REACT_LAZY_TYPE = Symbol.for('react.lazy');
-    var REACT_OFFSCREEN_TYPE = Symbol.for('react.offscreen'); // -----------------------------------------------------------------------------
+    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+    var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+    // (unstable) APIs that have been removed. Can we remove the symbols?
 
-    var enableScopeAPI = false; // Experimental Create Event Handle API.
-
-    var enableCacheElement = false;
-    var enableTransitionTracing = false; // No known bugs, but needs performance testing
-
-    var enableLegacyHidden = false; // Enables unstable_avoidThisFallback feature in Fiber
-    // stuff. Intended to enable React core members to more easily debug scheduling
-    // issues in DEV builds.
-
-    var enableDebugTracing = false; // Track which Fiber(s) schedule render work.
-
-    var REACT_MODULE_REFERENCE;
-    {
-      REACT_MODULE_REFERENCE = Symbol.for('react.module.reference');
-    }
+    var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
+    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+    var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
+    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+    var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
+    var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
+    var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
+    var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
 
     function isValidElementType(type) {
-      if (typeof type === 'string' || typeof type === 'function') {
-        return true;
-      } // Note: typeof might be other than 'symbol' or 'number' (e.g. if it's a polyfill).
-
-
-      if (type === REACT_FRAGMENT_TYPE || type === REACT_PROFILER_TYPE || enableDebugTracing || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || enableLegacyHidden || type === REACT_OFFSCREEN_TYPE || enableScopeAPI || enableCacheElement || enableTransitionTracing) {
-        return true;
-      }
-
-      if (typeof type === 'object' && type !== null) {
-        if (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || // This needs to include all possible module reference object
-        // types supported by any Flight configuration anywhere since
-        // we don't know which Flight build this will end up being used
-        // with.
-        type.$$typeof === REACT_MODULE_REFERENCE || type.getModuleId !== undefined) {
-          return true;
-        }
-      }
-
-      return false;
+      return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
+      type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
     }
 
     function typeOf(object) {
@@ -37739,18 +36785,18 @@ if ("development" !== "production") {
             var type = object.type;
 
             switch (type) {
+              case REACT_ASYNC_MODE_TYPE:
+              case REACT_CONCURRENT_MODE_TYPE:
               case REACT_FRAGMENT_TYPE:
               case REACT_PROFILER_TYPE:
               case REACT_STRICT_MODE_TYPE:
               case REACT_SUSPENSE_TYPE:
-              case REACT_SUSPENSE_LIST_TYPE:
                 return type;
 
               default:
                 var $$typeofType = type && type.$$typeof;
 
                 switch ($$typeofType) {
-                  case REACT_SERVER_CONTEXT_TYPE:
                   case REACT_CONTEXT_TYPE:
                   case REACT_FORWARD_REF_TYPE:
                   case REACT_LAZY_TYPE:
@@ -37770,8 +36816,11 @@ if ("development" !== "production") {
       }
 
       return undefined;
-    }
+    } // AsyncMode is deprecated along with isAsyncMode
 
+
+    var AsyncMode = REACT_ASYNC_MODE_TYPE;
+    var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
     var ContextConsumer = REACT_CONTEXT_TYPE;
     var ContextProvider = REACT_PROVIDER_TYPE;
     var Element = REACT_ELEMENT_TYPE;
@@ -37783,30 +36832,21 @@ if ("development" !== "production") {
     var Profiler = REACT_PROFILER_TYPE;
     var StrictMode = REACT_STRICT_MODE_TYPE;
     var Suspense = REACT_SUSPENSE_TYPE;
-    var SuspenseList = REACT_SUSPENSE_LIST_TYPE;
-    var hasWarnedAboutDeprecatedIsAsyncMode = false;
-    var hasWarnedAboutDeprecatedIsConcurrentMode = false; // AsyncMode should be deprecated
+    var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
 
     function isAsyncMode(object) {
       {
         if (!hasWarnedAboutDeprecatedIsAsyncMode) {
           hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
 
-          console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 18+.');
+          console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
         }
       }
-      return false;
+      return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
     }
 
     function isConcurrentMode(object) {
-      {
-        if (!hasWarnedAboutDeprecatedIsConcurrentMode) {
-          hasWarnedAboutDeprecatedIsConcurrentMode = true; // Using console['warn'] to evade Babel and ESLint
-
-          console['warn']('The ReactIs.isConcurrentMode() alias has been deprecated, ' + 'and will be removed in React 18+.');
-        }
-      }
-      return false;
+      return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
     }
 
     function isContextConsumer(object) {
@@ -37853,10 +36893,8 @@ if ("development" !== "production") {
       return typeOf(object) === REACT_SUSPENSE_TYPE;
     }
 
-    function isSuspenseList(object) {
-      return typeOf(object) === REACT_SUSPENSE_LIST_TYPE;
-    }
-
+    exports.AsyncMode = AsyncMode;
+    exports.ConcurrentMode = ConcurrentMode;
     exports.ContextConsumer = ContextConsumer;
     exports.ContextProvider = ContextProvider;
     exports.Element = Element;
@@ -37868,7 +36906,6 @@ if ("development" !== "production") {
     exports.Profiler = Profiler;
     exports.StrictMode = StrictMode;
     exports.Suspense = Suspense;
-    exports.SuspenseList = SuspenseList;
     exports.isAsyncMode = isAsyncMode;
     exports.isConcurrentMode = isConcurrentMode;
     exports.isContextConsumer = isContextConsumer;
@@ -37882,7 +36919,6 @@ if ("development" !== "production") {
     exports.isProfiler = isProfiler;
     exports.isStrictMode = isStrictMode;
     exports.isSuspense = isSuspense;
-    exports.isSuspenseList = isSuspenseList;
     exports.isValidElementType = isValidElementType;
     exports.typeOf = typeOf;
   })();
@@ -38623,7 +37659,7 @@ var unitlessKeys = {
 };
 var _default = unitlessKeys;
 exports.default = _default;
-},{}],"node_modules/@emotion/memoize/dist/emotion-memoize.esm.js":[function(require,module,exports) {
+},{}],"node_modules/@emotion/memoize/dist/memoize.browser.esm.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38632,7 +37668,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 function memoize(fn) {
-  var cache = Object.create(null);
+  var cache = {};
   return function (arg) {
     if (cache[arg] === undefined) cache[arg] = fn(arg);
     return cache[arg];
@@ -38641,7 +37677,7 @@ function memoize(fn) {
 
 var _default = memoize;
 exports.default = _default;
-},{}],"node_modules/@emotion/is-prop-valid/dist/emotion-is-prop-valid.esm.js":[function(require,module,exports) {
+},{}],"node_modules/@emotion/is-prop-valid/dist/is-prop-valid.browser.esm.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38653,11 +37689,9 @@ var _memoize = _interopRequireDefault(require("@emotion/memoize"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var reactPropsRegex = /^((children|dangerouslySetInnerHTML|key|ref|autoFocus|defaultValue|defaultChecked|innerHTML|suppressContentEditableWarning|suppressHydrationWarning|valueLink|abbr|accept|acceptCharset|accessKey|action|allow|allowUserMedia|allowPaymentRequest|allowFullScreen|allowTransparency|alt|async|autoComplete|autoPlay|capture|cellPadding|cellSpacing|challenge|charSet|checked|cite|classID|className|cols|colSpan|content|contentEditable|contextMenu|controls|controlsList|coords|crossOrigin|data|dateTime|decoding|default|defer|dir|disabled|disablePictureInPicture|download|draggable|encType|enterKeyHint|form|formAction|formEncType|formMethod|formNoValidate|formTarget|frameBorder|headers|height|hidden|high|href|hrefLang|htmlFor|httpEquiv|id|inputMode|integrity|is|keyParams|keyType|kind|label|lang|list|loading|loop|low|marginHeight|marginWidth|max|maxLength|media|mediaGroup|method|min|minLength|multiple|muted|name|nonce|noValidate|open|optimum|pattern|placeholder|playsInline|poster|preload|profile|radioGroup|readOnly|referrerPolicy|rel|required|reversed|role|rows|rowSpan|sandbox|scope|scoped|scrolling|seamless|selected|shape|size|sizes|slot|span|spellCheck|src|srcDoc|srcLang|srcSet|start|step|style|summary|tabIndex|target|title|translate|type|useMap|value|width|wmode|wrap|about|datatype|inlist|prefix|property|resource|typeof|vocab|autoCapitalize|autoCorrect|autoSave|color|incremental|fallback|inert|itemProp|itemScope|itemType|itemID|itemRef|on|option|results|security|unselectable|accentHeight|accumulate|additive|alignmentBaseline|allowReorder|alphabetic|amplitude|arabicForm|ascent|attributeName|attributeType|autoReverse|azimuth|baseFrequency|baselineShift|baseProfile|bbox|begin|bias|by|calcMode|capHeight|clip|clipPathUnits|clipPath|clipRule|colorInterpolation|colorInterpolationFilters|colorProfile|colorRendering|contentScriptType|contentStyleType|cursor|cx|cy|d|decelerate|descent|diffuseConstant|direction|display|divisor|dominantBaseline|dur|dx|dy|edgeMode|elevation|enableBackground|end|exponent|externalResourcesRequired|fill|fillOpacity|fillRule|filter|filterRes|filterUnits|floodColor|floodOpacity|focusable|fontFamily|fontSize|fontSizeAdjust|fontStretch|fontStyle|fontVariant|fontWeight|format|from|fr|fx|fy|g1|g2|glyphName|glyphOrientationHorizontal|glyphOrientationVertical|glyphRef|gradientTransform|gradientUnits|hanging|horizAdvX|horizOriginX|ideographic|imageRendering|in|in2|intercept|k|k1|k2|k3|k4|kernelMatrix|kernelUnitLength|kerning|keyPoints|keySplines|keyTimes|lengthAdjust|letterSpacing|lightingColor|limitingConeAngle|local|markerEnd|markerMid|markerStart|markerHeight|markerUnits|markerWidth|mask|maskContentUnits|maskUnits|mathematical|mode|numOctaves|offset|opacity|operator|order|orient|orientation|origin|overflow|overlinePosition|overlineThickness|panose1|paintOrder|pathLength|patternContentUnits|patternTransform|patternUnits|pointerEvents|points|pointsAtX|pointsAtY|pointsAtZ|preserveAlpha|preserveAspectRatio|primitiveUnits|r|radius|refX|refY|renderingIntent|repeatCount|repeatDur|requiredExtensions|requiredFeatures|restart|result|rotate|rx|ry|scale|seed|shapeRendering|slope|spacing|specularConstant|specularExponent|speed|spreadMethod|startOffset|stdDeviation|stemh|stemv|stitchTiles|stopColor|stopOpacity|strikethroughPosition|strikethroughThickness|string|stroke|strokeDasharray|strokeDashoffset|strokeLinecap|strokeLinejoin|strokeMiterlimit|strokeOpacity|strokeWidth|surfaceScale|systemLanguage|tableValues|targetX|targetY|textAnchor|textDecoration|textRendering|textLength|to|transform|u1|u2|underlinePosition|underlineThickness|unicode|unicodeBidi|unicodeRange|unitsPerEm|vAlphabetic|vHanging|vIdeographic|vMathematical|values|vectorEffect|version|vertAdvY|vertOriginX|vertOriginY|viewBox|viewTarget|visibility|widths|wordSpacing|writingMode|x|xHeight|x1|x2|xChannelSelector|xlinkActuate|xlinkArcrole|xlinkHref|xlinkRole|xlinkShow|xlinkTitle|xlinkType|xmlBase|xmlns|xmlnsXlink|xmlLang|xmlSpace|y|y1|y2|yChannelSelector|z|zoomAndPan|for|class|autofocus)|(([Dd][Aa][Tt][Aa]|[Aa][Rr][Ii][Aa]|x)-.*))$/; // https://esbench.com/bench/5bfee68a4cd7e6009ef61d23
+var reactPropsRegex = /^((children|dangerouslySetInnerHTML|key|ref|autoFocus|defaultValue|defaultChecked|innerHTML|suppressContentEditableWarning|suppressHydrationWarning|valueLink|accept|acceptCharset|accessKey|action|allow|allowUserMedia|allowPaymentRequest|allowFullScreen|allowTransparency|alt|async|autoComplete|autoPlay|capture|cellPadding|cellSpacing|challenge|charSet|checked|cite|classID|className|cols|colSpan|content|contentEditable|contextMenu|controls|controlsList|coords|crossOrigin|data|dateTime|decoding|default|defer|dir|disabled|disablePictureInPicture|download|draggable|encType|form|formAction|formEncType|formMethod|formNoValidate|formTarget|frameBorder|headers|height|hidden|high|href|hrefLang|htmlFor|httpEquiv|id|inputMode|integrity|is|keyParams|keyType|kind|label|lang|list|loading|loop|low|marginHeight|marginWidth|max|maxLength|media|mediaGroup|method|min|minLength|multiple|muted|name|nonce|noValidate|open|optimum|pattern|placeholder|playsInline|poster|preload|profile|radioGroup|readOnly|referrerPolicy|rel|required|reversed|role|rows|rowSpan|sandbox|scope|scoped|scrolling|seamless|selected|shape|size|sizes|slot|span|spellCheck|src|srcDoc|srcLang|srcSet|start|step|style|summary|tabIndex|target|title|type|useMap|value|width|wmode|wrap|about|datatype|inlist|prefix|property|resource|typeof|vocab|autoCapitalize|autoCorrect|autoSave|color|inert|itemProp|itemScope|itemType|itemID|itemRef|on|results|security|unselectable|accentHeight|accumulate|additive|alignmentBaseline|allowReorder|alphabetic|amplitude|arabicForm|ascent|attributeName|attributeType|autoReverse|azimuth|baseFrequency|baselineShift|baseProfile|bbox|begin|bias|by|calcMode|capHeight|clip|clipPathUnits|clipPath|clipRule|colorInterpolation|colorInterpolationFilters|colorProfile|colorRendering|contentScriptType|contentStyleType|cursor|cx|cy|d|decelerate|descent|diffuseConstant|direction|display|divisor|dominantBaseline|dur|dx|dy|edgeMode|elevation|enableBackground|end|exponent|externalResourcesRequired|fill|fillOpacity|fillRule|filter|filterRes|filterUnits|floodColor|floodOpacity|focusable|fontFamily|fontSize|fontSizeAdjust|fontStretch|fontStyle|fontVariant|fontWeight|format|from|fr|fx|fy|g1|g2|glyphName|glyphOrientationHorizontal|glyphOrientationVertical|glyphRef|gradientTransform|gradientUnits|hanging|horizAdvX|horizOriginX|ideographic|imageRendering|in|in2|intercept|k|k1|k2|k3|k4|kernelMatrix|kernelUnitLength|kerning|keyPoints|keySplines|keyTimes|lengthAdjust|letterSpacing|lightingColor|limitingConeAngle|local|markerEnd|markerMid|markerStart|markerHeight|markerUnits|markerWidth|mask|maskContentUnits|maskUnits|mathematical|mode|numOctaves|offset|opacity|operator|order|orient|orientation|origin|overflow|overlinePosition|overlineThickness|panose1|paintOrder|pathLength|patternContentUnits|patternTransform|patternUnits|pointerEvents|points|pointsAtX|pointsAtY|pointsAtZ|preserveAlpha|preserveAspectRatio|primitiveUnits|r|radius|refX|refY|renderingIntent|repeatCount|repeatDur|requiredExtensions|requiredFeatures|restart|result|rotate|rx|ry|scale|seed|shapeRendering|slope|spacing|specularConstant|specularExponent|speed|spreadMethod|startOffset|stdDeviation|stemh|stemv|stitchTiles|stopColor|stopOpacity|strikethroughPosition|strikethroughThickness|string|stroke|strokeDasharray|strokeDashoffset|strokeLinecap|strokeLinejoin|strokeMiterlimit|strokeOpacity|strokeWidth|surfaceScale|systemLanguage|tableValues|targetX|targetY|textAnchor|textDecoration|textRendering|textLength|to|transform|u1|u2|underlinePosition|underlineThickness|unicode|unicodeBidi|unicodeRange|unitsPerEm|vAlphabetic|vHanging|vIdeographic|vMathematical|values|vectorEffect|version|vertAdvY|vertOriginX|vertOriginY|viewBox|viewTarget|visibility|widths|wordSpacing|writingMode|x|xHeight|x1|x2|xChannelSelector|xlinkActuate|xlinkArcrole|xlinkHref|xlinkRole|xlinkShow|xlinkTitle|xlinkType|xmlBase|xmlns|xmlnsXlink|xmlLang|xmlSpace|y|y1|y2|yChannelSelector|z|zoomAndPan|for|class|autofocus)|(([Dd][Aa][Tt][Aa]|[Aa][Rr][Ii][Aa]|x)-.*))$/; // https://esbench.com/bench/5bfee68a4cd7e6009ef61d23
 
-var isPropValid =
-/* #__PURE__ */
-(0, _memoize.default)(function (prop) {
+var index = (0, _memoize.default)(function (prop) {
   return reactPropsRegex.test(prop) || prop.charCodeAt(0) === 111
   /* o */
   && prop.charCodeAt(1) === 110
@@ -38666,207 +37700,9 @@ var isPropValid =
 }
 /* Z+1 */
 );
-var _default = isPropValid;
+var _default = index;
 exports.default = _default;
-},{"@emotion/memoize":"node_modules/@emotion/memoize/dist/emotion-memoize.esm.js"}],"node_modules/hoist-non-react-statics/node_modules/react-is/cjs/react-is.development.js":[function(require,module,exports) {
-/** @license React v16.13.1
- * react-is.development.js
- *
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-'use strict';
-
-if ("development" !== "production") {
-  (function () {
-    'use strict'; // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-    // nor polyfill, then a plain number is used for performance.
-
-    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-    var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
-    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
-    // (unstable) APIs that have been removed. Can we remove the symbols?
-
-    var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
-    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
-    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-    var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
-    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-    var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
-    var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
-    var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
-    var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
-
-    function isValidElementType(type) {
-      return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
-      type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
-    }
-
-    function typeOf(object) {
-      if (typeof object === 'object' && object !== null) {
-        var $$typeof = object.$$typeof;
-
-        switch ($$typeof) {
-          case REACT_ELEMENT_TYPE:
-            var type = object.type;
-
-            switch (type) {
-              case REACT_ASYNC_MODE_TYPE:
-              case REACT_CONCURRENT_MODE_TYPE:
-              case REACT_FRAGMENT_TYPE:
-              case REACT_PROFILER_TYPE:
-              case REACT_STRICT_MODE_TYPE:
-              case REACT_SUSPENSE_TYPE:
-                return type;
-
-              default:
-                var $$typeofType = type && type.$$typeof;
-
-                switch ($$typeofType) {
-                  case REACT_CONTEXT_TYPE:
-                  case REACT_FORWARD_REF_TYPE:
-                  case REACT_LAZY_TYPE:
-                  case REACT_MEMO_TYPE:
-                  case REACT_PROVIDER_TYPE:
-                    return $$typeofType;
-
-                  default:
-                    return $$typeof;
-                }
-
-            }
-
-          case REACT_PORTAL_TYPE:
-            return $$typeof;
-        }
-      }
-
-      return undefined;
-    } // AsyncMode is deprecated along with isAsyncMode
-
-
-    var AsyncMode = REACT_ASYNC_MODE_TYPE;
-    var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
-    var ContextConsumer = REACT_CONTEXT_TYPE;
-    var ContextProvider = REACT_PROVIDER_TYPE;
-    var Element = REACT_ELEMENT_TYPE;
-    var ForwardRef = REACT_FORWARD_REF_TYPE;
-    var Fragment = REACT_FRAGMENT_TYPE;
-    var Lazy = REACT_LAZY_TYPE;
-    var Memo = REACT_MEMO_TYPE;
-    var Portal = REACT_PORTAL_TYPE;
-    var Profiler = REACT_PROFILER_TYPE;
-    var StrictMode = REACT_STRICT_MODE_TYPE;
-    var Suspense = REACT_SUSPENSE_TYPE;
-    var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
-
-    function isAsyncMode(object) {
-      {
-        if (!hasWarnedAboutDeprecatedIsAsyncMode) {
-          hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
-
-          console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
-        }
-      }
-      return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
-    }
-
-    function isConcurrentMode(object) {
-      return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
-    }
-
-    function isContextConsumer(object) {
-      return typeOf(object) === REACT_CONTEXT_TYPE;
-    }
-
-    function isContextProvider(object) {
-      return typeOf(object) === REACT_PROVIDER_TYPE;
-    }
-
-    function isElement(object) {
-      return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
-    }
-
-    function isForwardRef(object) {
-      return typeOf(object) === REACT_FORWARD_REF_TYPE;
-    }
-
-    function isFragment(object) {
-      return typeOf(object) === REACT_FRAGMENT_TYPE;
-    }
-
-    function isLazy(object) {
-      return typeOf(object) === REACT_LAZY_TYPE;
-    }
-
-    function isMemo(object) {
-      return typeOf(object) === REACT_MEMO_TYPE;
-    }
-
-    function isPortal(object) {
-      return typeOf(object) === REACT_PORTAL_TYPE;
-    }
-
-    function isProfiler(object) {
-      return typeOf(object) === REACT_PROFILER_TYPE;
-    }
-
-    function isStrictMode(object) {
-      return typeOf(object) === REACT_STRICT_MODE_TYPE;
-    }
-
-    function isSuspense(object) {
-      return typeOf(object) === REACT_SUSPENSE_TYPE;
-    }
-
-    exports.AsyncMode = AsyncMode;
-    exports.ConcurrentMode = ConcurrentMode;
-    exports.ContextConsumer = ContextConsumer;
-    exports.ContextProvider = ContextProvider;
-    exports.Element = Element;
-    exports.ForwardRef = ForwardRef;
-    exports.Fragment = Fragment;
-    exports.Lazy = Lazy;
-    exports.Memo = Memo;
-    exports.Portal = Portal;
-    exports.Profiler = Profiler;
-    exports.StrictMode = StrictMode;
-    exports.Suspense = Suspense;
-    exports.isAsyncMode = isAsyncMode;
-    exports.isConcurrentMode = isConcurrentMode;
-    exports.isContextConsumer = isContextConsumer;
-    exports.isContextProvider = isContextProvider;
-    exports.isElement = isElement;
-    exports.isForwardRef = isForwardRef;
-    exports.isFragment = isFragment;
-    exports.isLazy = isLazy;
-    exports.isMemo = isMemo;
-    exports.isPortal = isPortal;
-    exports.isProfiler = isProfiler;
-    exports.isStrictMode = isStrictMode;
-    exports.isSuspense = isSuspense;
-    exports.isValidElementType = isValidElementType;
-    exports.typeOf = typeOf;
-  })();
-}
-},{}],"node_modules/hoist-non-react-statics/node_modules/react-is/index.js":[function(require,module,exports) {
-'use strict';
-
-if ("development" === 'production') {
-  module.exports = require('./cjs/react-is.production.min.js');
-} else {
-  module.exports = require('./cjs/react-is.development.js');
-}
-},{"./cjs/react-is.development.js":"node_modules/hoist-non-react-statics/node_modules/react-is/cjs/react-is.development.js"}],"node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js":[function(require,module,exports) {
+},{"@emotion/memoize":"node_modules/@emotion/memoize/dist/memoize.browser.esm.js"}],"node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js":[function(require,module,exports) {
 'use strict';
 
 var reactIs = require('react-is');
@@ -38971,7 +37807,7 @@ function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
 
 module.exports = hoistNonReactStatics;
 
-},{"react-is":"node_modules/hoist-non-react-statics/node_modules/react-is/index.js"}],"node_modules/process/browser.js":[function(require,module,exports) {
+},{"react-is":"node_modules/react-is/index.js"}],"node_modules/process/browser.js":[function(require,module,exports) {
 
 // shim for using process in browser
 var process = module.exports = {}; // cached from whatever global is present so that test runners that stub it
@@ -39187,17 +38023,13 @@ var process = require("process");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.StyleSheetContext = exports.StyleSheetConsumer = exports.ServerStyleSheet = void 0;
 exports.StyleSheetManager = ye;
-exports.ThemeContext = exports.ThemeConsumer = void 0;
-exports.ThemeProvider = Fe;
-exports.__PRIVATE__ = void 0;
-exports.createGlobalStyle = We;
-exports.css = Ce;
-exports.default = void 0;
+exports.ThemeProvider = Ge;
+exports.createGlobalStyle = $e;
+exports.css = Ae;
 exports.isStyledComponent = N;
-exports.keyframes = Ue;
-exports.withTheme = exports.version = exports.useTheme = void 0;
+exports.keyframes = We;
+exports.withTheme = exports.version = exports.useTheme = exports.__PRIVATE__ = exports.ThemeContext = exports.ThemeConsumer = exports.StyleSheetContext = exports.StyleSheetConsumer = exports.ServerStyleSheet = exports.default = void 0;
 
 var _reactIs = require("react-is");
 
@@ -39215,11 +38047,11 @@ var _hoistNonReactStatics = _interopRequireDefault(require("hoist-non-react-stat
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function v() {
   return (v = Object.assign || function (e) {
@@ -39261,7 +38093,7 @@ function N(e) {
 }
 
 var A = "undefined" != typeof process && (undefined || undefined) || "data-styled",
-    C = "5.3.6",
+    C = "5.2.3",
     I = "undefined" != typeof window && "HTMLElement" in window,
     P = Boolean("boolean" == typeof SC_DISABLE_SPEEDY ? SC_DISABLE_SPEEDY : "undefined" != typeof process && void 0 !== undefined && "" !== undefined ? "false" !== undefined && undefined : "undefined" != typeof process && void 0 !== undefined && "" !== undefined ? "false" !== undefined && undefined : "production" !== "development"),
     O = {},
@@ -39324,13 +38156,13 @@ var T = function () {
 
       this.groupSizes = new Uint32Array(o), this.groupSizes.set(n), this.length = o;
 
-      for (var s = r; s < o; s++) {
-        this.groupSizes[s] = 0;
+      for (var i = r; i < o; i++) {
+        this.groupSizes[i] = 0;
       }
     }
 
-    for (var i = this.indexOfGroup(e + 1), a = 0, c = t.length; a < c; a++) {
-      this.tag.insertRule(i, t[a]) && (this.groupSizes[e]++, i++);
+    for (var s = this.indexOfGroup(e + 1), a = 0, c = t.length; a < c; a++) {
+      this.tag.insertRule(s, t[a]) && (this.groupSizes[e]++, s++);
     }
   }, t.clearGroup = function (e) {
     if (e < this.length) {
@@ -39347,56 +38179,56 @@ var T = function () {
     var t = "";
     if (e >= this.length || 0 === this.groupSizes[e]) return t;
 
-    for (var n = this.groupSizes[e], r = this.indexOfGroup(e), o = r + n, s = r; s < o; s++) {
-      t += this.tag.getRule(s) + "/*!sc*/\n";
+    for (var n = this.groupSizes[e], r = this.indexOfGroup(e), o = r + n, i = r; i < o; i++) {
+      t += this.tag.getRule(i) + "/*!sc*/\n";
     }
 
     return t;
   }, e;
 }(),
-    x = new Map(),
     k = new Map(),
+    x = new Map(),
     V = 1,
     B = function B(e) {
-  if (x.has(e)) return x.get(e);
+  if (k.has(e)) return k.get(e);
 
-  for (; k.has(V);) {
+  for (; x.has(V);) {
     V++;
   }
 
   var t = V++;
-  return "production" !== "development" && ((0 | t) < 0 || t > 1 << 30) && j(16, "" + t), x.set(e, t), k.set(t, e), t;
+  return "production" !== "development" && ((0 | t) < 0 || t > 1 << 30) && j(16, "" + t), k.set(e, t), x.set(t, e), t;
 },
-    z = function z(e) {
-  return k.get(e);
+    M = function M(e) {
+  return x.get(e);
 },
-    M = function M(e, t) {
-  t >= V && (V = t + 1), x.set(e, t), k.set(t, e);
+    z = function z(e, t) {
+  k.set(e, t), x.set(t, e);
 },
-    G = "style[" + A + '][data-styled-version="5.3.6"]',
-    L = new RegExp("^" + A + '\\.g(\\d+)\\[id="([\\w\\d-]+)"\\].*?"([^"]*)'),
+    L = "style[" + A + '][data-styled-version="5.2.3"]',
+    G = new RegExp("^" + A + '\\.g(\\d+)\\[id="([\\w\\d-]+)"\\].*?"([^"]*)'),
     F = function F(e, t, n) {
-  for (var r, o = n.split(","), s = 0, i = o.length; s < i; s++) {
-    (r = o[s]) && e.registerName(t, r);
+  for (var r, o = n.split(","), i = 0, s = o.length; i < s; i++) {
+    (r = o[i]) && e.registerName(t, r);
   }
 },
     Y = function Y(e, t) {
-  for (var n = (t.textContent || "").split("/*!sc*/\n"), r = [], o = 0, s = n.length; o < s; o++) {
-    var i = n[o].trim();
+  for (var n = t.innerHTML.split("/*!sc*/\n"), r = [], o = 0, i = n.length; o < i; o++) {
+    var s = n[o].trim();
 
-    if (i) {
-      var a = i.match(L);
+    if (s) {
+      var a = s.match(G);
 
       if (a) {
         var c = 0 | parseInt(a[1], 10),
             u = a[2];
-        0 !== c && (M(u, c), F(e, u, a[3]), e.getTag().insertRules(c, r)), r.length = 0;
-      } else r.push(i);
+        0 !== c && (z(u, c), F(e, u, a[3]), e.getTag().insertRules(c, r)), r.length = 0;
+      } else r.push(s);
     }
   }
 },
     q = function q() {
-  return "undefined" != typeof __webpack_nonce__ ? __webpack_nonce__ : null;
+  return "undefined" != typeof window && void 0 !== window.__webpack_nonce__ ? window.__webpack_nonce__ : null;
 },
     H = function H(e) {
   var t = document.head,
@@ -39408,11 +38240,11 @@ var T = function () {
       if (r && 1 === r.nodeType && r.hasAttribute(A)) return r;
     }
   }(n),
-      s = void 0 !== o ? o.nextSibling : null;
+      i = void 0 !== o ? o.nextSibling : null;
 
-  r.setAttribute(A, "active"), r.setAttribute("data-styled-version", "5.3.6");
-  var i = q();
-  return i && r.setAttribute("nonce", i), n.insertBefore(r, s), r;
+  r.setAttribute(A, "active"), r.setAttribute("data-styled-version", "5.2.3");
+  var s = q();
+  return s && r.setAttribute("nonce", s), n.insertBefore(r, i), r;
 },
     $ = function () {
   function e(e) {
@@ -39485,8 +38317,8 @@ var T = function () {
 },
     Z = function () {
   function e(e, t, n) {
-    void 0 === e && (e = E), void 0 === t && (t = {}), this.options = v({}, X, {}, e), this.gs = t, this.names = new Map(n), this.server = !!e.isServer, !this.server && I && J && (J = !1, function (e) {
-      for (var t = document.querySelectorAll(G), n = 0, r = t.length; n < r; n++) {
+    void 0 === e && (e = E), void 0 === t && (t = {}), this.options = v({}, X, {}, e), this.gs = t, this.names = new Map(n), !this.options.isServer && I && J && (J = !1, function (e) {
+      for (var t = document.querySelectorAll(L), n = 0, r = t.length; n < r; n++) {
         var o = t[n];
         o && "active" !== o.getAttribute(A) && (Y(e, o), o.parentNode && o.parentNode.removeChild(o));
       }
@@ -39523,16 +38355,16 @@ var T = function () {
   }, t.toString = function () {
     return function (e) {
       for (var t = e.getTag(), n = t.length, r = "", o = 0; o < n; o++) {
-        var s = z(o);
+        var i = M(o);
 
-        if (void 0 !== s) {
-          var i = e.names.get(s),
+        if (void 0 !== i) {
+          var s = e.names.get(i),
               a = t.getGroup(o);
 
-          if (i && a && i.size) {
-            var c = A + ".g" + o + '[id="' + s + '"]',
+          if (void 0 !== s && 0 !== a.length) {
+            var c = A + ".g" + o + '[id="' + i + '"]',
                 u = "";
-            void 0 !== i && i.forEach(function (e) {
+            void 0 !== s && s.forEach(function (e) {
               e.length > 0 && (u += e + ",");
             }), r += "" + a + c + '{content:"' + u + '"}/*!sc*/\n';
           }
@@ -39579,8 +38411,8 @@ function re(e) {
   return !0;
 }
 
-var oe = ne("5.3.6"),
-    se = function () {
+var oe = ne("5.2.3"),
+    ie = function () {
   function e(e, t, n) {
     this.rules = e, this.staticRulesId = "", this.isStatic = "production" === "development" && (void 0 === n || n.isStatic) && re(e), this.componentId = t, this.baseHash = te(oe, t), this.baseStyle = n, Z.registerId(t);
   }
@@ -39590,15 +38422,15 @@ var oe = ne("5.3.6"),
         o = [];
     if (this.baseStyle && o.push(this.baseStyle.generateAndInjectStyles(e, t, n)), this.isStatic && !n.hash) {
       if (this.staticRulesId && t.hasNameForId(r, this.staticRulesId)) o.push(this.staticRulesId);else {
-        var s = Ne(this.rules, e, t, n).join(""),
-            i = ee(te(this.baseHash, s) >>> 0);
+        var i = Ne(this.rules, e, t, n).join(""),
+            s = ee(te(this.baseHash, i.length) >>> 0);
 
-        if (!t.hasNameForId(r, i)) {
-          var a = n(s, "." + i, void 0, r);
-          t.insertRules(r, i, a);
+        if (!t.hasNameForId(r, s)) {
+          var a = n(i, "." + s, void 0, r);
+          t.insertRules(r, s, a);
         }
 
-        o.push(i), this.staticRulesId = i;
+        o.push(s), this.staticRulesId = s;
       }
     } else {
       for (var c = this.rules.length, u = te(this.baseHash, n.hash), l = "", d = 0; d < c; d++) {
@@ -39624,7 +38456,7 @@ var oe = ne("5.3.6"),
     return o.join(" ");
   }, e;
 }(),
-    ie = /^\s*\/\/.*$/gm,
+    se = /^\s*\/\/.*$/gm,
     ae = [":", "[", ".", "#"];
 
 function ce(e) {
@@ -39632,10 +38464,10 @@ function ce(e) {
       n,
       r,
       o,
-      s = void 0 === e ? E : e,
-      i = s.options,
-      a = void 0 === i ? E : i,
-      c = s.plugins,
+      i = void 0 === e ? E : e,
+      s = i.options,
+      a = void 0 === s ? E : s,
+      c = i.plugins,
       u = void 0 === c ? w : c,
       l = new _stylis.default(a),
       d = [],
@@ -39646,7 +38478,7 @@ function ce(e) {
       } catch (e) {}
     }
 
-    return function (n, r, o, s, i, a, c, u, l, d) {
+    return function (n, r, o, i, s, a, c, u, l, d) {
       switch (n) {
         case 1:
           if (0 === l && 64 === r.charCodeAt(0)) return e(r + ";"), "";
@@ -39673,15 +38505,15 @@ function ce(e) {
   }(function (e) {
     d.push(e);
   }),
-      f = function f(e, r, s) {
-    return 0 === r && -1 !== ae.indexOf(s[n.length]) || s.match(o) ? e : "." + t;
+      f = function f(e, r, i) {
+    return 0 === r && -1 !== ae.indexOf(i[n.length]) || i.match(o) ? e : "." + t;
   };
 
-  function m(e, s, i, a) {
+  function m(e, i, s, a) {
     void 0 === a && (a = "&");
-    var c = e.replace(ie, ""),
-        u = s && i ? i + " " + s + " { " + c + " }" : c;
-    return t = a, n = s, r = new RegExp("\\" + n + "\\b", "g"), o = new RegExp("(\\" + n + "\\b){2,}"), l(i || !s ? "" : s, u);
+    var c = e.replace(se, ""),
+        u = i && s ? s + " " + i + " { " + c + " }" : c;
+    return t = a, n = i, r = new RegExp("\\" + n + "\\b", "g"), o = new RegExp("(\\" + n + "\\b){2,}"), l(s || !i ? "" : i, u);
   }
 
   return l.use([].concat(u, [function (e, t, o) {
@@ -39716,7 +38548,7 @@ function me() {
 function ye(e) {
   var t = (0, _react.useState)(e.stylisPlugins),
       n = t[0],
-      s = t[1],
+      i = t[1],
       c = fe(),
       u = (0, _react.useMemo)(function () {
     var t = c;
@@ -39735,7 +38567,7 @@ function ye(e) {
     });
   }, [e.disableVendorPrefixes, n]);
   return (0, _react.useEffect)(function () {
-    (0, _shallowequal.default)(n, e.stylisPlugins) || s(e.stylisPlugins);
+    (0, _shallowequal.default)(n, e.stylisPlugins) || i(e.stylisPlugins);
   }, [e.stylisPlugins]), _react.default.createElement(ue.Provider, {
     value: u
   }, _react.default.createElement(de.Provider, {
@@ -39776,11 +38608,11 @@ var _e = function _e(e) {
 
 function Ne(e, n, r, o) {
   if (Array.isArray(e)) {
-    for (var s, i = [], a = 0, c = e.length; a < c; a += 1) {
-      "" !== (s = Ne(e[a], n, r, o)) && (Array.isArray(s) ? i.push.apply(i, s) : i.push(s));
+    for (var i, s = [], a = 0, c = e.length; a < c; a += 1) {
+      "" !== (i = Ne(e[a], n, r, o)) && (Array.isArray(i) ? s.push.apply(s, i) : s.push(i));
     }
 
-    return i;
+    return s;
   }
 
   if (_e(e)) return "";
@@ -39796,64 +38628,48 @@ function Ne(e, n, r, o) {
   return e instanceof ve ? r ? (e.inject(r, o), e.getName(o)) : e : S(e) ? function e(t, n) {
     var r,
         o,
-        s = [];
+        i = [];
 
-    for (var i in t) {
-      t.hasOwnProperty(i) && !_e(t[i]) && (Array.isArray(t[i]) && t[i].isCss || b(t[i]) ? s.push(be(i) + ":", t[i], ";") : S(t[i]) ? s.push.apply(s, e(t[i], i)) : s.push(be(i) + ": " + (r = i, null == (o = t[i]) || "boolean" == typeof o || "" === o ? "" : "number" != typeof o || 0 === o || r in _unitless.default ? String(o).trim() : o + "px") + ";"));
+    for (var s in t) {
+      t.hasOwnProperty(s) && !_e(t[s]) && (S(t[s]) ? i.push.apply(i, e(t[s], s)) : b(t[s]) ? i.push(be(s) + ":", t[s], ";") : i.push(be(s) + ": " + (r = s, null == (o = t[s]) || "boolean" == typeof o || "" === o ? "" : "number" != typeof o || 0 === o || r in _unitless.default ? String(o).trim() : o + "px") + ";"));
     }
 
-    return n ? [n + " {"].concat(s, ["}"]) : s;
+    return n ? [n + " {"].concat(i, ["}"]) : i;
   }(e) : e.toString();
 }
 
-var Ae = function Ae(e) {
-  return Array.isArray(e) && (e.isCss = !0), e;
-};
-
-function Ce(e) {
+function Ae(e) {
   for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++) {
     n[r - 1] = arguments[r];
   }
 
-  return b(e) || S(e) ? Ae(Ne(g(w, [e].concat(n)))) : 0 === n.length && 1 === e.length && "string" == typeof e[0] ? e : Ae(Ne(g(e, n)));
+  return b(e) || S(e) ? Ne(g(w, [e].concat(n))) : 0 === n.length && 1 === e.length && "string" == typeof e[0] ? e : Ne(g(e, n));
 }
 
-var Ie = /invalid hook call/i,
-    Pe = new Set(),
-    Oe = function Oe(e, t) {
+var Ce = /invalid hook call/i,
+    Ie = new Set(),
+    Pe = function Pe(e, t) {
   if ("production" !== "development") {
-    var n = "The component " + e + (t ? ' with the id of "' + t + '"' : "") + " has been created dynamically.\nYou may see this warning because you've called styled inside another component.\nTo resolve this only create new StyledComponents outside of any render method and function component.",
-        r = console.error;
+    var n = "The component " + e + (t ? ' with the id of "' + t + '"' : "") + " has been created dynamically.\nYou may see this warning because you've called styled inside another component.\nTo resolve this only create new StyledComponents outside of any render method and function component.";
 
     try {
-      var o = !0;
-      console.error = function (e) {
-        if (Ie.test(e)) o = !1, Pe.delete(n);else {
-          for (var t = arguments.length, s = new Array(t > 1 ? t - 1 : 0), i = 1; i < t; i++) {
-            s[i - 1] = arguments[i];
-          }
-
-          r.apply(void 0, [e].concat(s));
-        }
-      }, (0, _react.useRef)(), o && !Pe.has(n) && (console.warn(n), Pe.add(n));
+      (0, _react.useRef)(), Ie.has(n) || (console.warn(n), Ie.add(n));
     } catch (e) {
-      Ie.test(e.message) && Pe.delete(n);
-    } finally {
-      console.error = r;
+      Ce.test(e.message) && Ie.delete(n);
     }
   }
 },
-    Re = function Re(e, t, n) {
+    Oe = function Oe(e, t, n) {
   return void 0 === n && (n = E), e.theme !== n.theme && e.theme || t || n.theme;
 },
-    De = /[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~-]+/g,
-    je = /(^-|-$)/g;
+    Re = /[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~-]+/g,
+    De = /(^-|-$)/g;
 
-function Te(e) {
-  return e.replace(De, "-").replace(je, "");
+function je(e) {
+  return e.replace(Re, "-").replace(De, "");
 }
 
-var xe = function xe(e) {
+var Te = function Te(e) {
   return ee(ne(e) >>> 0);
 };
 
@@ -39861,16 +38677,16 @@ function ke(e) {
   return "string" == typeof e && ("production" === "development" || e.charAt(0) === e.charAt(0).toLowerCase());
 }
 
-var Ve = function Ve(e) {
+var xe = function xe(e) {
   return "function" == typeof e || "object" == _typeof(e) && null !== e && !Array.isArray(e);
 },
-    Be = function Be(e) {
+    Ve = function Ve(e) {
   return "__proto__" !== e && "constructor" !== e && "prototype" !== e;
 };
 
-function ze(e, t, n) {
+function Be(e, t, n) {
   var r = e[n];
-  Ve(t) && Ve(r) ? Me(r, t) : e[n] = t;
+  xe(t) && xe(r) ? Me(r, t) : e[n] = t;
 }
 
 function Me(e) {
@@ -39878,24 +38694,24 @@ function Me(e) {
     n[r - 1] = arguments[r];
   }
 
-  for (var o = 0, s = n; o < s.length; o++) {
-    var i = s[o];
-    if (Ve(i)) for (var a in i) {
-      Be(a) && ze(e, i[a], a);
+  for (var o = 0, i = n; o < i.length; o++) {
+    var s = i[o];
+    if (xe(s)) for (var a in s) {
+      Ve(a) && Be(e, s[a], a);
     }
   }
 
   return e;
 }
 
-var Ge = _react.default.createContext(),
-    Le = Ge.Consumer;
+var ze = _react.default.createContext(),
+    Le = ze.Consumer;
 
 exports.ThemeConsumer = Le;
-exports.ThemeContext = Ge;
+exports.ThemeContext = ze;
 
-function Fe(e) {
-  var t = (0, _react.useContext)(Ge),
+function Ge(e) {
+  var t = (0, _react.useContext)(ze),
       n = (0, _react.useMemo)(function () {
     return function (e, t) {
       if (!e) return j(14);
@@ -39908,43 +38724,43 @@ function Fe(e) {
       return Array.isArray(e) || "object" != _typeof(e) ? j(8) : t ? v({}, t, {}, e) : e;
     }(e.theme, t);
   }, [e.theme, t]);
-  return e.children ? _react.default.createElement(Ge.Provider, {
+  return e.children ? _react.default.createElement(ze.Provider, {
     value: n
   }, e.children) : null;
 }
 
-var Ye = {};
+var Fe = {};
 
-function qe(e, t, n) {
+function Ye(e, t, n) {
   var o = N(e),
-      i = !ke(e),
+      s = !ke(e),
       a = t.attrs,
       c = void 0 === a ? w : a,
       d = t.componentId,
       h = void 0 === d ? function (e, t) {
-    var n = "string" != typeof e ? "sc" : Te(e);
-    Ye[n] = (Ye[n] || 0) + 1;
-    var r = n + "-" + xe("5.3.6" + n + Ye[n]);
+    var n = "string" != typeof e ? "sc" : je(e);
+    Fe[n] = (Fe[n] || 0) + 1;
+    var r = n + "-" + Te("5.2.3" + n + Fe[n]);
     return t ? t + "-" + r : r;
   }(t.displayName, t.parentComponentId) : d,
       p = t.displayName,
       f = void 0 === p ? function (e) {
     return ke(e) ? "styled." + e : "Styled(" + _(e) + ")";
   }(e) : p,
-      g = t.displayName && t.componentId ? Te(t.displayName) + "-" + t.componentId : t.componentId || h,
+      g = t.displayName && t.componentId ? je(t.displayName) + "-" + t.componentId : t.componentId || h,
       S = o && e.attrs ? Array.prototype.concat(e.attrs, c).filter(Boolean) : c,
       A = t.shouldForwardProp;
-  o && e.shouldForwardProp && (A = t.shouldForwardProp ? function (n, r, o) {
-    return e.shouldForwardProp(n, r, o) && t.shouldForwardProp(n, r, o);
+  o && e.shouldForwardProp && (A = t.shouldForwardProp ? function (n, r) {
+    return e.shouldForwardProp(n, r) && t.shouldForwardProp(n, r);
   } : e.shouldForwardProp);
 
   var C,
-      I = new se(n, g, o ? e.componentStyle : void 0),
+      I = new ie(n, g, o ? e.componentStyle : void 0),
       P = I.isStatic && 0 === c.length,
       O = function O(e, t) {
     return function (e, t, n, r) {
       var o = e.attrs,
-          i = e.componentStyle,
+          s = e.componentStyle,
           a = e.defaultProps,
           c = e.foldedComponentIds,
           d = e.shouldForwardProp,
@@ -39961,22 +38777,22 @@ function qe(e, t, n) {
         return n.forEach(function (e) {
           var t,
               n,
-              s,
-              i = e;
+              i,
+              s = e;
 
-          for (t in b(i) && (i = i(r)), i) {
-            r[t] = o[t] = "className" === t ? (n = o[t], s = i[t], n && s ? n + " " + s : n || s) : i[t];
+          for (t in b(s) && (s = s(r)), s) {
+            r[t] = o[t] = "className" === t ? (n = o[t], i = s[t], n && i ? n + " " + i : n || i) : s[t];
           }
         }), [r, o];
-      }(Re(t, (0, _react.useContext)(Ge), a) || E, t, o),
+      }(Oe(t, (0, _react.useContext)(ze), a) || E, t, o),
           y = f[0],
           g = f[1],
           S = function (e, t, n, r) {
         var o = fe(),
-            s = me(),
-            i = t ? e.generateAndInjectStyles(E, o, s) : e.generateAndInjectStyles(n, o, s);
-        return "production" !== "development" && (0, _react.useDebugValue)(i), "production" !== "development" && !t && r && r(i), i;
-      }(i, r, y, "production" !== "development" ? e.warnTooManyClasses : void 0),
+            i = me(),
+            s = t ? e.generateAndInjectStyles(E, o, i) : e.generateAndInjectStyles(n, o, i);
+        return "production" !== "development" && (0, _react.useDebugValue)(s), "production" !== "development" && !t && r && r(s), s;
+      }(s, r, y, "production" !== "development" ? e.warnTooManyClasses : void 0),
           w = n,
           _ = g.$as || t.$as || g.as || t.as || p,
           N = ke(_),
@@ -39984,7 +38800,7 @@ function qe(e, t, n) {
           C = {};
 
       for (var I in A) {
-        "$" !== I[0] && "as" !== I && ("forwardedAs" === I ? C.as = A[I] : (d ? d(I, _isPropValid.default, _) : !N || (0, _isPropValid.default)(I)) && (C[I] = A[I]));
+        "$" !== I[0] && "as" !== I && ("forwardedAs" === I ? C.as = A[I] : (d ? d(I, _isPropValid.default) : !N || (0, _isPropValid.default)(I)) && (C[I] = A[I]));
       }
 
       return t.style && g.style !== t.style && (C.style = v({}, t.style, {}, g.style)), C.className = Array.prototype.concat(c, h, S !== h ? S : null, t.className, g.className).filter(Boolean).join(" "), C.ref = w, (0, _react.createElement)(_, C);
@@ -39998,19 +38814,19 @@ function qe(e, t, n) {
       var n,
           r,
           o = {},
-          s = Object.keys(e);
+          i = Object.keys(e);
 
-      for (r = 0; r < s.length; r++) {
-        n = s[r], t.indexOf(n) >= 0 || (o[n] = e[n]);
+      for (r = 0; r < i.length; r++) {
+        n = i[r], t.indexOf(n) >= 0 || (o[n] = e[n]);
       }
 
       return o;
     }(t, ["componentId"]),
-        s = r && r + "-" + (ke(e) ? e : Te(_(e)));
+        i = r && r + "-" + (ke(e) ? e : je(_(e)));
 
-    return qe(e, v({}, o, {
+    return Ye(e, v({}, o, {
       attrs: S,
-      componentId: s
+      componentId: i
     }), n);
   }, Object.defineProperty(C, "defaultProps", {
     get: function get() {
@@ -40019,18 +38835,18 @@ function qe(e, t, n) {
     set: function set(t) {
       this._foldedDefaultProps = o ? Me({}, e.defaultProps, t) : t;
     }
-  }), "production" !== "development" && (Oe(f, g), C.warnTooManyClasses = function (e, t) {
+  }), "production" !== "development" && (Pe(f, g), C.warnTooManyClasses = function (e, t) {
     var n = {},
         r = !1;
     return function (o) {
       if (!r && (n[o] = !0, Object.keys(n).length >= 200)) {
-        var s = t ? ' with the id of "' + t + '"' : "";
-        console.warn("Over 200 classes were generated for component " + e + s + ".\nConsider using the attrs method, together with a style object for frequently changed styles.\nExample:\n  const Component = styled.div.attrs(props => ({\n    style: {\n      background: props.background,\n    },\n  }))`width: 100%;`\n\n  <Component />"), r = !0, n = {};
+        var i = t ? ' with the id of "' + t + '"' : "";
+        console.warn("Over 200 classes were generated for component " + e + i + ".\nConsider using the attrs method, together with a style object for frequently changed styles.\nExample:\n  const Component = styled.div.attrs(props => ({\n    style: {\n      background: props.background,\n    },\n  }))`width: 100%;`\n\n  <Component />"), r = !0, n = {};
       }
     };
   }(f, g)), C.toString = function () {
     return "." + C.styledComponentId;
-  }, i && (0, _hoistNonReactStatics.default)(C, e, {
+  }, s && (0, _hoistNonReactStatics.default)(C, e, {
     attrs: !0,
     componentStyle: !0,
     displayName: !0,
@@ -40042,29 +38858,29 @@ function qe(e, t, n) {
   }), C;
 }
 
-var He = function He(e) {
+var qe = function qe(e) {
   return function e(t, r, o) {
     if (void 0 === o && (o = E), !(0, _reactIs.isValidElementType)(r)) return j(1, String(r));
 
-    var s = function s() {
-      return t(r, o, Ce.apply(void 0, arguments));
+    var i = function i() {
+      return t(r, o, Ae.apply(void 0, arguments));
     };
 
-    return s.withConfig = function (n) {
+    return i.withConfig = function (n) {
       return e(t, r, v({}, o, {}, n));
-    }, s.attrs = function (n) {
+    }, i.attrs = function (n) {
       return e(t, r, v({}, o, {
         attrs: Array.prototype.concat(o.attrs, n).filter(Boolean)
       }));
-    }, s;
-  }(qe, e);
+    }, i;
+  }(Ye, e);
 };
 
-["a", "abbr", "address", "area", "article", "aside", "audio", "b", "base", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "cite", "code", "col", "colgroup", "data", "datalist", "dd", "del", "details", "dfn", "dialog", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "main", "map", "mark", "marquee", "menu", "menuitem", "meta", "meter", "nav", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u", "ul", "var", "video", "wbr", "circle", "clipPath", "defs", "ellipse", "foreignObject", "g", "image", "line", "linearGradient", "marker", "mask", "path", "pattern", "polygon", "polyline", "radialGradient", "rect", "stop", "svg", "text", "textPath", "tspan"].forEach(function (e) {
-  He[e] = He(e);
+["a", "abbr", "address", "area", "article", "aside", "audio", "b", "base", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "cite", "code", "col", "colgroup", "data", "datalist", "dd", "del", "details", "dfn", "dialog", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "main", "map", "mark", "marquee", "menu", "menuitem", "meta", "meter", "nav", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "u", "ul", "var", "video", "wbr", "circle", "clipPath", "defs", "ellipse", "foreignObject", "g", "image", "line", "linearGradient", "marker", "mask", "path", "pattern", "polygon", "polyline", "radialGradient", "rect", "stop", "svg", "text", "tspan"].forEach(function (e) {
+  qe[e] = qe(e);
 });
 
-var $e = function () {
+var He = function () {
   function e(e, t) {
     this.rules = e, this.componentId = t, this.isStatic = re(e), Z.registerId(this.componentId + 1);
   }
@@ -40072,8 +38888,8 @@ var $e = function () {
   var t = e.prototype;
   return t.createStyles = function (e, t, n, r) {
     var o = r(Ne(this.rules, t, n, r).join(""), ""),
-        s = this.componentId + e;
-    n.insertRules(s, s, o);
+        i = this.componentId + e;
+    n.insertRules(i, i, o);
   }, t.removeStyles = function (e, t) {
     t.clearRules(this.componentId + e);
   }, t.renderStyles = function (e, t, n, r) {
@@ -40081,24 +38897,24 @@ var $e = function () {
   }, e;
 }();
 
-function We(e) {
+function $e(e) {
   for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), o = 1; o < t; o++) {
     n[o - 1] = arguments[o];
   }
 
-  var i = Ce.apply(void 0, [e].concat(n)),
-      a = "sc-global-" + xe(JSON.stringify(i)),
-      u = new $e(i, a);
+  var s = Ae.apply(void 0, [e].concat(n)),
+      a = "sc-global-" + Te(JSON.stringify(s)),
+      u = new He(s, a);
 
   function l(e) {
     var t = fe(),
         n = me(),
-        o = (0, _react.useContext)(Ge),
+        o = (0, _react.useContext)(ze),
         l = (0, _react.useRef)(t.allocateGSInstance(a)).current;
-    return "production" !== "development" && _react.default.Children.count(e.children) && console.warn("The global style component " + a + " was given child JSX. createGlobalStyle does not render children."), "production" !== "development" && i.some(function (e) {
+    return "production" !== "development" && _react.default.Children.count(e.children) && console.warn("The global style component " + a + " was given child JSX. createGlobalStyle does not render children."), "production" !== "development" && s.some(function (e) {
       return "string" == typeof e && -1 !== e.indexOf("@import");
-    }) && console.warn("Please do not use @import CSS syntax in createGlobalStyle at this time, as the CSSOM APIs we use in production do not handle it well. Instead, we recommend using a library such as react-helmet to inject a typical <link> meta tag to the stylesheet, or simply embedding it manually in your index.html <head> section for a simpler app."), t.server && h(l, e, t, o, n), (0, _react.useLayoutEffect)(function () {
-      if (!t.server) return h(l, e, t, o, n), function () {
+    }) && console.warn("Please do not use @import CSS syntax in createGlobalStyle at this time, as the CSSOM APIs we use in production do not handle it well. Instead, we recommend using a library such as react-helmet to inject a typical <link> meta tag to the stylesheet, or simply embedding it manually in your index.html <head> section for a simpler app."), (0, _react.useLayoutEffect)(function () {
+      return h(l, e, t, o, n), function () {
         return u.removeStyles(l, t);
       };
     }, [l, e, t, o, n]), null;
@@ -40106,42 +38922,41 @@ function We(e) {
 
   function h(e, t, n, r, o) {
     if (u.isStatic) u.renderStyles(e, O, n, o);else {
-      var s = v({}, t, {
-        theme: Re(t, r, l.defaultProps)
+      var i = v({}, t, {
+        theme: Oe(t, r, l.defaultProps)
       });
-      u.renderStyles(e, s, n, o);
+      u.renderStyles(e, i, n, o);
     }
   }
 
-  return "production" !== "development" && Oe(a), _react.default.memo(l);
+  return "production" !== "development" && Pe(a), _react.default.memo(l);
 }
 
-function Ue(e) {
+function We(e) {
   "production" !== "development" && "undefined" != typeof navigator && "ReactNative" === navigator.product && console.warn("`keyframes` cannot be used on ReactNative, only on the web. To do animation in ReactNative please use Animated.");
 
   for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++) {
     n[r - 1] = arguments[r];
   }
 
-  var o = Ce.apply(void 0, [e].concat(n)).join(""),
-      s = xe(o);
-  return new ve(s, o);
+  var o = Ae.apply(void 0, [e].concat(n)).join(""),
+      i = Te(o);
+  return new ve(i, o);
 }
 
-var Je = function () {
+var Ue = function () {
   function e() {
     var e = this;
     this._emitSheetCSS = function () {
-      var t = e.instance.toString();
-      if (!t) return "";
-      var n = q();
-      return "<style " + [n && 'nonce="' + n + '"', A + '="true"', 'data-styled-version="5.3.6"'].filter(Boolean).join(" ") + ">" + t + "</style>";
+      var t = e.instance.toString(),
+          n = q();
+      return "<style " + [n && 'nonce="' + n + '"', A + '="true"', 'data-styled-version="5.2.3"'].filter(Boolean).join(" ") + ">" + t + "</style>";
     }, this.getStyleTags = function () {
       return e.sealed ? j(2) : e._emitSheetCSS();
     }, this.getStyleElement = function () {
       var t;
       if (e.sealed) return j(2);
-      var n = ((t = {})[A] = "", t["data-styled-version"] = "5.3.6", t.dangerouslySetInnerHTML = {
+      var n = ((t = {})[A] = "", t["data-styled-version"] = "5.2.3", t.dangerouslySetInnerHTML = {
         __html: e.instance.toString()
       }, t),
           o = q();
@@ -40164,11 +38979,11 @@ var Je = function () {
     return j(3);
   }, e;
 }(),
-    Xe = function Xe(e) {
+    Je = function Je(e) {
   var t = _react.default.forwardRef(function (t, n) {
-    var o = (0, _react.useContext)(Ge),
-        i = e.defaultProps,
-        a = Re(t, o, i);
+    var o = (0, _react.useContext)(ze),
+        s = e.defaultProps,
+        a = Oe(t, o, s);
     return "production" !== "development" && void 0 === a && console.warn('[withTheme] You are not using a ThemeProvider nor passing a theme prop or a theme in defaultProps in component class "' + _(e) + '"'), _react.default.createElement(e, v({}, t, {
       theme: a,
       ref: n
@@ -40177,22 +38992,22 @@ var Je = function () {
 
   return (0, _hoistNonReactStatics.default)(t, e), t.displayName = "WithTheme(" + _(e) + ")", t;
 },
-    Ze = function Ze() {
-  return (0, _react.useContext)(Ge);
+    Xe = function Xe() {
+  return (0, _react.useContext)(ze);
 },
-    Ke = {
+    Ze = {
   StyleSheet: Z,
   masterSheet: he
 };
 
-exports.__PRIVATE__ = Ke;
-exports.useTheme = Ze;
-exports.withTheme = Xe;
-exports.ServerStyleSheet = Je;
-"production" !== "development" && "undefined" != typeof navigator && "ReactNative" === navigator.product && console.warn("It looks like you've imported 'styled-components' on React Native.\nPerhaps you're looking to import 'styled-components/native'?\nRead more about this at https://www.styled-components.com/docs/basics#react-native"), "production" !== "development" && "test" !== "development" && "undefined" != typeof window && (window["__styled-components-init__"] = window["__styled-components-init__"] || 0, 1 === window["__styled-components-init__"] && console.warn("It looks like there are several instances of 'styled-components' initialized in this application. This may cause dynamic styles to not render properly, errors during the rehydration process, a missing theme prop, and makes your application bigger without good reason.\n\nSee https://s-c.sh/2BAXzed for more info."), window["__styled-components-init__"] += 1);
-var _default = He;
+exports.__PRIVATE__ = Ze;
+exports.useTheme = Xe;
+exports.withTheme = Je;
+exports.ServerStyleSheet = Ue;
+"production" !== "development" && "undefined" != typeof navigator && "ReactNative" === navigator.product && console.warn("It looks like you've imported 'styled-components' on React Native.\nPerhaps you're looking to import 'styled-components/native'?\nRead more about this at https://www.styled-components.com/docs/basics#react-native"), "production" !== "development" && "test" !== "development" && (window["__styled-components-init__"] = window["__styled-components-init__"] || 0, 1 === window["__styled-components-init__"] && console.warn("It looks like there are several instances of 'styled-components' initialized in this application. This may cause dynamic styles to not render properly, errors during the rehydration process, a missing theme prop, and makes your application bigger without good reason.\n\nSee https://s-c.sh/2BAXzed for more info."), window["__styled-components-init__"] += 1);
+var _default = qe;
 exports.default = _default;
-},{"react-is":"node_modules/react-is/index.js","react":"../node_modules/react/index.js","shallowequal":"node_modules/shallowequal/index.js","@emotion/stylis":"node_modules/@emotion/stylis/dist/stylis.browser.esm.js","@emotion/unitless":"node_modules/@emotion/unitless/dist/unitless.browser.esm.js","@emotion/is-prop-valid":"node_modules/@emotion/is-prop-valid/dist/emotion-is-prop-valid.esm.js","hoist-non-react-statics":"node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js","process":"node_modules/process/browser.js"}],"../src/useIntersectionObserver.ts":[function(require,module,exports) {
+},{"react-is":"node_modules/react-is/index.js","react":"../node_modules/react/index.js","shallowequal":"node_modules/shallowequal/index.js","@emotion/stylis":"node_modules/@emotion/stylis/dist/stylis.browser.esm.js","@emotion/unitless":"node_modules/@emotion/unitless/dist/unitless.browser.esm.js","@emotion/is-prop-valid":"node_modules/@emotion/is-prop-valid/dist/is-prop-valid.browser.esm.js","hoist-non-react-statics":"node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js","process":"node_modules/process/browser.js"}],"../src/useIntersectionObserver.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -40210,7 +39025,7 @@ function createObserverStore(options) {
   var root = null;
   var observer = null;
   var entry = null;
-  var listeners = new Set();
+  var listener = null;
 
   function unobserve() {
     observer === null || observer === void 0 ? void 0 : observer.disconnect();
@@ -40218,24 +39033,23 @@ function createObserverStore(options) {
   }
 
   function observe() {
-    var rootMargin = options.rootMargin,
-        threshold = options.threshold;
-
-    if (node) {
-      // Create a observer for current "node" with given options.
-      observer = new IntersectionObserver(function (_a) {
-        var newEntry = _a[0];
-        entry = newEntry;
-        listeners.forEach(function (listener) {
-          return listener();
-        });
-      }, {
-        root: root,
-        rootMargin: rootMargin,
-        threshold: threshold
-      });
-      observer.observe(node);
+    if (!node) {
+      return;
     }
+
+    var rootMargin = options.rootMargin,
+        threshold = options.threshold; // Create a observer for current "node" with given options.
+
+    observer = new IntersectionObserver(function (_a) {
+      var newEntry = _a[0];
+      entry = newEntry;
+      listener === null || listener === void 0 ? void 0 : listener();
+    }, {
+      root: root,
+      rootMargin: rootMargin,
+      threshold: threshold
+    });
+    observer.observe(node);
   }
 
   function initializeObserver() {
@@ -40246,10 +39060,10 @@ function createObserverStore(options) {
   return {
     subscribe: function subscribe(onStoreChange) {
       initializeObserver();
-      listeners.add(onStoreChange);
+      listener = onStoreChange;
       return function () {
         unobserve();
-        listeners.delete(onStoreChange);
+        listener = null;
       };
     },
     getSnapshot: function getSnapshot() {
@@ -40298,31 +39112,30 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.__assign = void 0;
-exports.__asyncDelegator = __asyncDelegator;
-exports.__asyncGenerator = __asyncGenerator;
-exports.__asyncValues = __asyncValues;
-exports.__await = __await;
-exports.__awaiter = __awaiter;
-exports.__classPrivateFieldGet = __classPrivateFieldGet;
-exports.__classPrivateFieldIn = __classPrivateFieldIn;
-exports.__classPrivateFieldSet = __classPrivateFieldSet;
-exports.__createBinding = void 0;
-exports.__decorate = __decorate;
-exports.__exportStar = __exportStar;
 exports.__extends = __extends;
-exports.__generator = __generator;
-exports.__importDefault = __importDefault;
-exports.__importStar = __importStar;
-exports.__makeTemplateObject = __makeTemplateObject;
-exports.__metadata = __metadata;
-exports.__param = __param;
-exports.__read = __read;
 exports.__rest = __rest;
-exports.__spread = __spread;
-exports.__spreadArray = __spreadArray;
-exports.__spreadArrays = __spreadArrays;
+exports.__decorate = __decorate;
+exports.__param = __param;
+exports.__metadata = __metadata;
+exports.__awaiter = __awaiter;
+exports.__generator = __generator;
+exports.__exportStar = __exportStar;
 exports.__values = __values;
+exports.__read = __read;
+exports.__spread = __spread;
+exports.__spreadArrays = __spreadArrays;
+exports.__spreadArray = __spreadArray;
+exports.__await = __await;
+exports.__asyncGenerator = __asyncGenerator;
+exports.__asyncDelegator = __asyncDelegator;
+exports.__asyncValues = __asyncValues;
+exports.__makeTemplateObject = __makeTemplateObject;
+exports.__importStar = __importStar;
+exports.__importDefault = __importDefault;
+exports.__classPrivateFieldGet = __classPrivateFieldGet;
+exports.__classPrivateFieldSet = __classPrivateFieldSet;
+exports.__classPrivateFieldIn = __classPrivateFieldIn;
+exports.__createBinding = exports.__assign = void 0;
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -40819,11 +39632,10 @@ function useTrackVisibility(args) {
       wasEverVisible = _c[0],
       setWasEverVisible = _c[1];
 
-  (0, _react.useEffect)(function () {
-    if (isVisible) {
-      setWasEverVisible(isVisible);
-    }
-  }, [isVisible]);
+  if (isVisible && !wasEverVisible) {
+    setWasEverVisible(true);
+  }
+
   return [ref, (0, _tslib.__assign)((0, _tslib.__assign)({}, result), {
     isVisible: isVisible,
     wasEverVisible: wasEverVisible
@@ -40837,6 +39649,12 @@ exports.default = _default;
 
 Object.defineProperty(exports, "__esModule", {
   value: true
+});
+Object.defineProperty(exports, "useIntersectionObserver", {
+  enumerable: true,
+  get: function () {
+    return _useIntersectionObserver.default;
+  }
 });
 Object.defineProperty(exports, "IntersectionObserverHookArgs", {
   enumerable: true,
@@ -40874,6 +39692,12 @@ Object.defineProperty(exports, "IntersectionObserverHookRootRefCallbackNode", {
     return _useIntersectionObserver.IntersectionObserverHookRootRefCallbackNode;
   }
 });
+Object.defineProperty(exports, "useTrackVisibility", {
+  enumerable: true,
+  get: function () {
+    return _useTrackVisibility.default;
+  }
+});
 Object.defineProperty(exports, "TrackVisibilityHookArgs", {
   enumerable: true,
   get: function () {
@@ -40886,26 +39710,14 @@ Object.defineProperty(exports, "TrackVisibilityHookResult", {
     return _useTrackVisibility.TrackVisibilityHookResult;
   }
 });
-Object.defineProperty(exports, "useIntersectionObserver", {
-  enumerable: true,
-  get: function () {
-    return _useIntersectionObserver.default;
-  }
-});
-Object.defineProperty(exports, "useTrackVisibility", {
-  enumerable: true,
-  get: function () {
-    return _useTrackVisibility.default;
-  }
-});
 
 var _useIntersectionObserver = _interopRequireWildcard(require("./useIntersectionObserver"));
 
 var _useTrackVisibility = _interopRequireWildcard(require("./useTrackVisibility"));
 
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 },{"./useIntersectionObserver":"../src/useIntersectionObserver.ts","./useTrackVisibility":"../src/useTrackVisibility.ts"}],"components/Message.tsx":[function(require,module,exports) {
 "use strict";
 
@@ -40923,18 +39735,12 @@ var __makeTemplateObject = this && this.__makeTemplateObject || function (cooked
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
-  var desc = Object.getOwnPropertyDescriptor(m, k);
-
-  if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-    desc = {
-      enumerable: true,
-      get: function get() {
-        return m[k];
-      }
-    };
-  }
-
-  Object.defineProperty(o, k2, desc);
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
 } : function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
   o[k2] = m[k];
@@ -41001,18 +39807,12 @@ var __makeTemplateObject = this && this.__makeTemplateObject || function (cooked
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
-  var desc = Object.getOwnPropertyDescriptor(m, k);
-
-  if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-    desc = {
-      enumerable: true,
-      get: function get() {
-        return m[k];
-      }
-    };
-  }
-
-  Object.defineProperty(o, k2, desc);
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
 } : function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
   o[k2] = m[k];
@@ -41079,7 +39879,7 @@ function App() {
       mode = _a[0],
       setMode = _a[1];
 
-  var _b = (0, src_1.useTrackVisibility)(),
+  var _b = src_1.useTrackVisibility(),
       ref = _b[0],
       _c = _b[1],
       isVisible = _c.isVisible,
@@ -41107,7 +39907,7 @@ function App() {
   }, innerContent));
 }
 
-var root = (0, client_1.createRoot)(document.getElementById('root'));
+var root = client_1.createRoot(document.getElementById('root'));
 root.render(React.createElement(React.StrictMode, null, React.createElement(App, null)));
 var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6;
 },{"react-app-polyfill/ie11":"node_modules/react-app-polyfill/ie11.js","react":"../node_modules/react/index.js","react-dom/client":"../node_modules/react-dom/client.js","styled-components":"node_modules/styled-components/dist/styled-components.browser.esm.js","../src":"../src/index.ts","./components/Message":"components/Message.tsx"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -41138,7 +39938,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57152" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64968" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -41169,8 +39969,9 @@ if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
         assetsToAccept.forEach(function (v) {
           hmrAcceptRun(v[0], v[1]);
         });
-      } else {
-        window.location.reload();
+      } else if (location.reload) {
+        // `location` global exists in a web worker context but lacks `.reload()` function.
+        location.reload();
       }
     }
 
