@@ -42,6 +42,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'import/order': 'off',
     'import/newline-after-import': 'warn',
+    'import/prefer-default-export': 'off',
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': 'warn',
     'react/jsx-curly-newline': 'off',
@@ -51,5 +52,6 @@ module.exports = {
       'warn',
       { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
     ],
+    'react/jsx-one-expression-per-line': 'off',
   },
 };

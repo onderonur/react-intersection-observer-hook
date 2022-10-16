@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { CachedIntersectionObserver, createObserverCache } from './utils';
 import { Omit } from './types';
 
 const DEFAULT_ROOT_MARGIN = '0px';
@@ -29,6 +30,8 @@ export type IntersectionObserverHookResult = [
   },
 ];
 
+const observerCache = createObserverCache();
+
 // For more info:
 // https://developers.google.com/web/updates/2016/04/intersectionobserver
 // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
@@ -40,50 +43,50 @@ function useIntersectionObserver(
 
   const nodeRef = useRef<IntersectionObserverHookRefCallbackNode>(null);
   const rootRef = useRef<IntersectionObserverHookRootRefCallbackNode>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  const observerRef = useRef<CachedIntersectionObserver | null>(null);
 
   const [entry, setEntry] = useState<IntersectionObserverEntry>();
-
-  const unobserve = useCallback(() => {
-    // Disconnect the current observer (if there is one)
-    const currentObserver = observerRef.current;
-    currentObserver?.disconnect();
-    observerRef.current = null;
-  }, []);
 
   const observe = useCallback(() => {
     const node = nodeRef.current;
     if (node) {
-      const root = rootRef.current;
-      const options = { root, rootMargin, threshold };
-      // Create a observer for current "node" with given options.
-      const observer = new IntersectionObserver(([newEntry]) => {
-        setEntry(newEntry);
-      }, options);
-      observer.observe(node);
+      const observer = observerCache.getObserver({
+        root: rootRef.current,
+        rootMargin,
+        threshold,
+      });
+      observer.observe(node, (observedEntry) => {
+        setEntry(observedEntry);
+      });
       observerRef.current = observer;
     }
   }, [rootMargin, threshold]);
 
-  const initializeObserver = useCallback(() => {
-    unobserve();
-    observe();
-  }, [observe, unobserve]);
+  const unobserve = useCallback(() => {
+    const currentObserver = observerRef.current;
+    const node = nodeRef.current;
+    if (node) {
+      currentObserver?.unobserve(node);
+    }
+    observerRef.current = null;
+  }, []);
 
   const refCallback = useCallback<IntersectionObserverHookRefCallback>(
     (node) => {
+      unobserve();
       nodeRef.current = node;
-      initializeObserver();
+      observe();
     },
-    [initializeObserver],
+    [observe, unobserve],
   );
 
   const rootRefCallback = useCallback<IntersectionObserverHookRootRefCallback>(
     (rootNode) => {
+      unobserve();
       rootRef.current = rootNode;
-      initializeObserver();
+      observe();
     },
-    [initializeObserver],
+    [observe, unobserve],
   );
 
   useEffect(() => {
@@ -95,12 +98,12 @@ function useIntersectionObserver(
     // we stop observing the node. But we need to start observing after component re-mounts with its preserved state.
     // So to handle this case, we call initializeObserver here.
     // https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-strict-mode
-    initializeObserver();
+    observe();
     return () => {
       // We disconnect the observer on unmount to prevent memory leaks etc.
       unobserve();
     };
-  }, [initializeObserver, unobserve]);
+  }, [observe, unobserve]);
 
   return [refCallback, { entry, rootRef: rootRefCallback }];
 }

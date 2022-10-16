@@ -51,11 +51,29 @@ enum ParentType {
 function App() {
   const [mode, setMode] = React.useState(ParentType.DOCUMENT);
   const [ref, { isVisible, rootRef }] = useTrackVisibility();
+  const [
+    ref2,
+    { isVisible: isVisible2, rootRef: rootRef2 },
+  ] = useTrackVisibility();
 
   const innerContent = (
     <Content>
       <Ball ref={ref} />
     </Content>
+  );
+
+  const innerContent2 = (
+    <Content>
+      <Ball ref={ref2} />
+    </Content>
+  );
+
+  const rootCallback = React.useCallback(
+    (node) => {
+      rootRef(node);
+      rootRef2(node);
+    },
+    [rootRef, rootRef2],
   );
 
   return (
@@ -76,15 +94,27 @@ function App() {
             </option>
           </select>
         </Label>
-        <Message isVisible={isVisible} />
+        <Message label="First ball" isVisible={isVisible} />
+        <Message label="Second" isVisible={isVisible2} />
       </Top>
       {mode === ParentType.DOCUMENT ? (
-        innerContent
+        <>
+          {innerContent}
+          {innerContent2}
+        </>
       ) : (
-        <Scroller ref={rootRef}>{innerContent}</Scroller>
+        <Scroller ref={rootCallback}>
+          {innerContent}
+          {innerContent2}
+        </Scroller>
       )}
     </Root>
   );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root'),
+);
