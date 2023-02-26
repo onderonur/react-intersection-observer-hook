@@ -15,10 +15,16 @@ const Top = styled.div`
 `;
 
 const Label = styled.label`
+  display: block;
+  user-select: none;
   font-weight: bold;
   > * {
     margin-left: 8px;
   }
+`;
+
+const Checkbox = styled.input.attrs({ type: 'checkbox' })`
+  margin: 8px 8px 4px 0;
 `;
 
 const Scroller = styled.div`
@@ -49,6 +55,7 @@ enum ParentType {
 }
 
 function App() {
+  const [isContentVisible, setIsContentVisible] = React.useState(true);
   const [mode, setMode] = React.useState(ParentType.DOCUMENT);
   const [ref, { isVisible, rootRef }] = useTrackVisibility();
   const [
@@ -56,16 +63,15 @@ function App() {
     { isVisible: isVisible2, rootRef: rootRef2 },
   ] = useTrackVisibility();
 
-  const innerContent = (
-    <Content>
-      <Ball ref={ref} />
-    </Content>
-  );
-
-  const innerContent2 = (
-    <Content>
-      <Ball ref={ref2} />
-    </Content>
+  const content = (
+    <>
+      <Content>
+        <Ball ref={ref} />
+      </Content>
+      <Content>
+        <Ball ref={ref2} />
+      </Content>
+    </>
   );
 
   const rootCallback = React.useCallback(
@@ -94,19 +100,24 @@ function App() {
             </option>
           </select>
         </Label>
+        <Label>
+          <Checkbox
+            checked={isContentVisible}
+            onChange={(e) => setIsContentVisible(e.target.checked)}
+          />
+          Show Content
+        </Label>
         <Message label="First ball" isVisible={isVisible} />
-        <Message label="Second" isVisible={isVisible2} />
+        <Message label="Second ball" isVisible={isVisible2} />
       </Top>
-      {mode === ParentType.DOCUMENT ? (
-        <>
-          {innerContent}
-          {innerContent2}
-        </>
-      ) : (
-        <Scroller ref={rootCallback}>
-          {innerContent}
-          {innerContent2}
-        </Scroller>
+      {isContentVisible && (
+        <div>
+          {mode === ParentType.DOCUMENT ? (
+            content
+          ) : (
+            <Scroller ref={rootCallback}>{content}</Scroller>
+          )}
+        </div>
       )}
     </Root>
   );
