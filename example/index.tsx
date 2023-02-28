@@ -38,11 +38,11 @@ const Content = styled.div`
   height: 3000px;
 `;
 
-const Ball = styled.div`
+const Ball = styled.div<{ color: string }>`
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background-color: #1db954;
+  background-color: ${({ color }) => color};
   margin-left: auto;
   margin-right: auto;
   margin-top: 50%;
@@ -57,29 +57,49 @@ enum ParentType {
 function App() {
   const [isContentVisible, setIsContentVisible] = React.useState(true);
   const [mode, setMode] = React.useState(ParentType.DOCUMENT);
-  const [ref, { isVisible, rootRef }] = useTrackVisibility();
   const [
-    ref2,
-    { isVisible: isVisible2, rootRef: rootRef2 },
+    firstBallRef,
+    { isVisible: isFirstBallVisible, rootRef: firstBallRootRef },
   ] = useTrackVisibility();
+
+  const [
+    secondBallRef1,
+    { isVisible: isSecondBallVisible1, rootRef: secondBallRootRef1 },
+  ] = useTrackVisibility();
+
+  const [
+    secondBallRef2,
+    { isVisible: isSecondBallVisible2, rootRef: secondBallRootRef2 },
+  ] = useTrackVisibility({
+    threshold: 0.5,
+  });
+
+  const secondBallRef = React.useCallback(
+    (node: HTMLDivElement) => {
+      secondBallRef1(node);
+      secondBallRef2(node);
+    },
+    [secondBallRef1, secondBallRef2],
+  );
 
   const content = (
     <>
       <Content>
-        <Ball ref={ref} />
+        <Ball ref={firstBallRef} color="#1db954" />
       </Content>
       <Content>
-        <Ball ref={ref2} />
+        <Ball ref={secondBallRef} color="#f20404" />
       </Content>
     </>
   );
 
   const rootCallback = React.useCallback(
     (node) => {
-      rootRef(node);
-      rootRef2(node);
+      firstBallRootRef(node);
+      secondBallRootRef1(node);
+      secondBallRootRef2(node);
     },
-    [rootRef, rootRef2],
+    [firstBallRootRef, secondBallRootRef1, secondBallRootRef2],
   );
 
   return (
@@ -107,8 +127,12 @@ function App() {
           />
           Show Content
         </Label>
-        <Message label="First ball" isVisible={isVisible} />
-        <Message label="Second ball" isVisible={isVisible2} />
+        <Message label="Green ball" isVisible={isFirstBallVisible} />
+        <Message label="Red ball" isVisible={isSecondBallVisible1} />
+        <Message
+          label="More than half of red ball"
+          isVisible={isSecondBallVisible2}
+        />
       </Top>
       {isContentVisible && (
         <div>

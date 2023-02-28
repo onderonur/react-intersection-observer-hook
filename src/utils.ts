@@ -1,4 +1,11 @@
-type ObserverCache = Map<string, IntersectionObserver>;
+type EntryCallback = (entry: IntersectionObserverEntry) => void;
+
+type CachedObserver = {
+  observer: IntersectionObserver;
+  entryCallbacks: Map<Element, EntryCallback>;
+};
+
+type ObserverCache = Map<string, CachedObserver>;
 
 type ObserverCachesByRoot = Map<
   IntersectionObserverInit['root'],
@@ -16,28 +23,25 @@ export type CachedIntersectionObserver = {
 export function createObserverCache() {
   const cachesByRoot: ObserverCachesByRoot = new Map();
 
-  const entryCallbacks = new Map<
-    Element,
-    (entry: IntersectionObserverEntry) => void
-  >();
-
   function getObserver({
     root,
     rootMargin,
     threshold,
   }: IntersectionObserverInit): CachedIntersectionObserver {
-    let cacheByRoot: ObserverCache | undefined = cachesByRoot.get(root);
+    let cacheByRoot = cachesByRoot.get(root);
 
     if (!cacheByRoot) {
-      cacheByRoot = new Map<string, IntersectionObserver>();
+      cacheByRoot = new Map();
       cachesByRoot.set(root, cacheByRoot);
     }
 
     const cacheKey = JSON.stringify({ rootMargin, threshold });
-    let observer = cacheByRoot.get(cacheKey);
+    let cachedObserver = cacheByRoot.get(cacheKey);
 
-    if (!observer) {
-      observer = new IntersectionObserver(
+    if (!cachedObserver) {
+      const entryCallbacks = new Map<Element, EntryCallback>();
+
+      const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             const callback = entryCallbacks.get(entry.target);
@@ -47,7 +51,9 @@ export function createObserverCache() {
         { root, rootMargin, threshold },
       );
 
-      cacheByRoot.set(cacheKey, observer);
+      cachedObserver = { observer, entryCallbacks };
+
+      cacheByRoot.set(cacheKey, cachedObserver);
     }
 
     return {
@@ -55,12 +61,12 @@ export function createObserverCache() {
         node: Element,
         callback: (entry: IntersectionObserverEntry) => void,
       ) => {
-        entryCallbacks.set(node, callback);
-        observer?.observe(node);
+        cachedObserver?.entryCallbacks.set(node, callback);
+        cachedObserver?.observer.observe(node);
       },
       unobserve: (node: Element) => {
-        entryCallbacks.delete(node);
-        observer?.unobserve(node);
+        cachedObserver?.entryCallbacks.delete(node);
+        cachedObserver?.observer.unobserve(node);
       },
     };
   }

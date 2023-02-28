@@ -22,7 +22,7 @@ function Message({ label, isVisible }: MessageProps) {
       <MessageLabel>{label}:</MessageLabel>
       {isVisible
         ? '(づ｡◕‿‿◕｡)づ You have found it!'
-        : "¯\\_(ツ)_/¯ I don't know where the green ball is. Use scroll to find it."}
+        : `¯\\_(ツ)_/¯ I don't know where it is. Use scroll to find it.`}
     </MessageContent>
   );
 }
