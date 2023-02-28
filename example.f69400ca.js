@@ -35476,7 +35476,6 @@ exports.createObserverCache = createObserverCache;
 
 function createObserverCache() {
   var cachesByRoot = new Map();
-  var entryCallbacks = new Map();
 
   function getObserver(_a) {
     var root = _a.root,
@@ -35493,12 +35492,13 @@ function createObserverCache() {
       rootMargin: rootMargin,
       threshold: threshold
     });
-    var observer = cacheByRoot.get(cacheKey);
+    var cachedObserver = cacheByRoot.get(cacheKey);
 
-    if (!observer) {
-      observer = new IntersectionObserver(function (entries) {
+    if (!cachedObserver) {
+      var entryCallbacks_1 = new Map();
+      var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          var callback = entryCallbacks.get(entry.target);
+          var callback = entryCallbacks_1.get(entry.target);
           callback === null || callback === void 0 ? void 0 : callback(entry);
         });
       }, {
@@ -35506,17 +35506,21 @@ function createObserverCache() {
         rootMargin: rootMargin,
         threshold: threshold
       });
-      cacheByRoot.set(cacheKey, observer);
+      cachedObserver = {
+        observer: observer,
+        entryCallbacks: entryCallbacks_1
+      };
+      cacheByRoot.set(cacheKey, cachedObserver);
     }
 
     return {
       observe: function observe(node, callback) {
-        entryCallbacks.set(node, callback);
-        observer === null || observer === void 0 ? void 0 : observer.observe(node);
+        cachedObserver === null || cachedObserver === void 0 ? void 0 : cachedObserver.entryCallbacks.set(node, callback);
+        cachedObserver === null || cachedObserver === void 0 ? void 0 : cachedObserver.observer.observe(node);
       },
       unobserve: function unobserve(node) {
-        entryCallbacks.delete(node);
-        observer === null || observer === void 0 ? void 0 : observer.unobserve(node);
+        cachedObserver === null || cachedObserver === void 0 ? void 0 : cachedObserver.entryCallbacks.delete(node);
+        cachedObserver === null || cachedObserver === void 0 ? void 0 : cachedObserver.observer.unobserve(node);
       }
     };
   }
@@ -35559,17 +35563,20 @@ function useIntersectionObserver(args) {
   var observe = (0, _react.useCallback)(function () {
     var node = nodeRef.current;
 
-    if (node) {
-      var observer = observerCache.getObserver({
-        root: rootRef.current,
-        rootMargin: rootMargin,
-        threshold: threshold
-      });
-      observer.observe(node, function (observedEntry) {
-        setEntry(observedEntry);
-      });
-      observerRef.current = observer;
+    if (!node) {
+      setEntry(undefined);
+      return;
     }
+
+    var observer = observerCache.getObserver({
+      root: rootRef.current,
+      rootMargin: rootMargin,
+      threshold: threshold
+    });
+    observer.observe(node, function (observedEntry) {
+      setEntry(observedEntry);
+    });
+    observerRef.current = observer;
   }, [rootMargin, threshold]);
   var unobserve = (0, _react.useCallback)(function () {
     var currentObserver = observerRef.current;
@@ -35580,7 +35587,12 @@ function useIntersectionObserver(args) {
     }
 
     observerRef.current = null;
-  }, []);
+  }, []); // React will call the ref callback with the DOM element when the component mounts,
+  // and call it with null when it unmounts.
+  // So, we don't need an useEffect etc to unobserve nodes.
+  // When nodeRef.current is null, it will be unobserved and observe function
+  // won't do anything.
+
   var refCallback = (0, _react.useCallback)(function (node) {
     unobserve();
     nodeRef.current = node;
@@ -35590,21 +35602,6 @@ function useIntersectionObserver(args) {
     unobserve();
     rootRef.current = rootNode;
     observe();
-  }, [observe, unobserve]);
-  (0, _react.useEffect)(function () {
-    // After React 18, StrictMode unmounts and mounts components to be sure
-    // if they are resilient effects being mounted and destroyed multiple times.
-    // This a behavior to be sure nothing breaks when off-screen components
-    // can preserve their state with future React versions.
-    // So in StrictMode, React unmounts the component, clean-up of this useEffect gets triggered and
-    // we stop observing the node. But we need to start observing after component re-mounts with its preserved state.
-    // So to handle this case, we call initializeObserver here.
-    // https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-strict-mode
-    observe();
-    return function () {
-      // We disconnect the observer on unmount to prevent memory leaks etc.
-      unobserve();
-    };
   }, [observe, unobserve]);
   return [refCallback, {
     entry: entry,
@@ -36283,7 +36280,7 @@ var MessageLabel = styled_components_1.default.span(templateObject_2 || (templat
 function Message(_a) {
   var label = _a.label,
       isVisible = _a.isVisible;
-  return React.createElement(MessageContent, null, React.createElement(MessageLabel, null, label, ":"), isVisible ? '(づ｡◕‿‿◕｡)づ You have found it!' : "¯\\_(ツ)_/¯ I don't know where the green ball is. Use scroll to find it.");
+  return React.createElement(MessageContent, null, React.createElement(MessageLabel, null, label, ":"), isVisible ? '(づ｡◕‿‿◕｡)づ You have found it!' : "\xAF\\_(\u30C4)_/\xAF I don't know where it is. Use scroll to find it.");
 }
 
 exports.default = Message;
@@ -36361,10 +36358,16 @@ var Message_1 = __importDefault(require("./components/Message"));
 
 var Root = styled_components_1.default.div(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n  min-width: 300px;\n"], ["\n  min-width: 300px;\n"])));
 var Top = styled_components_1.default.div(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n  position: fixed;\n  top: 6px;\n"], ["\n  position: fixed;\n  top: 6px;\n"])));
-var Label = styled_components_1.default.label(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n  font-weight: bold;\n  > * {\n    margin-left: 8px;\n  }\n"], ["\n  font-weight: bold;\n  > * {\n    margin-left: 8px;\n  }\n"])));
-var Scroller = styled_components_1.default.div(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n  width: 100%;\n  height: 600px;\n  overflow: auto;\n  background-color: #fafafa;\n"], ["\n  width: 100%;\n  height: 600px;\n  overflow: auto;\n  background-color: #fafafa;\n"])));
-var Content = styled_components_1.default.div(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n  height: 3000px;\n"], ["\n  height: 3000px;\n"])));
-var Ball = styled_components_1.default.div(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n  width: 100px;\n  height: 100px;\n  border-radius: 50%;\n  background-color: #1db954;\n  margin-left: auto;\n  margin-right: auto;\n  margin-top: 50%;\n"], ["\n  width: 100px;\n  height: 100px;\n  border-radius: 50%;\n  background-color: #1db954;\n  margin-left: auto;\n  margin-right: auto;\n  margin-top: 50%;\n"])));
+var Label = styled_components_1.default.label(templateObject_3 || (templateObject_3 = __makeTemplateObject(["\n  display: block;\n  user-select: none;\n  font-weight: bold;\n  > * {\n    margin-left: 8px;\n  }\n"], ["\n  display: block;\n  user-select: none;\n  font-weight: bold;\n  > * {\n    margin-left: 8px;\n  }\n"])));
+var Checkbox = styled_components_1.default.input.attrs({
+  type: 'checkbox'
+})(templateObject_4 || (templateObject_4 = __makeTemplateObject(["\n  margin: 8px 8px 4px 0;\n"], ["\n  margin: 8px 8px 4px 0;\n"])));
+var Scroller = styled_components_1.default.div(templateObject_5 || (templateObject_5 = __makeTemplateObject(["\n  width: 100%;\n  height: 600px;\n  overflow: auto;\n  background-color: #fafafa;\n"], ["\n  width: 100%;\n  height: 600px;\n  overflow: auto;\n  background-color: #fafafa;\n"])));
+var Content = styled_components_1.default.div(templateObject_6 || (templateObject_6 = __makeTemplateObject(["\n  height: 3000px;\n"], ["\n  height: 3000px;\n"])));
+var Ball = styled_components_1.default.div(templateObject_7 || (templateObject_7 = __makeTemplateObject(["\n  width: 100px;\n  height: 100px;\n  border-radius: 50%;\n  background-color: ", ";\n  margin-left: auto;\n  margin-right: auto;\n  margin-top: 50%;\n"], ["\n  width: 100px;\n  height: 100px;\n  border-radius: 50%;\n  background-color: ", ";\n  margin-left: auto;\n  margin-right: auto;\n  margin-top: 50%;\n"])), function (_a) {
+  var color = _a.color;
+  return color;
+});
 var ParentType;
 
 (function (ParentType) {
@@ -36373,32 +36376,50 @@ var ParentType;
 })(ParentType || (ParentType = {}));
 
 function App() {
-  var _a = React.useState(ParentType.DOCUMENT),
-      mode = _a[0],
-      setMode = _a[1];
+  var _a = React.useState(true),
+      isContentVisible = _a[0],
+      setIsContentVisible = _a[1];
 
-  var _b = src_1.useTrackVisibility(),
-      ref = _b[0],
-      _c = _b[1],
-      isVisible = _c.isVisible,
-      rootRef = _c.rootRef;
+  var _b = React.useState(ParentType.DOCUMENT),
+      mode = _b[0],
+      setMode = _b[1];
 
-  var _d = src_1.useTrackVisibility(),
-      ref2 = _d[0],
-      _e = _d[1],
-      isVisible2 = _e.isVisible,
-      rootRef2 = _e.rootRef;
+  var _c = src_1.useTrackVisibility(),
+      firstBallRef = _c[0],
+      _d = _c[1],
+      isFirstBallVisible = _d.isVisible,
+      firstBallRootRef = _d.rootRef;
 
-  var innerContent = React.createElement(Content, null, React.createElement(Ball, {
-    ref: ref
-  }));
-  var innerContent2 = React.createElement(Content, null, React.createElement(Ball, {
-    ref: ref2
-  }));
+  var _e = src_1.useTrackVisibility(),
+      secondBallRef1 = _e[0],
+      _f = _e[1],
+      isSecondBallVisible1 = _f.isVisible,
+      secondBallRootRef1 = _f.rootRef;
+
+  var _g = src_1.useTrackVisibility({
+    threshold: 0.5
+  }),
+      secondBallRef2 = _g[0],
+      _h = _g[1],
+      isSecondBallVisible2 = _h.isVisible,
+      secondBallRootRef2 = _h.rootRef;
+
+  var secondBallRef = React.useCallback(function (node) {
+    secondBallRef1(node);
+    secondBallRef2(node);
+  }, [secondBallRef1, secondBallRef2]);
+  var content = React.createElement(React.Fragment, null, React.createElement(Content, null, React.createElement(Ball, {
+    ref: firstBallRef,
+    color: "#1db954"
+  })), React.createElement(Content, null, React.createElement(Ball, {
+    ref: secondBallRef,
+    color: "#f20404"
+  })));
   var rootCallback = React.useCallback(function (node) {
-    rootRef(node);
-    rootRef2(node);
-  }, [rootRef, rootRef2]);
+    firstBallRootRef(node);
+    secondBallRootRef1(node);
+    secondBallRootRef2(node);
+  }, [firstBallRootRef, secondBallRootRef1, secondBallRootRef2]);
   return React.createElement(Root, null, React.createElement(Top, null, React.createElement(Label, {
     htmlFor: "parentType"
   }, "Parent Type", React.createElement("select", {
@@ -36411,19 +36432,27 @@ function App() {
     value: ParentType.DOCUMENT
   }, "Document"), React.createElement("option", {
     value: ParentType.SCROLLABLE_CONTAINER
-  }, "Scrollable Container"))), React.createElement(Message_1.default, {
-    label: "First ball",
-    isVisible: isVisible
+  }, "Scrollable Container"))), React.createElement(Label, null, React.createElement(Checkbox, {
+    checked: isContentVisible,
+    onChange: function onChange(e) {
+      return setIsContentVisible(e.target.checked);
+    }
+  }), "Show Content"), React.createElement(Message_1.default, {
+    label: "Green ball",
+    isVisible: isFirstBallVisible
   }), React.createElement(Message_1.default, {
-    label: "Second",
-    isVisible: isVisible2
-  })), mode === ParentType.DOCUMENT ? React.createElement(React.Fragment, null, innerContent, innerContent2) : React.createElement(Scroller, {
+    label: "Red ball",
+    isVisible: isSecondBallVisible1
+  }), React.createElement(Message_1.default, {
+    label: "More than half of red ball",
+    isVisible: isSecondBallVisible2
+  })), isContentVisible && React.createElement("div", null, mode === ParentType.DOCUMENT ? content : React.createElement(Scroller, {
     ref: rootCallback
-  }, innerContent, innerContent2));
+  }, content)));
 }
 
 ReactDOM.render(React.createElement(React.StrictMode, null, React.createElement(App, null)), document.getElementById('root'));
-var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6;
+var templateObject_1, templateObject_2, templateObject_3, templateObject_4, templateObject_5, templateObject_6, templateObject_7;
 },{"react-app-polyfill/ie11":"node_modules/react-app-polyfill/ie11.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/profiling.js","styled-components":"node_modules/styled-components/dist/styled-components.browser.esm.js","../src":"../src/index.ts","./components/Message":"components/Message.tsx"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -36452,7 +36481,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49740" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50087" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
