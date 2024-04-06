@@ -3,9 +3,7 @@
   "projectOwner": "onderonur",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "files": [
-    "README.md"
-  ],
+  "files": ["README.md"],
   "imageSize": 100,
   "commit": true,
   "commitConvention": "none",
@@ -15,9 +13,7 @@
       "name": "KimSeonghyeon",
       "avatar_url": "https://avatars.githubusercontent.com/u/13966404?v=4",
       "profile": "https://seonghyeonkimm.github.io/",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     }
   ],
   "contributorsPerLine": 7

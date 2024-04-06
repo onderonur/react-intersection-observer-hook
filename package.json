@@ -1,64 +1,34 @@
 {
   "name": "react-intersection-observer-hook",
-  "version": "2.1.1",
-  "license": "MIT",
-  "author": "onderonur",
-  "main": "dist/index.js",
-  "module": "dist/react-intersection-observer-hook.esm.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
   ],
-  "keywords": [
-    "react",
-    "react-hooks",
-    "intersection-observer",
-    "on-screen",
-    "visibility"
-  ],
-  "homepage": "https://onderonur.github.io/react-intersection-observer-hook",
-  "bugs": {
-    "url": "https://github.com/onderonur/react-intersection-observer-hook/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/onderonur/react-intersection-observer-hook.git"
-  },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --env=jsdom",
-    "lint": "tsdx lint",
-    "clean": "rimraf dist .rts2_cache_esm .rts2_cache_cjs example/.cache example/dist",
-    "prepublishOnly": "npm run build",
-    "prepare": "husky install"
-  },
-  "peerDependencies": {
-    "react": ">=16.8.0"
+    "build": "turbo build",
+    "build:bundle": "turbo build --filter=react-intersection-observer-hook",
+    "dev": "turbo dev",
+    "format": "prettier --check --ignore-unknown .",
+    "format:fix": "prettier --write --ignore-unknown .",
+    "lint": "turbo lint",
+    "lint:fix": "turbo lint:fix",
+    "prepare": "husky && npm run build:bundle",
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.22",
-    "@types/react": "^17.0.3",
-    "@types/react-dom": "^17.0.3",
-    "@typescript-eslint/eslint-plugin": "^4.20.0",
-    "@typescript-eslint/parser": "^4.20.0",
-    "all-contributors-cli": "^6.20.0",
-    "eslint": "^7.23.0",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-prettier": "^7.2.0",
-    "eslint-config-react-app": "^6.0.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-react": "^7.23.1",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "husky": "^6.0.0",
-    "prettier": "^2.2.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "rimraf": "^3.0.2",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.1.0",
-    "typescript": "^4.2.3"
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "all-contributors-cli": "^6.26.1",
+    "eslint": "^8.57.0",
+    "husky": "^9.0.11",
+    "prettier": "^3.2.5",
+    "prettier-plugin-organize-imports": "^3.2.4",
+    "prettier-plugin-packagejson": "^2.4.14",
+    "turbo": "latest"
+  },
+  "packageManager": "npm@10.2.4",
+  "engines": {
+    "node": ">=18"
   }
 }

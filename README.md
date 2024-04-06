@@ -1,6 +1,6 @@
 # react-intersection-observer-hook
 
-![Build status](https://img.shields.io/github/actions/workflow/status/onderonur/react-intersection-observer-hook/main.yml)
+![Build status](https://img.shields.io/github/actions/workflow/status/onderonur/react-intersection-observer-hook/quality.yml)
 ![License](https://img.shields.io/npm/l/react-intersection-observer-hook)
 ![Version](https://img.shields.io/npm/v/react-intersection-observer-hook)
 
@@ -92,10 +92,8 @@ function Example() {
   // `rootRef`: Same ref callback which is returned by `useIntersectionObserver`.
   // `isVisible`: Becomes true/false based on the response of `IntersectionObserver`.
   // `wasEverVisible`: When our observed node becomes visible once, this flag becomes `true` and stays like that.
-  const [
-    ref,
-    { entry, rootRef, isVisible, wasEverVisible },
-  ] = useTrackVisibility();
+  const [ref, { entry, rootRef, isVisible, wasEverVisible }] =
+    useTrackVisibility();
 
   useEffect(() => {
     console.log(`The component is ${isVisible ? 'visible' : 'not visible'}.`);
