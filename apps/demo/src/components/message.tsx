@@ -7,12 +7,12 @@ type MessageProps = {
 
 export function Message({ label, isVisible }: MessageProps) {
   return (
-    <div className="my-1 border rounded p-2">
+    <div className="my-1 rounded border p-2">
       <p className="font-semibold">{label}:</p>
       <p>
         {isVisible
-          ? '(づ｡◕‿‿◕｡)づ You have found it!'
-          : `¯\\_(ツ)_/¯ I don't know where it is. Use scroll to find it.`}
+          ? '✅ You have found it!'
+          : `👀 I don't know where it is. Use scroll to find it.`}
       </p>
     </div>
   );

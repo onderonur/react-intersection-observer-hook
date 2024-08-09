@@ -15,7 +15,7 @@ type SettingsProps = {
 
 export function Settings({ values, onChange }: SettingsProps) {
   return (
-    <div className="border rounded p-2">
+    <div className="rounded border p-2">
       <label
         className="block select-none font-semibold [&>*]:ml-2"
         htmlFor="parentType"
@@ -23,7 +23,7 @@ export function Settings({ values, onChange }: SettingsProps) {
         Parent Type
         <select
           id="parentType"
-          className="border rounded p-1"
+          className="rounded border p-1"
           value={values.parentType}
           onChange={(e) => {
             onChange({
@@ -41,7 +41,7 @@ export function Settings({ values, onChange }: SettingsProps) {
       <label className="block select-none font-semibold [&>*]:ml-2">
         <input
           type="checkbox"
-          className="mt-2 mr-2 mb-1"
+          className="mb-1 mr-2 mt-2"
           checked={values.isContentVisible}
           onChange={(e) => {
             onChange({ ...values, isContentVisible: e.target.checked });

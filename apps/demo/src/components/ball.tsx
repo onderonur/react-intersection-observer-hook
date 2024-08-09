@@ -9,7 +9,7 @@ export const Ball = forwardRef<React.ElementRef<'div'>, BallProps>(
     return (
       <div
         ref={ref}
-        className="w-24 h-24 rounded-full mx-auto mt-[50%]"
+        className="mx-auto mb-12 mt-[110vh] h-24 w-24 rounded-full"
         style={{ backgroundColor: color }}
       />
     );

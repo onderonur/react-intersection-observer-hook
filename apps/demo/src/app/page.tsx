@@ -43,10 +43,10 @@ export default function Page() {
 
   const content = (
     <>
-      <div className="min-h-[3000px]">
+      <div>
         <Ball ref={firstBallRef} color="#1db954" />
       </div>
-      <div className="min-h-[3000px]">
+      <div>
         <Ball ref={secondBallRef} color="#f20404" />
       </div>
     </>
@@ -61,9 +61,11 @@ export default function Page() {
     [firstBallRootRef, secondBallRootRef1, secondBallRootRef2],
   );
 
+  if (!settings.isContentVisible) return null;
+
   return (
     <main>
-      <div className="fixed top-2 left-2 p-2 bg-slate-400 rounded text-xs max-w-72 flex flex-col gap-2">
+      <div className="fixed left-2 top-2 flex max-w-72 flex-col gap-2 rounded bg-slate-400 p-2 text-xs opacity-80">
         <Settings values={settings} onChange={setSettings} />
         <div>
           <Message label="Green ball" isVisible={isFirstBallVisible} />
@@ -74,20 +76,15 @@ export default function Page() {
           />
         </div>
       </div>
-      {settings.isContentVisible && (
-        <div>
-          {settings.parentType === ParentType.DOCUMENT ? (
-            content
-          ) : (
-            <div
-              ref={rootCallback}
-              className="w-full h-[600px] overflow-auto bg-slate-100"
-            >
-              {content}
-            </div>
-          )}
-        </div>
-      )}
+      <div>
+        {settings.parentType === ParentType.DOCUMENT ? (
+          content
+        ) : (
+          <div ref={rootCallback} className="w-full overflow-auto bg-slate-100">
+            {content}
+          </div>
+        )}
+      </div>
     </main>
   );
 }
