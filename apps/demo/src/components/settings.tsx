@@ -1,6 +1,6 @@
 export enum ParentType {
-  DOCUMENT,
-  SCROLLABLE_CONTAINER,
+  DOCUMENT = 'document',
+  SCROLLABLE_CONTAINER = 'scrollableContainer',
 }
 
 export type SettingsValues = {

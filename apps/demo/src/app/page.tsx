@@ -61,8 +61,6 @@ export default function Page() {
     [firstBallRootRef, secondBallRootRef1, secondBallRootRef2],
   );
 
-  if (!settings.isContentVisible) return null;
-
   return (
     <main>
       <div className="fixed left-2 top-2 flex max-w-72 flex-col gap-2 rounded bg-slate-400 p-2 text-xs opacity-80">
@@ -76,15 +74,20 @@ export default function Page() {
           />
         </div>
       </div>
-      <div>
-        {settings.parentType === ParentType.DOCUMENT ? (
-          content
-        ) : (
-          <div ref={rootCallback} className="w-full overflow-auto bg-slate-100">
-            {content}
-          </div>
-        )}
-      </div>
+      {settings.isContentVisible && (
+        <div>
+          {settings.parentType === ParentType.DOCUMENT ? (
+            content
+          ) : (
+            <div
+              ref={rootCallback}
+              className="mx-8 max-h-80 overflow-auto bg-slate-100"
+            >
+              {content}
+            </div>
+          )}
+        </div>
+      )}
     </main>
   );
 }

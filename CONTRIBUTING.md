@@ -64,7 +64,8 @@ To run it, we can use the below command. It starts an interactive CLI to check t
 npm run updates:check
 ```
 
-## Adding Contributors
+## Adding Contributors
+
 [all-contributors-cli](https://github.com/all-contributors/cli) is used for maintaining the contributors of this repository.
 
 To add a new contributor, we can run the below command and follow its instructions.
@@ -113,7 +114,8 @@ Lastly, we can run the below command to auto correct common errors in `package.j
 npm pkg fix -w react-intersection-observer-hook
 ```
 
-## Publish
+## Publishing the Package
+
 Firstly, we need to bump the package version which can be done by using the below commands.
 
 ```bash
