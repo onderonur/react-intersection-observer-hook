@@ -34,7 +34,7 @@ export default function Page() {
   });
 
   const secondBallRef = useCallback(
-    (node: React.ElementRef<'div'>) => {
+    (node: React.ComponentRef<'div'>) => {
       secondBallRef1(node);
       secondBallRef2(node);
     },
@@ -53,7 +53,7 @@ export default function Page() {
   );
 
   const rootCallback = useCallback(
-    (node: React.ElementRef<'div'>) => {
+    (node: React.ComponentRef<'div'>) => {
       firstBallRootRef(node);
       secondBallRootRef1(node);
       secondBallRootRef2(node);
