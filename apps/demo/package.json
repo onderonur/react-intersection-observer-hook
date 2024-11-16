@@ -5,10 +5,10 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "lint:check": "next lint --max-warnings 0",
+    "lint": "next lint --max-warnings 0",
     "lint:fix": "next lint --fix --max-warnings 0",
     "start": "next start",
-    "types:check": "tsc"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "next": "14.2.5",
