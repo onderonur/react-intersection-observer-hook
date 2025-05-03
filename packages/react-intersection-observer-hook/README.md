@@ -10,13 +10,19 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-This is a simple to use React hook package for using [Insersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) declaratively. By using this hook, you can easily track if a component is visible or not, create lazy loading images, trigger animations on entering or leaving the viewport, implement infinite loading etc.
+This is a easy to use React hook package for using [Insersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) declaratively. By using this hook, you can easily track if a component is visible or not, create lazy loading images, trigger animations on entering or leaving the viewport, implement infinite scroll etc.
 
 **Live demo is [here](https://onderonur.github.io/react-intersection-observer-hook).**
 
 This package relies on [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). Browser compatibility can be seen in [here](https://caniuse.com/#feat=intersectionobserver).
 
 If you want to support the browsers those are not supporting it natively, you can use a [polyfill](https://www.npmjs.com/package/intersection-observer).
+
+## Versions
+
+For **React v19**, it is recommended to use versions after `v4`, since it uses [cleanup functions for refs](https://react.dev/blog/2024/12/05/react-19#cleanup-functions-for-refs).
+
+For older versions of React, you can stick with `v3` until you migrate to React 19.
 
 ## Installation
 
@@ -26,7 +32,7 @@ npm install react-intersection-observer-hook
 
 ## Usage
 
-```javascript
+```jsx
 import React, { useEffect } from 'react';
 import { useIntersectionObserver } from 'react-intersection-observer-hook';
 // ...
@@ -38,17 +44,18 @@ function Example() {
   const [ref, { entry }] = useIntersectionObserver();
   const isVisible = entry && entry.isIntersecting;
 
-  useEffect(() => {
-    console.log(`The component is ${isVisible ? 'visible' : 'not visible'}.`);
-  }, [isVisible]);
-
-  return <SomeComponentToTrack ref={ref} />;
+  return (
+    <div>
+      <p>Component is {isVisible ? 'visible' : 'not visible'}.</p>
+      <SomeComponentToTrack ref={ref} />
+    </div>
+  );
 }
 ```
 
 If you have a scrollable container, you can set a `root` like this:
 
-```javascript
+```jsx
 import React, { useEffect } from 'react';
 import { useIntersectionObserver } from 'react-intersection-observer-hook';
 // ...
@@ -57,25 +64,23 @@ function Example() {
   const [ref, { entry, rootRef }] = useIntersectionObserver();
   const isVisible = entry && entry.isIntersecting;
 
-  useEffect(() => {
-    console.log(`The component is ${isVisible ? 'visible' : 'not visible'}.`);
-  }, [isVisible]);
-
   return (
-    <ScrollableContainer
-      // We use `rootRef` callback to set the root node.
-      ref={rootRef}
-    >
-      <SomeComponentToTrack ref={ref} />
-    </ScrollableContainer>
+    <div>
+      <p>Component is {isVisible ? 'visible' : 'not visible'}.</p>
+      <ScrollableContainer
+        // We use `rootRef` callback to set the root node.
+        ref={rootRef}
+      >
+        <SomeComponentToTrack ref={ref} />
+      </ScrollableContainer>
+    </div>
   );
 }
 ```
 
-If you just want to track visibility, you can also use `useTrackVisibility` hook.
-It has the same API as `useIntersectionObserver` hook. It just returns additional fields as its second tuple item.
+If you just want to track visibility, you can also use `useTrackVisibility` hook. It mostly has the same API as `useIntersectionObserver` hook.
 
-```javascript
+```jsx
 import React, { useEffect } from 'react';
 import { useTrackVisibility } from 'react-intersection-observer-hook';
 // ...
@@ -87,15 +92,18 @@ function Example() {
   // `entry`: Same object which is returned by `useIntersectionObserver`.
   // `rootRef`: Same ref callback which is returned by `useIntersectionObserver`.
   // `isVisible`: Becomes `true`/`false` based on the response of `IntersectionObserver`.
-  // `wasEverVisible`: When the observed node becomes visible once, this flag becomes `true` and stays like that.
-  const [ref, { entry, rootRef, isVisible, wasEverVisible }] =
-    useTrackVisibility();
+  const [ref, { entry, rootRef, isVisible }] = useTrackVisibility({
+    // In addition to the `IntersectionObserver` arguments, you can use `once` flag
+    // to watch the visibility of an element once, so `isVisible` stays `true` after the element is visible for the first time.
+    // once: true,
+  });
 
-  useEffect(() => {
-    console.log(`The component is ${isVisible ? 'visible' : 'not visible'}.`);
-  }, [isVisible]);
-
-  return <SomeComponentToTrack ref={ref} />;
+  return (
+    <div>
+      <p>Component is {isVisible ? 'visible' : 'not visible'}.</p>
+      <SomeComponentToTrack ref={ref} />
+    </div>
+  );
 }
 ```
 
@@ -103,12 +111,18 @@ You can find more usage examples in the `demo` app in this repository.
 
 ## Arguments
 
-Both `useIntersectionObserver` and `useTrackVisibility` gets the same arguments. And those are;
+### `useIntersectionObserver`
 
-- **rootMargin:** Indicates the margin value around the root element. Default value is zero for all directions (top, right, bottom and left).
-- **threshold:** Threshold value (or values) to trigger the observer.
+- `rootMargin`: Indicates the margin value around the root element. Default value is `0` for all directions (top, right, bottom and left).
+- `threshold`: Threshold value (or values) to trigger the observer.
 
 _For more info, you can check [here](https://developers.google.com/web/updates/2016/04/intersectionobserver) and [here](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)._
+
+### useTrackVisibility
+
+Gets the same arguments as `useIntersectionObserver`. In addition:
+
+- `once`: When set `true`, `isVibisle` stays as `true` after the element is visible for the first time. Default `false`.
 
 ## Contributors ✨
 

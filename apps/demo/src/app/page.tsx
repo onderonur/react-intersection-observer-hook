@@ -33,10 +33,25 @@ export default function Page() {
     threshold: 0.5,
   });
 
+  const [
+    thirdBallRef,
+    { isVisible: isThirdBallVisible, rootRef: thirdBallRootRef },
+  ] = useTrackVisibility({
+    once: true,
+  });
+
+  // Merging multiple refs.
+  // When we want to use multiple refs on the same element,
+  // we need to merge them like this.
   const secondBallRef = useCallback(
     (node: React.ComponentRef<'div'>) => {
-      secondBallRef1(node);
-      secondBallRef2(node);
+      const cleanup1 = secondBallRef1(node);
+      const cleanup2 = secondBallRef2(node);
+
+      return () => {
+        cleanup1();
+        cleanup2();
+      };
     },
     [secondBallRef1, secondBallRef2],
   );
@@ -49,16 +64,36 @@ export default function Page() {
       <div>
         <Ball ref={secondBallRef} color="#f20404" />
       </div>
+      <div>
+        <Ball ref={thirdBallRef} color="#f104b2" />
+      </div>
     </>
   );
 
+  // Merging multiple root refs.
+  // Normally, we don't need to do this for a single ref use on the same root.
+  // But since we have multiple refs used on the same root for this demo,
+  // we need to merge them.
   const rootCallback = useCallback(
     (node: React.ComponentRef<'div'>) => {
-      firstBallRootRef(node);
-      secondBallRootRef1(node);
-      secondBallRootRef2(node);
+      const cleanup1 = firstBallRootRef(node);
+      const cleanup2 = secondBallRootRef1(node);
+      const cleanup3 = secondBallRootRef2(node);
+      const cleanup4 = thirdBallRootRef(node);
+
+      return () => {
+        cleanup1();
+        cleanup2();
+        cleanup3();
+        cleanup4();
+      };
     },
-    [firstBallRootRef, secondBallRootRef1, secondBallRootRef2],
+    [
+      firstBallRootRef,
+      secondBallRootRef1,
+      secondBallRootRef2,
+      thirdBallRootRef,
+    ],
   );
 
   return (
@@ -72,10 +107,14 @@ export default function Page() {
             label="More than half of red ball"
             isVisible={isSecondBallVisible2}
           />
+          <Message
+            label="Pink ball (seen once)"
+            isVisible={isThirdBallVisible}
+          />
         </div>
       </div>
       {settings.isContentVisible && (
-        <div>
+        <div className="min-h-[200vh]">
           {settings.parentType === ParentType.DOCUMENT ? (
             content
           ) : (

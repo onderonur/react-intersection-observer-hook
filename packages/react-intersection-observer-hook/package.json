@@ -1,6 +1,6 @@
 {
   "name": "react-intersection-observer-hook",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "React hook to use IntersectionObserver declaratively.",
   "keywords": [
     "react",
@@ -49,19 +49,19 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.15.4",
+    "@arethetypeswrong/cli": "^0.17.1",
     "@repo/eslint-config": "*",
     "@repo/lint-staged-config": "*",
     "@repo/typescript-config": "*",
-    "@types/react": "^18.3.3",
+    "@types/react": "^19.0.1",
     "eslint": "^8.57.0",
-    "publint": "^0.2.10",
-    "react": "^18.3.1",
-    "tsup": "^8.2.4",
-    "typescript": "^5.5.4"
+    "publint": "^0.2.12",
+    "react": "^19.0.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react": ">=19",
+    "react-dom": ">=19"
   }
 }
