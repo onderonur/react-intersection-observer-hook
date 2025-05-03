@@ -4,28 +4,30 @@ import useIntersectionObserver, {
   type IntersectionObserverHookResult,
 } from './use-intersection-observer';
 
-export type TrackVisibilityHookArgs = IntersectionObserverHookArgs;
+export type TrackVisibilityHookArgs = IntersectionObserverHookArgs & {
+  once?: boolean;
+};
 
 export type TrackVisibilityHookResult = [
   IntersectionObserverHookResult[0],
   IntersectionObserverHookResult[1] & {
     isVisible: boolean;
-    wasEverVisible: boolean;
   },
 ];
 
 function useTrackVisibility(
-  args?: IntersectionObserverHookArgs,
+  args?: TrackVisibilityHookArgs,
 ): TrackVisibilityHookResult {
-  const [ref, result] = useIntersectionObserver(args);
+  const { once, ...rest } = args ?? {};
+  const [ref, result] = useIntersectionObserver(rest);
   const isVisible = Boolean(result.entry?.isIntersecting);
-  const [wasEverVisible, setWasEverVisible] = useState(isVisible);
+  const [isVisibleOnce, setIsVisibleOnce] = useState(isVisible);
 
-  if (isVisible && !wasEverVisible) {
-    setWasEverVisible(true);
+  if (once && isVisible && !isVisibleOnce) {
+    setIsVisibleOnce(true);
   }
 
-  return [ref, { ...result, isVisible, wasEverVisible }];
+  return [ref, { ...result, isVisible: once ? isVisibleOnce : isVisible }];
 }
 
 export default useTrackVisibility;

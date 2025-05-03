@@ -10,18 +10,21 @@ export type IntersectionObserverHookArgs = Omit<
   'root'
 >;
 
+// Normally, when a ref callback returns a cleanup function, React does not call
+// the ref callback with `null` after React 19.
+// But since its types still have `null`, we need to keep it here too.
 export type IntersectionObserverHookRefCallbackNode = Element | null;
 
 export type IntersectionObserverHookRefCallback = (
   node: IntersectionObserverHookRefCallbackNode,
-) => void;
+) => VoidFunction;
 
 export type IntersectionObserverHookRootRefCallbackNode =
   IntersectionObserverInit['root'];
 
 export type IntersectionObserverHookRootRefCallback = (
   node: IntersectionObserverHookRootRefCallbackNode,
-) => void;
+) => VoidFunction;
 
 export type IntersectionObserverHookResult = [
   IntersectionObserverHookRefCallback,
@@ -48,59 +51,68 @@ function useIntersectionObserver(
 
   const [entry, setEntry] = useState<IntersectionObserverEntry>();
 
-  const observe = useCallback(() => {
-    const node = nodeRef.current;
+  const reinitializeObserver = useCallback(() => {
+    function cleanupObserver() {
+      const observer = observerRef.current;
+      const node = nodeRef.current;
 
-    if (!node) {
-      setEntry(undefined);
-      return;
+      if (node) {
+        observer?.unobserve(node);
+        setEntry(undefined);
+      }
+
+      observerRef.current = null;
     }
 
-    const observer = observerCache.getObserver({
-      root: rootRef.current,
-      rootMargin,
-      threshold,
-    });
+    function initializeObserver() {
+      const node = nodeRef.current;
 
-    observer.observe(node, (observedEntry) => {
-      setEntry(observedEntry);
-    });
+      if (!node) return;
 
-    observerRef.current = observer;
+      const observer = observerCache.getObserver({
+        root: rootRef.current,
+        rootMargin,
+        threshold,
+      });
+
+      observer.observe(node, (observedEntry) => {
+        setEntry(observedEntry);
+      });
+
+      observerRef.current = observer;
+    }
+
+    cleanupObserver();
+    initializeObserver();
   }, [rootMargin, threshold]);
 
-  const unobserve = useCallback(() => {
-    const currentObserver = observerRef.current;
-    const node = nodeRef.current;
-
-    if (node) {
-      currentObserver?.unobserve(node);
-    }
-
-    observerRef.current = null;
-  }, []);
-
   // React will call the ref callback with the DOM element when the component mounts,
-  // and call it with null when it unmounts.
+  // and call its cleanup function when it unmounts.
   // So, we don't need an useEffect etc to unobserve nodes.
-  // When nodeRef.current is null, it will be unobserved and observe function
-  // won't do anything.
   const refCallback = useCallback<IntersectionObserverHookRefCallback>(
     (node) => {
-      unobserve();
       nodeRef.current = node;
-      observe();
+      reinitializeObserver();
+
+      return () => {
+        nodeRef.current = null;
+        reinitializeObserver();
+      };
     },
-    [observe, unobserve],
+    [reinitializeObserver],
   );
 
   const rootRefCallback = useCallback<IntersectionObserverHookRootRefCallback>(
     (rootNode) => {
-      unobserve();
       rootRef.current = rootNode;
-      observe();
+      reinitializeObserver();
+
+      return () => {
+        rootRef.current = null;
+        reinitializeObserver();
+      };
     },
-    [observe, unobserve],
+    [reinitializeObserver],
   );
 
   return [refCallback, { entry, rootRef: rootRefCallback }];
