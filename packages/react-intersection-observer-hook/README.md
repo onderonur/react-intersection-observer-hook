@@ -10,7 +10,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-This is a easy to use React hook package for using [Insersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) declaratively. By using this hook, you can easily track if a component is visible or not, create lazy loading images, trigger animations on entering or leaving the viewport, implement infinite scroll etc.
+This is an easy to use React hook package for using [Insersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) declaratively. By using this hook, you can easily track if a component is visible or not, create lazy loading images, trigger animations on entering or leaving the viewport, implement infinite scroll etc.
 
 **Live demo is [here](https://onderonur.github.io/react-intersection-observer-hook).**
 
@@ -106,6 +106,10 @@ function Example() {
   );
 }
 ```
+
+> [!NOTE]
+> The returned `ref` from `useIntersectionObserver` and `useTrackVisibility` can be attached to **only** one element at a time. If you assign it to multiple elements, only the most recently assigned element will be observed.
+> Currently, there is no support for observing multiple elements by using the same `ref`. Documentation will be updated when this is implemented.
 
 You can find more usage examples in the `demo` app in this repository.
 
