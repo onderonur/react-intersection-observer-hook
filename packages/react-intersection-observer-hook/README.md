@@ -14,10 +14,6 @@ This is an easy to use React hook package for using [Insersection Observer](http
 
 **Live demo is [here](https://onderonur.github.io/react-intersection-observer-hook).**
 
-This package relies on [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API). Browser compatibility can be seen in [here](https://caniuse.com/#feat=intersectionobserver).
-
-If you want to support the browsers those are not supporting it natively, you can use a [polyfill](https://www.npmjs.com/package/intersection-observer).
-
 ## Versions
 
 For **React v19**, it is recommended to use versions after `v4`, since it uses [cleanup functions for refs](https://react.dev/blog/2024/12/05/react-19#cleanup-functions-for-refs).
